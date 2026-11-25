@@ -30,10 +30,7 @@ af_render_gameplay_3d:
         swap    d0
         asr.w   #2,d0
         move.w  d0,cam_ox
-        move.w  af_pitch,d0
-        asr.w   #2,d0
-        sub.w   #26,d0
-        move.w  d0,cam_oy
+        move.w  #-26,cam_oy
         move.w  #-155,d0
         btst    #7,CIAAPRA
         beq.s   .cam_boost
