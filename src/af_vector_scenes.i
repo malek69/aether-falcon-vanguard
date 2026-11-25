@@ -218,8 +218,6 @@ af_aw_fill_tri:
         lea     poly_intro_stripe(pc),a0
         move.b  #$FE,d6
         bsr.w   af_aw_fill_ngon
-
-        ; Radar wiezy Solis
         move.w  #38,d0
         ifd FULL_RES
         move.w  #70,d1
@@ -232,11 +230,8 @@ af_aw_fill_tri:
         addq.w  #2,d3
         move.b  #$FD,d6
         jsr     af_fill_chunky_diamond
-
         cmp.w   #170,d7
         bge.w   .act3_takeoff
-
-        ; AKT 1 & 2: XF-14 na pokladzie, podjezdza czerwony motocykl i pilot idzie do samolotu
         move.w  #160,d0
         ifd FULL_RES
         move.w  #146,d1
@@ -260,8 +255,6 @@ af_aw_fill_tri:
         add.w   #14,d5
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
-
-        ; Motocykl (X = 14 -> 109)
         move.w  d7,d4
         cmp.w   #95,d4
         ble.s   .moto_mv
@@ -282,7 +275,6 @@ af_aw_fill_tri:
         move.w  d4,d0
         addq.w  #8,d0
         jsr     af_fill_chunky_diamond
-
         move.w  d4,d0
         subq.w  #8,d0
         move.w  d5,d1
@@ -293,8 +285,6 @@ af_aw_fill_tri:
         subq.w  #5,d3
         move.b  #$FC,d6
         bsr.w   af_aw_fill_tri
-
-        ; Pilot na motocyklu (t < 95) -> Pilot idacy do XF-14 (t >= 95)
         cmp.w   #95,d7
         bge.s   .pilot_walk
         move.w  d7,d0
@@ -319,8 +309,6 @@ af_aw_fill_tri:
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
         bra.w   .intro_done
-
-        ; AKT 3 & 4: Start XF-14 z dopalaczem i lot w dal na tle logo
 .act3_takeoff:
         move.w  #101,d0
         ifd FULL_RES
@@ -333,7 +321,6 @@ af_aw_fill_tri:
         jsr     af_fill_chunky_diamond
         move.w  #117,d0
         jsr     af_fill_chunky_diamond
-
         move.w  d7,d4
         sub.w   #170,d4
         move.w  d4,d5
@@ -364,7 +351,6 @@ af_aw_fill_tri:
         move.w  d4,d0
         asr.w   #3,d0
         add.w   #160,d0
-
         movem.w d0-d2,-(sp)
         move.w  d2,d4
         move.w  d0,d2
@@ -377,7 +363,6 @@ af_aw_fill_tri:
         move.b  #$FF,d6
         bsr.w   af_aw_fill_tri
         movem.w (sp)+,d0-d2
-
         movem.w d0-d2,-(sp)
         move.w  d2,d4
         move.w  d0,d2
@@ -390,7 +375,6 @@ af_aw_fill_tri:
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
         movem.w (sp)+,d0-d2
-
         addq.w  #6,d1
         moveq   #3,d3
         btst    #1,d7
@@ -402,11 +386,9 @@ af_aw_fill_tri:
         moveq   #2,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
-
 .intro_done:
         movem.l (sp)+,d0-d7/a0-a1
         rts
-
 ; ----------------------------------------------------------------------------
 ; af_draw_aw_briefing: Taktyczna sylwetka celu misji (N-gon)
 ; ----------------------------------------------------------------------------
