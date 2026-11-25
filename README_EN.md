@@ -18,7 +18,6 @@
 | :--- | :--- | :--- |
 | **1. Standard `020` (`--profile standard`)** | Stock **Amiga 1200 (`68EC020`)** + Fast RAM — **`320×128`** mode | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
 | **2. THEA1200 (`--profile thea1200`)** | **THEA1200**, **Amiberry (PC)**, **FS-UAE** — full PAL **`320×256`** (`-DFULL_RES`) | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
-| **3. Turbo `MC68060` (`--profile 060`)** | **`MC68060` (50+ MHz)** accelerators — full PAL **`320×256`** (`-DFULL_RES`, `-m68060`, `-DM68060`) | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
 
 ---
 

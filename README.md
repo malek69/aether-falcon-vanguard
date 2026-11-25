@@ -18,7 +18,6 @@
 | :--- | :--- | :--- |
 | **1. Standard `020` (`--profile standard`)** | Bazowa **Amiga 1200 (`68EC020`)** + Fast RAM — tryb **`320×128`** | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
 | **2. THEA1200 (`--profile thea1200`)** | Konsola **THEA1200**, **Amiberry (PC)**, **FS-UAE** — pełny PAL **`320×256`** (`-DFULL_RES`) | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
-| **3. Turbo `MC68060` (`--profile 060`)** | Karty turbo **`MC68060` (50+ MHz)** — pełny PAL **`320×256`** (`-DFULL_RES`, `-m68060`, `-DM68060`) | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
 
 ---
 

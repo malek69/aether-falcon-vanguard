@@ -10,7 +10,6 @@ AURA_DEMO = os.path.join(ROOT, "refs", "aura3d", "demo_v1")
 PROFILES = {
     "standard": ("-m68020", list(), ["-kick1hunks"], "_020"),
     "thea1200": ("-m68020", ["-DFULL_RES"], list(), "_THEA1200"),
-    "060":      ("-m68060", ["-DFULL_RES", "-DM68060"], list(), "_060"),
 }
 
 def write_whdload_info(path, slave_name):
@@ -85,7 +84,7 @@ def build_profile(profile):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--profile", choices=["standard", "thea1200", "060", "all"], default="all")
+    p.add_argument("--profile", choices=["standard", "thea1200", "all"], default="all")
     args = p.parse_args()
     for t in (list(PROFILES.keys()) if args.profile == "all" else [args.profile]):
         build_profile(t)
