@@ -507,3 +507,76 @@ chunky_buf:     ds.b 320*128
         endif
 edge_buf:       ds.b 256*40
 af_entities:    ds.b 16*MAX_ENTITIES
+
+; ============================================================================
+; Szybki blitter pelnoekranowego tla lotniska 256 kol. AGA + sprite motocykla
+; ============================================================================
+        section code,code
+af_blit_airbase_bg:
+        movem.l d0-d7/a0-a1,-(sp)
+        lea     bg_airbase_gfx,a0
+        lea     chunky_buf,a1
+        ifd FULL_RES
+        move.w  #255,d7
+.ab_row:moveq   #19,d6
+.ab_col:move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        dbf     d6,.ab_col
+        dbf     d7,.ab_row
+        else
+        moveq   #127,d7
+.ab_row:moveq   #19,d6
+.ab_col:move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        dbf     d6,.ab_col
+        lea     320(a0),a0
+        dbf     d7,.ab_row
+        endif
+        movem.l (sp)+,d0-d7/a0-a1
+        rts
+
+; Rysuje przezroczysty sprite motocykla (96x48) w pozycji (d0=X, d1=Y)
+af_blit_moto_sprite:
+        movem.l d0-d7/a0-a2,-(sp)
+        lea     spr_moto_gfx,a0
+        lea     chunky_buf,a1
+        mulu.w  #320,d1
+        add.l   d1,a1
+        add.w   d0,a1
+        ifd FULL_RES
+        moveq   #47,d7
+.sm_y:  move.l  a1,a2
+        moveq   #95,d6
+.sm_x:  move.b  (a0)+,d2
+        beq.s   .sm_sk
+        move.b  d2,(a2)
+.sm_sk: addq.l  #1,a2
+        dbf     d6,.sm_x
+        lea     320(a1),a1
+        dbf     d7,.sm_y
+        else
+        moveq   #23,d7
+.sm_y:  move.l  a1,a2
+        moveq   #95,d6
+.sm_x:  move.b  (a0)+,d2
+        beq.s   .sm_sk
+        move.b  d2,(a2)
+.sm_sk: addq.l  #1,a2
+        dbf     d6,.sm_x
+        lea     96(a0),a0
+        lea     320(a1),a1
+        dbf     d7,.sm_y
+        endif
+        movem.l (sp)+,d0-d7/a0-a2
+        rts
+
+        section fastram_data,data
+        cnop    0,4
+bg_airbase_gfx:
+        incbin  "../data/bg_airbase.bin"
+spr_moto_gfx:
+        incbin  "../data/spr_moto.bin"

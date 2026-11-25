@@ -39,8 +39,6 @@ af_render_vector_screen:
         move.b  #$01,d6
         jsr     af_aw_fill_ngon
 .bg_stars:
-        jsr     draw_256_starfield
-
         move.w  af_state,d0
         cmp.w   #STATE_BRIEFING,d0
         beq.w   .draw_briefing

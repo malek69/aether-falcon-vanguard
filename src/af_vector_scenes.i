@@ -502,196 +502,22 @@ af_emit_dyn_poly:
         rts
 
 af_intro_cut1:
-        lea     poly_intro_mountains(pc),a0
-        move.b  #$11,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_deck(pc),a0
-        move.b  #$12,d6
-        bsr.w   af_aw_fill_ngon
-        ; Pedzacy pas na pokladzie (perspektywiczny trapez)
-        move.w  d7,d5
-        lsl.w   #3,d5
-        and.w   #255,d5
-        move.w  #310,d0
-        sub.w   d5,d0
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d0,(a0)+
-        move.w #222,(a0)+
-        add.w   #55,d0
-        move.w  d0,(a0)+
-        move.w #222,(a0)+
-        sub.w   #12,d0
-        move.w  d0,(a0)+
-        move.w #232,(a0)+
-        sub.w   #55,d0
-        move.w  d0,(a0)+
-        move.w #232,(a0)+
-        move.b  #$FE,d6
-        bsr.s   af_emit_dyn_poly
-        ; Pozycja motocykla (d4 = srodek X)
-        move.w  d7,d4
-        asr.w   #1,d4
-        add.w   #88,d4
-        ; Stozek swiatla reflektora
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        add.w #62,d0
-        move.w d0,(a0)+
-        move.w #162,(a0)+
-        add.w   #115,d0
-        move.w d0,(a0)+
-        move.w #144,(a0)+
-        move.w  d0,(a0)+
-        move.w #196,(a0)+
-        move.w  d4,d0
-        add.w #62,d0
-        move.w d0,(a0)+
-        move.w #172,(a0)+
-        move.b  #$FE,d6
-        bsr.w   af_emit_dyn_poly
-        ; Tylne kolo (6-kat) + felga
-        move.w  d4,d0
-        sub.w #52,d0
-        bsr.w   .draw_wheel
-        ; Przednie kolo (6-kat) + felga
-        move.w  d4,d0
-        add.w #56,d0
-        bsr.w   .draw_wheel
-        ; Ciemny dolny plug i silnik motocykla (4-kat)
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        sub.w #34,d0
-        move.w d0,(a0)+
-        move.w #178,(a0)+
-        move.w  d4,d0
-        add.w #42,d0
-        move.w d0,(a0)+
-        move.w #178,(a0)+
-        move.w  d4,d0
-        add.w #28,d0
-        move.w d0,(a0)+
-        move.w #198,(a0)+
-        move.w  d4,d0
-        sub.w #24,d0
-        move.w d0,(a0)+
-        move.w #198,(a0)+
-        move.b  #$14,d6
-        bsr.w   af_emit_dyn_poly
-        ; Glowna czerwona owiewka i ogon motocykla (6-kat)
-        lea     af_dyn_poly(pc),a0
-        move.w  #6,(a0)+
-        move.w  d4,d0
-        sub.w #68,d0
-        move.w d0,(a0)+
-        move.w #156,(a0)+
-        move.w  d4,d0
-        sub.w #18,d0
-        move.w d0,(a0)+
-        move.w #162,(a0)+
-        move.w  d4,d0
-        add.w #18,d0
-        move.w d0,(a0)+
-        move.w #148,(a0)+
-        move.w  d4,d0
-        add.w #66,d0
-        move.w d0,(a0)+
-        move.w #160,(a0)+
-        move.w  d4,d0
-        add.w #48,d0
-        move.w d0,(a0)+
-        move.w #180,(a0)+
-        move.w  d4,d0
-        sub.w #46,d0
-        move.w d0,(a0)+
-        move.w #176,(a0)+
-        move.b  #$FC,d6
-        bsr.w   af_emit_dyn_poly
-        ; Jasny bialo-blekitny pas na owiewce i szyba
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        add.w #16,d0
-        move.w d0,(a0)+
-        move.w #148,(a0)+
-        move.w  d4,d0
-        add.w #34,d0
-        move.w d0,(a0)+
-        move.w #136,(a0)+
-        move.w  d4,d0
-        add.w #54,d0
-        move.w d0,(a0)+
-        move.w #154,(a0)+
-        move.w  d4,d0
-        add.w #24,d0
-        move.w d0,(a0)+
-        move.w #158,(a0)+
-        move.b  #$FD,d6
-        bsr.w   af_emit_dyn_poly
-        ; Pochylony kierowca (kurtka + kask + zloty wizjer)
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        sub.w #24,d0
-        move.w d0,(a0)+
-        move.w #158,(a0)+
-        move.w  d4,d0
-        sub.w #6,d0 
-        move.w d0,(a0)+
-        move.w #134,(a0)+
-        move.w  d4,d0
-        add.w #18,d0
-        move.w d0,(a0)+
-        move.w #142,(a0)+
-        move.w  d4,d0
-        add.w #4,d0 
-        move.w d0,(a0)+
-        move.w #162,(a0)+
-        move.b  #$17,d6
-        bsr.w   af_emit_dyn_poly
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        add.w #2,d0 
-        move.w d0,(a0)+
-        move.w #120,(a0)+
-        move.w  d4,d0
-        add.w #20,d0
-        move.w d0,(a0)+
-        move.w #120,(a0)+
-        move.w  d4,d0
-        add.w #24,d0
-        move.w d0,(a0)+
-        move.w #136,(a0)+
-        move.w  d4,d0
-        add.w #2,d0 
-        move.w d0,(a0)+
-        move.w #136,(a0)+
-        move.b  #$FF,d6
-        bsr.w   af_emit_dyn_poly
+        jsr     af_blit_airbase_bg
+        move.w  d7,d0
+        lsl.w   #1,d0
+        cmp.w   #185,d0
+        ble.s   .mx_ok
+        move.w  #185,d0
+.mx_ok: addq.w  #8,d0
+        ifd FULL_RES
+        move.w  #188,d1
+        else
+        moveq   #94,d1
+        endif
+        jsr     af_blit_moto_sprite
         bra.w   af_intro_done
-.draw_wheel:
-        move.w  #194,d1
-        moveq   #22,d2
-        move.b  #$01,d6
-        bsr.w   af_skel_draw_circle
-        moveq   #11,d2
-        move.b  #$16,d6
-        bsr.w   af_skel_draw_circle
-        moveq   #5,d2
-        move.b  #$FF,d6
-        bra.w   af_skel_draw_circle
-
-
 af_intro_cut2:
-        lea     poly_intro_mountains(pc),a0
-        move.b  #$11,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_deck(pc),a0
-        move.b  #$12,d6
-        bsr.w   af_aw_fill_ngon
+        jsr     af_blit_airbase_bg
         ; Wielowarstwowo cieniowany kadlub i wlot powietrza XF-14 (3 odcienie: gorny refleks, bok, cien pod kadlubem)
         lea     af_dyn_poly(pc),a0
         move.w  #5,(a0)+
@@ -819,15 +645,7 @@ af_intro_cut2:
         bra.w   af_intro_done
 
 af_intro_cut34:
-        lea     poly_intro_mountains(pc),a0
-        move.b  #$11,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_deck(pc),a0
-        move.b  #$13,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_stripe(pc),a0
-        move.b  #$FE,d6
-        bsr.w   af_aw_fill_ngon
+        jsr     af_blit_airbase_bg
         jsr     af_clear_fighter_zbuffer
         move.w  #0,cam_ox
         move.w  #0,cam_oy
