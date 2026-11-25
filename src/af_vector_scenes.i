@@ -73,12 +73,15 @@ af_aw_fill_tri:
         move.w  d0,d6
         move.l  d6,a4                   ; a4 = 4x kolor
 
-        ; step_long (d6.l) = ((x2 - x0) << 16) / (y2 - y0)
+        lea     recip_table_32,a3
+        cmp.w   #512,d7
+        ble.s   .dy1
+        move.w  #512,d7
+.dy1:   move.l  (a3,d7.w*4),d0
         move.w  8(sp),d6
         sub.w   (sp),d6
-        swap    d6
-        clr.w   d6
-        divs.l  d7,d6
+        ext.l   d6
+        muls.l  d0,d6
 
         move.w  (sp),d4
         swap    d4
@@ -95,11 +98,14 @@ af_aw_fill_tri:
         sub.w   2(sp),d7                ; - y0
         ble.s   .do_bot
 
-        move.w  4(sp),d0                ; x1
-        sub.w   (sp),d0                 ; - x0
-        swap    d0
-        clr.w   d0
-        divs.l  d7,d0                   ; step_short_top (d0.l)
+        cmp.w   #512,d7
+        ble.s   .dy2
+        move.w  #512,d7
+.dy2:   move.l  (a3,d7.w*4),d2
+        move.w  4(sp),d0
+        sub.w   (sp),d0
+        ext.l   d0
+        muls.l  d2,d0
 
         move.w  (sp),d2                 ; x0
         swap    d2

@@ -16,7 +16,6 @@ af_render_vector_screen:
         move.l  #$00FFFFFF,255*4(a0)
         jsr     load_aga_256_palette
 .pal_cached:
-        jsr     clear_chunky
         ; Wlasne tlo sceny fabularnej (osobne dla Intro, Briefingu i Debriefingu)
         move.w  af_state,d0
         cmp.w   #STATE_BRIEFING,d0
@@ -50,12 +49,7 @@ af_render_vector_screen:
 
         ; --- EKRAN 0: INTRO (Zywa scena wektorowa Another World + Tytul) ---
         jsr     af_draw_aw_intro
-        ; Centralny romb (zloto $EC)
-        move.w  #160,d0
-        move.w  #54,d1
-        moveq   #22,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
+
 
 
 

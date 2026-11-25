@@ -239,7 +239,7 @@ af_update_flight:
         cmp.b   #$4F,d4                 ; Kursor Lewo
         bne.s   .chk_rt
 .do_left:
-        sub.w   #14,d2
+        sub.w   #20,d2
         cmp.w   #-128,d2
         bge.s   .roll_ok
         move.w  #-128,d2
@@ -250,7 +250,7 @@ af_update_flight:
         cmp.b   #$4E,d4                 ; Kursor Prawo
         bne.s   .damp_roll
 .do_right:
-        add.w   #14,d2
+        add.w   #20,d2
         cmp.w   #128,d2
         ble.s   .roll_ok
         move.w  #128,d2
@@ -275,7 +275,7 @@ af_update_flight:
         cmp.b   #$4C,d4                 ; Kursor Gora
         bne.s   .chk_dn
 .do_up:
-        sub.w   #10,d2
+        sub.w   #15,d2
         bra.s   .pitch_ok
 .chk_dn:
         btst    #0,d1
@@ -283,7 +283,7 @@ af_update_flight:
         cmp.b   #$4D,d4                 ; Kursor Dol
         bne.s   .damp_pitch
 .do_down:
-        add.w   #10,d2
+        add.w   #15,d2
         bra.s   .pitch_ok
 .damp_pitch:
         move.w  d2,d3
@@ -301,6 +301,9 @@ af_update_flight:
         add.l   #8<<16,d0
         subq.w  #1,af_energy
 .no_boost:
+        ifnd FULL_RES
+        add.l   d0,af_pos_z
+        endif
         add.l   d0,af_pos_z
         move.l  af_pos_z,d1
         move.w  d1,ter_sub_z

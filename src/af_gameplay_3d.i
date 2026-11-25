@@ -101,7 +101,9 @@ af_render_gameplay_3d:
         jsr     ptrail_update_and_draw
 
         ; 6. Rozblysk soczewkowy 3D (Lens Flare) + celownik Lock-On i HUD
+        ifd FULL_RES
         jsr     draw_3d_lens_flare
+        endif
         bsr.w   af_draw_reticle_and_hud
 
         ; 7. Konwersja Chunky (160x128) -> 8 bitplanow AGA + obramowanie
