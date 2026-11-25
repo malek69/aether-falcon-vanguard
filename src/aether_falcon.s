@@ -197,7 +197,7 @@ af_init_mission:
         clr.w   af_roll
         clr.w   af_pitch
         move.w  #64,af_orbit_angle
-        move.w  #118,af_orbit_radius
+        move.w  #126,af_orbit_radius
         clr.w   af_ship_dx
         move.w  #56,af_ship_dy
         move.w  #200,af_energy
@@ -267,9 +267,9 @@ af_update_flight:
         bne.s   .chk_dn
 .rad_in:
         subq.w  #3,d3
-        cmp.w   #20,d3
+        cmp.w   #72,d3
         bge.s   .rad_ok
-        moveq   #20,d3
+        moveq   #72,d3
         bra.s   .rad_ok
 .chk_dn:
         btst    #0,d1
@@ -278,9 +278,9 @@ af_update_flight:
         bne.s   .rad_ok
 .rad_out:
         addq.w  #3,d3
-        cmp.w   #144,d3
+        cmp.w   #132,d3
         ble.s   .rad_ok
-        move.w  #144,d3
+        move.w  #132,d3
 .rad_ok:
         move.w  d3,af_orbit_radius
         ; Oblicz jednostkowy cos(angle) i sin(angle) z sin_tab (-256..256)
