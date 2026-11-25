@@ -18,10 +18,10 @@ af_render_vector_screen:
 .pal_cached:
                 ; Ultraszybkie 32-bitowe czyszczenie tla ekranu fabularnego
         lea     chunky_buf,a0
-        move.l  #,d1
+        move.l  #16843009,d1
         cmp.w   #STATE_BRIEFING,af_state
         bne.s   .bg_c_ok
-        move.l  #,d1
+        move.l  #33686018,d1
 .bg_c_ok:
         ifd FULL_RES
         move.w  #20479,d2
