@@ -38,12 +38,6 @@
 |:---:|:---:|
 | **1. Tablica Odpraw Taktycznych (Briefing)** | **2. Chmury 3D, Teren Wokselowy i SCORE: 002350** |
 
-## Galeria Terenu Wokselowego 3D (v0.1.3 — Amiga 1200 AGA / THEA1200)
-
-| ![1. Wokselowy Ocean i Wyspy (Misja 01)](docs/screenshots/v009_01_voxel_archipelago.png) | ![2. Przelot 360° i Celownik 3D](docs/screenshots/v009_02_voxel_canyon.png) | ![3. Góry, Ląd i Modele 3D](docs/screenshots/v009_03_voxel_citadel.png) |
-|:---:|:---:|:---:|
-| **1. Wokselowy Ocean i Wyspy** | **2. Przelot 360° i Celownik 3D** | **3. Góry, Ląd i Modele 3D** |
-
 ## Wykorzystane Silniki i Powiązane Repozytoria
 
 | Logo | Silnik i Repozytorium | Rola w projekcie |
