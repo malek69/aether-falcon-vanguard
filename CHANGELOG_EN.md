@@ -8,6 +8,10 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ## [v0.0.5] - 2026-11-25
 
+| <img src="docs/screenshots/01_intro_topgun.png" width="210"> | <img src="docs/screenshots/02_intro_takeoff_logo.png" width="210"> | <img src="docs/screenshots/03_briefing_controls.png" width="210"> | <img src="docs/screenshots/04_gameplay_plasma_cannons.png" width="210"> |
+|:---:|:---:|:---:|:---:|
+| **1. Intro: Bike & Pilot** | **2. XF-14 Takeoff & Logo** | **3. Briefing & Controls** | **4. 3D Flight & Cannons** |
+
 - **Multi-Act Top Gun Intro (`src/af_vector_scenes.i`):** motorcycle arrival at Solis carrier deck, pilot boarding XF-14 cockpit, afterburner takeoff, and title/emblem reveal as the jet flies into the distance.
 - **Twin Plasma Cannon Beams (`src/af_gameplay_3d.i`, `input_ctrl.i`):** instant twin wingtip plasma beams on `Space / Fire / Alt / Enter` plus Multi-Lock missile salvos.
 - **Briefing Controls & Gameplay-Only `H` Help (`src/af_campaigns.i`, `hud_fps.i`):** clean `FPS`-only overlay on vector screens and dedicated game control map during 3D missions.
