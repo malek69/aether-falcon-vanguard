@@ -33,7 +33,12 @@ af_render_gameplay_3d:
         move.w  af_pitch,d0
         asr.w   #1,d0
         move.w  d0,cam_oy
-        move.w  #-155,cam_oz
+        move.w  #-155,d0
+        btst    #7,CIAAPRA
+        bne.s   .cam_z_ok
+        move.w  #-168,d0
+.cam_z_ok:
+        move.w  d0,cam_oz
         clr.w   cam_sin
         move.w  #256,cam_cos
 
@@ -65,11 +70,17 @@ af_render_gameplay_3d:
         ; Pozycja mysliwca na ekranie (dolna czesc kadru, przesuniecie boczne z roll)
         move.w  af_roll,d4
         asr.w   #3,d4                   ; X: lekki dryf przy przechyle
+        move.l  vbl_tick(pc),d0
+        lsr.l   #2,d0
+        and.w   #3,d0
+        subq.w  #1,d0                   ; -1..+2 px mikrokolebanie aerodynamiczne
         ifd FULL_RES
-        move.w  #18,d5                  ; Y: optymalna pozycja dla 320x256
+        move.w  #18,d5
+        add.w   d0,d5
         moveq   #22,d6
         else
-        move.w  #8,d5                   ; Y: idealnie w 128 liniach bez przycinania
+        move.w  #8,d5
+        add.w   d0,d5
         moveq   #24,d6
         endif
 

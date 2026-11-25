@@ -275,7 +275,10 @@ af_update_flight:
         cmp.b   #$4C,d4                 ; Kursor Gora
         bne.s   .chk_dn
 .do_up:
-        sub.w   #15,d2
+        sub.w   #14,d2
+        cmp.w   #-110,d2
+        bge.s   .pitch_ok
+        move.w  #-110,d2
         bra.s   .pitch_ok
 .chk_dn:
         btst    #0,d1
@@ -283,7 +286,10 @@ af_update_flight:
         cmp.b   #$4D,d4                 ; Kursor Dol
         bne.s   .damp_pitch
 .do_down:
-        add.w   #15,d2
+        add.w   #14,d2
+        cmp.w   #110,d2
+        ble.s   .pitch_ok
+        move.w  #110,d2
         bra.s   .pitch_ok
 .damp_pitch:
         move.w  d2,d3

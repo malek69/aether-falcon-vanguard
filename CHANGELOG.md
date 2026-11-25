@@ -6,6 +6,14 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.0.4] - 2026-11-25
+
+- **Plynna fizyka lotu i ograniczniki sterow (`src/aether_falcon.s`):** dodano progresywne tlumienie przechylow (`Roll`) oraz twarde ograniczniki pochylenia (`Pitch` `-110..+110`), eliminujace wyjscie kamery poza korytarz kanionu.
+- **Dynamiczna kamera dopalacza i animacja aerodynamiczna XF-14 (`src/af_gameplay_3d.i`):** odrzut kamery przy wlaczeniu dopalacza (`cam_oz = -168`) oraz subtelne mikrokolebanie kadluba w strugach powietrza.
+- **Wersja THEA1200 16:9 Widescreen (`320x256` PAL):** pelnoekranowa korekcja proporcji anamorficznych `3/4` oraz pelne 256-liniowe przycinanie terenu 3D (`#520`).
+
+---
+
 ## [v0.0.3] - 2026-11-25
 
 - **Obsluga dysku twardego (`src/af_disk_loader.i` - `dos.library`):** wczytywanie z katalogu `data/` parametrow kampanii (`missions.dat`), rekordu punktow (`hiscore.dat` z automatycznym zapisem przy wyjsciu), ekranu AGA (`title.chk` + `title.pal`) oraz sampla PCM dla Pauli (`intro.pcm`), automatycznie pakowanych do `.lha` i `_FSUAE.zip`.

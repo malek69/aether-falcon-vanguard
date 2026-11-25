@@ -6,6 +6,14 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.0.4] - 2026-11-25
+
+- **Smooth Flight Physics & Control Clamps (`src/aether_falcon.s`):** added progressive roll damping and strict pitch clamps (`-110..+110`) to keep camera altitude locked inside the canyon corridor.
+- **Dynamic Afterburner Camera & XF-14 Aerodynamic Bobbing (`src/af_gameplay_3d.i`):** camera pullback during afterburner boost (`cam_oz = -168`) plus subtle airstream hover oscillation.
+- **THEA1200 16:9 Widescreen Polish (`320x256` PAL):** full-screen `3/4` anamorphic aspect correction and seamless 256-line 3D terrain edge culling (`#520`).
+
+---
+
 ## [v0.0.3] - 2026-11-25
 
 - **Hard Drive Support (`src/af_disk_loader.i` - `dos.library`):** loads campaign parameters (`missions.dat`), persistent high score (`hiscore.dat` saved automatically on exit), optional AGA title screen (`title.chk` + `title.pal`), and Paula PCM audio (`intro.pcm`) from `data/`, automatically bundled into `.lha` and `_FSUAE.zip` packages.

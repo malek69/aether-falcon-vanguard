@@ -1,7 +1,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.3</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.4</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="https://github.com">Pobierz .LHA</a> &bull;
@@ -12,7 +12,7 @@
 
 ---
 
-## Pobieranie (v0.0.3 — 2 Profile Sprzętowe)
+## Pobieranie (v0.0.4 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -21,7 +21,7 @@
 
 ---
 
-## Galeria (v0.0.3 — Amiga 1200 AGA / THEA1200)
+## Galeria (v0.0.4 — Amiga 1200 AGA / THEA1200)
 
 <table>
   <tr>
