@@ -288,7 +288,7 @@ af_update_enemy_bolts:
         neg.w   d0
 .eb_dx: cmp.w   #26,d0
         bgt.s   .eb_rts
-        moveq   #SFX_EXPLOSION,d0
+        moveq   #SFX_EXPLODE,d0
         bsr.w   af_trigger_sfx
         rts
 .eb_draw:
