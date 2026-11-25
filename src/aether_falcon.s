@@ -197,7 +197,7 @@ af_init_mission:
         clr.w   af_roll
         clr.w   af_pitch
         move.w  #64,af_orbit_angle
-        move.w  #112,af_orbit_radius
+        move.w  #118,af_orbit_radius
         clr.w   af_ship_dx
         move.w  #56,af_ship_dy
         move.w  #200,af_energy
@@ -278,9 +278,9 @@ af_update_flight:
         bne.s   .rad_ok
 .rad_out:
         addq.w  #3,d3
-        cmp.w   #138,d3
+        cmp.w   #144,d3
         ble.s   .rad_ok
-        move.w  #138,d3
+        move.w  #144,d3
 .rad_ok:
         move.w  d3,af_orbit_radius
         ; Oblicz dx = cos(angle)*radius, dy = sin(angle)*radius z sin_tab
@@ -296,8 +296,7 @@ af_update_flight:
         asr.l   #8,d4
         move.w  d4,af_ship_dx
         move.w  af_orbit_angle,d0
-        neg.w   d0
-        add.w   #64,d0
+        sub.w   #64,d0
         and.w   #255,d0
         move.w  d0,af_roll            ; kadlub skierowany do srodka okregu (Gyruss!)
         muls.w  d3,d5
