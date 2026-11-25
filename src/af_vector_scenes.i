@@ -1,5 +1,5 @@
 ; ============================================================================
-; AETHER FALCON: VANGUARD - Oryginalne dane wektorowe N-gon (100% autorskie IP)
+; AETHER FALCON: VANGUARD - Sceny wektorowe N-gon (wypukle bryly bez artefaktow)
 ; ============================================================================
 
         cnop    0,4
@@ -35,32 +35,46 @@ af_vec_frame_table:
         dc.l    af_vec_scene_briefing
         dc.l    af_vec_scene_debriefing
 
+; KLATKA 0: INTRO - Emblem Skrzydla Solis (3 wypukle wielokaty)
 af_vec_scene_intro:
         dc.w    0
-        dc.w    0
-        dc.w    6
-        dc.w    160,40, 250,110, 210,130, 160,95, 110,130, 70,110
-        dc.w    0
+        dc.w    0                       ; Lewe skrzydlo
         dc.w    4
-        dc.w    160,105, 195,145, 160,215, 125,145
+        dc.w    154,50, 154,105, 68,125, 96,75
+        dc.w    0
+        dc.w    0                       ; Prawe skrzydlo
+        dc.w    4
+        dc.w    166,50, 224,75, 252,125, 166,105
+        dc.w    0
+        dc.w    2                       ; Centralny grot (bitplan 2 - inny kolor)
+        dc.w    4
+        dc.w    160,36, 184,115, 160,185, 136,115
         dc.w    -1
 
+; KLATKA 1: BRIEFING - Mapa sektora i 2 cele taktyczne
 af_vec_scene_briefing:
         dc.w    0
-        dc.w    0
+        dc.w    0                       ; Wyspa / Kanion (wypukly pieciokat)
         dc.w    5
-        dc.w    50,180, 110,120, 190,135, 265,90, 285,195
+        dc.w    64,155, 115,105, 215,105, 260,155, 160,182
         dc.w    0
+        dc.w    2                       ; Cel taktyczny Alfa
         dc.w    4
-        dc.w    140,70, 155,85, 140,100, 125,85
+        dc.w    120,58, 138,76, 120,94, 102,76
         dc.w    0
+        dc.w    2                       ; Cel taktyczny Beta
         dc.w    4
-        dc.w    210,60, 225,75, 210,90, 195,75
+        dc.w    204,52, 222,70, 204,88, 186,70
         dc.w    -1
 
+; KLATKA 2: DEBRIEFING - Odznaka Awansu Pilota
 af_vec_scene_debriefing:
         dc.w    0
+        dc.w    2
+        dc.w    4
+        dc.w    160,38, 204,110, 160,182, 116,110
         dc.w    0
-        dc.w    5
-        dc.w    160,45, 190,135, 105,85, 215,85, 130,135
+        dc.w    0
+        dc.w    4
+        dc.w    160,68, 186,110, 160,152, 134,110
         dc.w    -1

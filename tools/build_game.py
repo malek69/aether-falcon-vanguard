@@ -10,7 +10,7 @@ AURA_DEMO = os.path.join(ROOT, "refs", "aura3d", "demo_v1")
 PROFILES = {
     "standard": ("-m68020", list(), ["-kick1hunks"], "_020"),
     "thea1200": ("-m68020", ["-DFULL_RES"], list(), "_THEA1200"),
-    "060":      ("-m68060", ["-DFULL_RES"], list(), "_060"),
+    "060":      ("-m68060", ["-DFULL_RES", "-DM68060"], list(), "_060"),
 }
 
 def write_whdload_info(path, slave_name):
@@ -56,7 +56,7 @@ def build_profile(profile):
 
     with open(os.path.join(pkg_dir, "README.txt"), "w", newline=chr(10)) as rf:
         rf.write(
-            f"AETHER FALCON: VANGUARD v0.0.1 [{profile}] (2026)" + chr(10) +
+            f"AETHER FALCON: VANGUARD v0.0.2 [{profile}] (2026)" + chr(10) +
             "Bare-Metal Amiga 1200 AGA / THEA1200 3D Combat Sim" + chr(10) +
             "Controls: Joy2 / THEA1200 Pad / Arrows + Space | Exit: LMB or ESC" + chr(10)
         )

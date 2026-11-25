@@ -17,12 +17,45 @@ MAX_ENTITIES    equ     12
 
 start:
         movem.l d0-a6,-(sp)
+
+        ; 1. Odczyt VBR przez Exec Supervisor() zanim sys_takeover wylaczy OS
+        move.l  4.w,a6
+        lea     .get_vbr(pc),a5
+        jsr     -30(a6)
+        move.l  d0,af_vbr_base
+
+        ; 2. Alokacja 512 KB w Fast RAM dla fill_lut (MEMF_PUBLIC|MEMF_FAST|MEMF_CLEAR)
+        move.l  4.w,a6
+        move.l  #524288,d0
+        move.l  #$00010005,d1
+        jsr     -198(a6)
+        move.l  d0,af_fill_lut_ptr
+        beq.w   exit_program
+
+        ; 3. Przejecie sprzetu AGA (bitplany $80000..$a8000, Copper, Audio .MOD)
         bsr.w   sys_takeover
         tst.l   d0
         beq.w   exit_program
 
+        ; 4. Podpiecie przerwania VBL 50Hz pod prawdziwy adres VBR+$6c
+        move.l  af_vbr_base,a0
+        move.l  #vbl_irq_handler,$6c(a0)
+        bra.s   .vbr_ready
+.get_vbr:
+        movec   vbr,d0
+        rte
+.vbr_ready:
+
         move.l  #0,vbl_tick
+        lea     aga_pal256,a0
+        move.l  #$00FF3040,252*4(a0)    ; $FC = czerwien bojowa (wrogowie / celownik)
+        move.l  #$0020E8FF,253*4(a0)    ; $FD = blekit Eteru (skrzydla / rdzenie)
+        move.l  #$00FFD020,254*4(a0)    ; $FE = zloto Solis (emblem / lock-on)
+        move.l  #$00FFFFFF,255*4(a0)    ; $FF = czysta biel (napisy / HUD)
+        jsr     load_aga_256_palette
+        move.b  #1,pal_loaded
         jsr     hud_fps_init
+        clr.b   info_visible
         bsr.w   init_fill_lut
         jsr     terrain_3d_init
         bsr.w   af_init_campaign
@@ -31,39 +64,46 @@ start:
 mainloop:
         bsr.w   wait_vbl
         jsr     input_update_controls
+        cmp.l   #2,vbl_tick
+        bne.s   .pal_synced
+        lea     aga_pal256,a0
+        jsr     load_aga_256_palette
+.pal_synced:
 
-        btst    #6,CIAAPRA
+        ; Wyjscie po 25 klatkach (debounce klikniecia w okno emulatora)
+        cmp.l   #25,vbl_tick
+        blo.s   .no_exit
+        btst    #6,CIAAPRA              ; LMB
         beq.w   shutdown
-        cmp.b   #$75,$bfec01
+        cmp.b   #$75,$bfec01            ; ESC
         beq.w   shutdown
+.no_exit:
 
         move.w  af_state,d0
         cmp.w   #STATE_GAMEPLAY,d0
         beq.w   .do_gameplay
 
-        bsr.w   clear_draw_bpl
-        move.l  draw_bpl3,a0
-        bsr.w   blit_clear_full
-        bsr.w   wait_blitter
-
-        move.w  af_state,d0
-        cmp.w   #STATE_DEBRIEF,d0
-        bne.s   .set_vec_frm
-        moveq   #2,d0
-.set_vec_frm:
-        move.w  d0,cur_frame
-        jsr     af_play_vector_frame
+        ; --- TRYB WEKTOROWY: INTRO / BRIEFING / DEBRIEFING ---
+        jsr     af_render_vector_screen
         jsr     hud_fps_tick
 
+        ; Przejscie dalej: Joy2 Fire, RMB, Spacja lub Enter
         addq.l  #1,af_state_timer
-        cmp.l   #25,af_state_timer
+        cmp.l   #20,af_state_timer
         blo.w   mainloop
-        btst    #7,CIAAPRA
+
+        btst    #7,CIAAPRA              ; Joy2 Fire / Pad THEA1200
         beq.s   .advance_state
-        cmp.b   #$7F,$bfec01
+        btst    #2,$dff016              ; Prawy przycisk myszy (RMB)
+        beq.s   .advance_state
+        move.b  kbd_held_raw,d1         ; Zdekodowany rawkey z input_ctrl.i!
+        cmp.b   #$40,d1                 ; Spacja
+        beq.s   .advance_state
+        cmp.b   #$44,d1                 ; Enter
         bne.w   mainloop
 
 .advance_state:
+        clr.b   kbd_held_raw            ; Skonsumuj klawisz (brak przeskoku 2 ekranow naraz)
         clr.l   af_state_timer
         move.w  af_state,d0
         addq.w  #1,d0
@@ -75,9 +115,17 @@ mainloop:
         move.w  d0,af_state
         cmp.w   #STATE_GAMEPLAY,d0
         bne.w   mainloop
+        lea     aga_pal256,a0
+        move.l  #$00FF3040,252*4(a0)    ; $FC = czerwien bojowa (wrogowie / celownik)
+        move.l  #$0020E8FF,253*4(a0)    ; $FD = blekit Eteru (skrzydla / rdzenie)
+        move.l  #$00FFD020,254*4(a0)    ; $FE = zloto Solis (emblem / lock-on)
+        move.l  #$00FFFFFF,255*4(a0)    ; $FF = czysta biel (napisy / HUD)
+        jsr     load_aga_256_palette
+        move.b  #1,pal_loaded
         bsr.w   af_init_mission
         bra.w   mainloop
 
+        ; --- TRYB 3D GAMEPLAY (XF-14 Albatros + Teren 3D + Lock-On) ---
 .do_gameplay:
         jsr     af_sfx_tick
         bsr.w   af_update_flight
@@ -101,6 +149,9 @@ exit_program:
         moveq   #0,d0
         rts
 
+; ============================================================================
+; LOGIKA LOTU MYSLIWCA XF-14 "ALBATROS" + PRZEWIJANIE TERENU 3D
+; ============================================================================
         cnop    0,4
 af_init_campaign:
         clr.w   af_state
@@ -124,8 +175,8 @@ af_init_mission:
         clr.w   af_pitch
         move.w  #200,af_energy
         clr.w   af_locks
-        move.w  #160,af_reticle_x
-        move.w  #64,af_reticle_y
+        move.w  #80,af_reticle_x
+        move.w  #56,af_reticle_y
 
         lea     af_entities,a0
         moveq   #MAX_ENTITIES-1,d7
@@ -160,18 +211,25 @@ af_update_flight:
         lsr.w   #1,d1
         eor.w   d0,d1
 
+        move.b  kbd_held_raw,d4
         move.w  af_roll,d2
         btst    #9,d0
-        beq.s   .chk_rt
-        sub.w   #12,d2
+        bne.s   .do_left
+        cmp.b   #$4F,d4                 ; Kursor Lewo
+        bne.s   .chk_rt
+.do_left:
+        sub.w   #14,d2
         cmp.w   #-128,d2
         bge.s   .roll_ok
         move.w  #-128,d2
         bra.s   .roll_ok
 .chk_rt:
         btst    #1,d0
-        beq.s   .damp_roll
-        add.w   #12,d2
+        bne.s   .do_right
+        cmp.b   #$4E,d4                 ; Kursor Prawo
+        bne.s   .damp_roll
+.do_right:
+        add.w   #14,d2
         cmp.w   #128,d2
         ble.s   .roll_ok
         move.w  #128,d2
@@ -192,13 +250,19 @@ af_update_flight:
 
         move.w  af_pitch,d2
         btst    #8,d1
-        beq.s   .chk_dn
-        sub.w   #8,d2
+        bne.s   .do_up
+        cmp.b   #$4C,d4                 ; Kursor Gora
+        bne.s   .chk_dn
+.do_up:
+        sub.w   #10,d2
         bra.s   .pitch_ok
 .chk_dn:
         btst    #0,d1
-        beq.s   .damp_pitch
-        add.w   #8,d2
+        bne.s   .do_down
+        cmp.b   #$4D,d4                 ; Kursor Dol
+        bne.s   .damp_pitch
+.do_down:
+        add.w   #10,d2
         bra.s   .pitch_ok
 .damp_pitch:
         move.w  d2,d3
@@ -246,6 +310,8 @@ af_update_entities:
         add.w   #40,af_energy
         add.l   #250,af_score
         add.l   #6400<<16,12(a0)
+        moveq   #SFX_CORE,d0
+        jsr     af_trigger_sfx
         bra.s   .next_e
 .lock_target:
         tst.b   2(a0)
@@ -254,11 +320,16 @@ af_update_entities:
         bge.s   .next_e
         st      2(a0)
         addq.w  #1,af_locks
+        moveq   #SFX_LOCKON,d0
+        jsr     af_trigger_sfx
 .next_e:
         lea     16(a0),a0
         dbf     d7,.el
         rts
 
+; ============================================================================
+; MODULY SILNIKA Z refs/aura3d/engine/ ORAZ MODULY GRY
+; ============================================================================
         include "gfx_engine.i"
         include "vec3d_engine.i"
         include "scene_player.i"
@@ -280,13 +351,16 @@ af_update_entities:
         include "lens_flare.i"
         include "terrain_3d.i"
         include "af_vector_scenes.i"
+        section code,code
         include "af_audio_sfx.i"
         include "af_campaigns.i"
         include "af_fighter_mesh.i"
         include "af_gameplay_3d.i"
         section code,code
-        section code,code
 
+; ============================================================================
+; ZMIENNE GRY I WSKAZNIKI BITPLANOW AGA
+; ============================================================================
         even
 af_state:       dc.w    0
 af_mission:     dc.w    0
@@ -294,14 +368,16 @@ af_roll:        dc.w    0
 af_pitch:       dc.w    0
 af_energy:      dc.w    200
 af_locks:       dc.w    0
-af_reticle_x:   dc.w    160
-af_reticle_y:   dc.w    64
+af_reticle_x:   dc.w    80
+af_reticle_y:   dc.w    56
 af_pos_x:       dc.l    0
 af_pos_y:       dc.l    0
 af_pos_z:       dc.l    0
 af_vel_z:       dc.l    0
 af_score:       dc.l    0
 af_state_timer: dc.l    0
+af_fill_lut_ptr:dc.l    0
+af_vbr_base:    dc.l    0
 
         even
 disp_bpl1:      dc.l 0
