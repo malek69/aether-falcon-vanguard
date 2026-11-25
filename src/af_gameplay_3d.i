@@ -137,6 +137,8 @@ af_render_gameplay_3d:
         bsr.w   af_draw_reticle_and_hud
         bsr.w   af_draw_cannon_beams
 
+        ; Wyswietl na zywo SCORE: 000000 oraz numer misji M1/3 w lewym gornym rogu HUD
+        bsr.w   af_draw_live_score_hud
         ; Wyswietl baner potwierdzenia zebrania Rdzenia Eteru
         tst.w   af_core_msg_timer
         beq.s   .no_core_msg
@@ -1438,4 +1440,50 @@ af_cores_collected: dc.w 0
         even
 af_core_msg_timer: dc.w 0
 str_core_pickup:   dc.b "ETHER CORE +40 SHIELD!",0
+        even
+
+; ============================================================================
+; af_draw_live_score_hud - Wyswietla SCORE: 000000 oraz M1/3 w trakcie misji
+; ============================================================================
+        cnop    0,4
+af_draw_live_score_hud:
+        movem.l d0-d6/a0,-(sp)
+        ; 1. Numer misji obok paska tarczy (M1/3, M2/3, M3/3)
+        lea     str_hud_mis(pc),a0
+        move.w  af_mission,d0
+        add.b   #49,d0                  ; ASCII 1..3
+        move.b  d0,1(a0)
+        moveq   #56,d0
+        moveq   #6,d1
+        move.b  #253,d6
+        jsr     af_print_chunky_str
+
+        ; 2. Konwersja 32-bit af_score na 6 cyfr dziesietnych
+        move.l  af_score,d0
+        cmp.l   #999999,d0
+        ble.s   .sc_ok
+        move.l  #999999,d0
+.sc_ok: lea     str_hud_score+13(pc),a0
+        moveq   #5,d2
+.sc_dig:moveq   #0,d1
+        divul.l #10,d1:d0
+        add.b   #48,d1
+        move.b  d1,-(a0)
+        dbf     d2,.sc_dig
+
+        lea     str_hud_score(pc),a0
+        moveq   #10,d0
+        ifd FULL_RES
+        moveq   #15,d1
+        else
+        moveq   #13,d1
+        endif
+        move.b  #254,d6                 ; zloto Solis ($FE)
+        jsr     af_print_chunky_str
+        movem.l (sp)+,d0-d6/a0
+        rts
+
+        even
+str_hud_mis:    dc.b    "M1/3",0
+str_hud_score:  dc.b    "SCORE: 000000",0
         even

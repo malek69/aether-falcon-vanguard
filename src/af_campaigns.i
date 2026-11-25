@@ -98,30 +98,34 @@ af_render_vector_screen:
         lea     320(a0),a0
         dbf     d7,.brd_row
 
-        ; Ramka zewnetrzna tablicy ($FD turkus) i wewnetrzna ($FE zloto Solis)
-        move.w  #160,d0
+        ; Gorna i dolna belka ramki tablicy odpraw (x=14..305)
+        lea     chunky_buf+14,a0
+        move.l  #4261281277,d1          ; $FDFDFDFD (turkus)
         ifd FULL_RES
-        move.w  #115,d1
-        moveq   #100,d3
+        adda.l  #14*320,a0
+        lea     202*320(a0),a1
         else
-        move.w  #54,d1
-        moveq   #47,d3
+        adda.l  #6*320,a0
+        lea     96*320(a0),a1
         endif
-        move.b  #253,d6
-        jsr     af_draw_chunky_rect
+        moveq   #72,d6
+.brd_bar:
+        move.l  d1,(a0)+
+        move.l  d1,(a1)+
+        dbf     d6,.brd_bar
 
         ; Mini-radar taktyczny w prawym gornym rogu tablicy (x=268)
-        move.w  #268,d0
+        move.w  #282,d0
         ifd FULL_RES
         move.w  #66,d1
-        moveq   #22,d3
+        moveq   #14,d3
         else
         move.w  #32,d1
         moveq   #11,d3
         endif
         move.b  #254,d6
         jsr     af_draw_chunky_rect
-        move.w  #262,d0
+        move.w  #277,d0
         ifd FULL_RES
         move.w  #60,d1
         else
@@ -130,7 +134,7 @@ af_render_vector_screen:
         moveq   #4,d3
         move.b  #252,d6
         jsr     af_fill_chunky_diamond
-        move.w  #275,d0
+        move.w  #287,d0
         ifd FULL_RES
         move.w  #73,d1
         else
