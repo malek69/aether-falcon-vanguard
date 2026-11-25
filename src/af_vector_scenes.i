@@ -391,28 +391,128 @@ af_intro_done_alt:
         rts
 
 ; ----------------------------------------------------------------------------
-; af_draw_aw_briefing: Taktyczna sylwetka celu misji (N-gon)
-; ----------------------------------------------------------------------------
-        cnop    0,4
-af_draw_aw_briefing:
-        movem.l d0-d7/a0,-(sp)
-        lea     poly_brief_panel(pc),a0
-        move.b  #$13,d6
-        bsr.w   af_aw_fill_ngon
-
-        move.w  af_mission,d0
-        cmp.w   #1,d0
-        beq.s   .bm2
-        cmp.w   #2,d0
-        beq.s   .bm3
-        lea     poly_brief_m1(pc),a0
-        bra.s   .bdraw
-.bm2:   lea     poly_brief_m2(pc),a0
-        bra.s   .bdraw
-.bm3:   lea     poly_brief_m3(pc),a0
-.bdraw: move.b  #$FD,d6
-        bsr.w   af_aw_fill_ngon
-        movem.l (sp)+,d0-d7/a0
+; af_draw_aw_briefing:
+        movem.l d0-d7/a0-a1,-(sp)
+        ; Tlo sali odpraw lotniskowca Solis
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #10,(a0)+
+        move.w  #16,(a0)+
+        move.w  #310,(a0)+
+        move.w  #16,(a0)+
+        move.w  #310,(a0)+
+        move.w  #244,(a0)+
+        move.w  #10,(a0)+
+        move.w  #244,(a0)+
+        move.b  #$12,d6
+        bsr.w   af_skel_emit_poly
+        ; Animowany ruch glowy i ramienia oficera odprawy (d7 = wychylenie -4..+4)
+        move.l  vbl_tick(pc),d0
+        lsr.l   #3,d0
+        and.w   #15,d0
+        lea     af_skel_sin16(pc),a1
+        move.b  (a1,d0.w),d7
+        ext.w   d7
+        asr.w   #2,d7
+        ; Ramiona i mundur oficera po lewej stronie (X=16..98, Y=118..244)
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #16,(a0)+
+        move.w  #122,(a0)+
+        move.w  #94,(a0)+
+        move.w  #122,(a0)+
+        move.w  #102,(a0)+
+        move.w  #244,(a0)+
+        move.w  #16,(a0)+
+        move.w  #244,(a0)+
+        move.b  #$16,d6
+        bsr.w   af_skel_emit_poly
+        ; Zlote pagony na mundurze
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #20,(a0)+
+        move.w  #120,(a0)+
+        move.w  #44,(a0)+
+        move.w  #120,(a0)+
+        move.w  #44,(a0)+
+        move.w  #128,(a0)+
+        move.w  #20,(a0)+
+        move.w  #128,(a0)+
+        move.b  #$FE,d6
+        bsr.w   af_skel_emit_poly
+        ; Glowa oficera z animowanym przytakiwaniem (Y = 86 + d7)
+        move.w  #54,d0
+        move.w  #88,d1
+        add.w   d7,d1
+        moveq   #22,d2
+        move.b  #$FF,d6
+        bsr.w   af_skel_draw_circle
+        ; Wizjer / okulary taktyczne oficera
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #46,(a0)+
+        move.w  #82,d1
+        add.w   d7,d1
+        move.w  d1,(a0)+
+        move.w  #74,(a0)+
+        move.w  d1,(a0)+
+        addq.w  #8,d1
+        move.w  #74,(a0)+
+        move.w  d1,(a0)+
+        move.w  #46,(a0)+
+        move.w  d1,(a0)+
+        move.b  #$FD,d6
+        bsr.w   af_skel_emit_poly
+        ; Duzy taktyczny notatnik / clipboard w dloni (X=102..302, Y=36..238)
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #102,(a0)+
+        move.w  #36,(a0)+
+        move.w  #302,(a0)+
+        move.w  #36,(a0)+
+        move.w  #302,(a0)+
+        move.w  #238,(a0)+
+        move.w  #102,(a0)+
+        move.w  #238,(a0)+
+        move.b  #$FE,d6
+        bsr.w   af_skel_emit_poly
+        ; Wewnetrzna ciemna kartka notatnika (X=108..296, Y=44..232)
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #108,(a0)+
+        move.w  #44,(a0)+
+        move.w  #296,(a0)+
+        move.w  #44,(a0)+
+        move.w  #296,(a0)+
+        move.w  #232,(a0)+
+        move.w  #108,(a0)+
+        move.w  #232,(a0)+
+        move.b  #$01,d6
+        bsr.w   af_skel_emit_poly
+        ; Zloty klips na gorze notatnika
+        lea     af_skel_pbuf(pc),a0
+        move.w  #4,(a0)+
+        move.w  #172,(a0)+
+        move.w  #30,(a0)+
+        move.w  #232,(a0)+
+        move.w  #30,(a0)+
+        move.w  #232,(a0)+
+        move.w  #44,(a0)+
+        move.w  #172,(a0)+
+        move.w  #44,(a0)+
+        move.b  #$FC,d6
+        bsr.w   af_skel_emit_poly
+        ; Animowana reka wskazujaca na zadania w notatniku (porusza sie gora-dol!)
+        move.w  #84,d0
+        move.w  #176,d1
+        move.w  #124,d2
+        move.w  #146,d3
+        add.w   d7,d3
+        add.w   d7,d3
+        moveq   #6,d4
+        move.b  #$FD,d6
+        bsr.w   af_skel_draw_bone
+        movem.l (sp)+,d0-d7/a0-a1
         rts
 
 ; ----------------------------------------------------------------------------
