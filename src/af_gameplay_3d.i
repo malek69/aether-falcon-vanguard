@@ -313,7 +313,7 @@ af_draw_world_entities:
         endif
         bgt.w   .next_ent
         ; Zebrano Rdzen Eteru! +250 pkt, +40 tarczy, dzwiek i rozblysk
-        moveq   #SFX_LOCK,d0
+        moveq   #SFX_PICKUP,d0
         bsr.w   af_trigger_sfx
         add.l   #250,af_score
         addq.w  #1,af_cores_collected
