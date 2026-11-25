@@ -65,9 +65,10 @@ af_render_gameplay_3d:
 .pt_ok:
         moveq   #0,d0                   ; Yaw = 0 (lot w glab ekranu, widok zza ogona)
         move.w  af_pitch,d1
-        asr.w   #1,d1
-        sub.w   #10,d1                  ; Lekki kat z gory na kadlub i skrzydla
-        move.w  af_roll,d2              ; Przechyl skrzydel (bank angle)
+        asr.w   #3,d1                   ; Naturalny kat pochylenia -13..+13 (bez stawania deba!)
+        subq.w  #8,d1                   ; Lekki kat z gory na kadlub i skrzydla
+        move.w  af_roll,d2
+        asr.w   #1,d2                   ; Naturalny przechyl skrzydel +/-60 st.
         jsr     build_rot_matrix_3d
 
         ; Pelny swobodny lot mysliwca XF-14 po calym ekranie (Roll -> X, Pitch -> Y)
@@ -104,14 +105,16 @@ af_render_gameplay_3d:
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
 
-        ; Podwojna smuga spalin z dysz mysliwca XF-14
+        ; Podwojna smuga spalin z dysz mysliwca XF-14 (zsynchronizowana 1:1 z pozycja kadluba!)
         move.w  af_roll,d4
-        asr.w   #3,d4
+        asr.w   #1,d4
+        move.w  af_pitch,d5
+        asr.w   #2,d5
         ifd FULL_RES
-        move.w  #18,d5
+        add.w   #20,d5
         moveq   #22,d6
         else
-        move.w  #8,d5
+        add.w   #10,d5
         moveq   #24,d6
         endif
         jsr     ptrail_emit_twin_nozzles
@@ -366,13 +369,14 @@ af_draw_reticle_and_hud:
 
         move.w  af_pitch,d1
         ifd FULL_RES
-        add.w   #116,d1
-        cmp.w   #16,d1
+        asr.w   #1,d1
+        add.w   #124,d1
+        cmp.w   #48,d1
         bge.s   .ry1
-        moveq   #16,d1
-.ry1:   cmp.w   #236,d1
+        moveq   #48,d1
+.ry1:   cmp.w   #210,d1
         ble.s   .ry2
-        move.w  #236,d1
+        move.w  #210,d1
         else
         asr.w   #1,d1
         add.w   #58,d1

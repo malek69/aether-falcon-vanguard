@@ -205,9 +205,9 @@ af_aw_fill_tri:
 af_draw_aw_intro:
         movem.l d0-d7/a0-a1,-(sp)
         move.l  af_state_timer,d7
-        cmp.l   #120,d7
+        cmp.l   #360,d7
         ble.s   .t_ok
-        moveq   #120,d7
+        move.w  #360,d7
 .t_ok:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
@@ -223,7 +223,10 @@ af_draw_aw_intro:
 
         ; Wrota hangaru rozsuwajace sie na boki
         move.w  d7,d5
-        lsr.w   #2,d5                   ; 0..30 px rozwarcia
+        cmp.w   #160,d5
+        ble.s   .dr_ok
+        move.w  #160,d5
+.dr_ok: lsr.w   #2,d5                   ; 0..40 px rozwarcia wrót hangaru
         move.w  #112,d0
         sub.w   d5,d0
         ifd FULL_RES
@@ -330,10 +333,13 @@ af_draw_aw_intro:
         move.b  #$FE,d6
         bsr.w   af_aw_fill_ngon
 
-        ; Startujacy mysliwiec XF-14 "Albatros"
+        ; Startujacy mysliwiec XF-14 "Albatros" (odpala dopalacz po otwarciu wrot)
         move.w  d7,d4
-        asr.w   #1,d4
-        addq.w  #8,d4
+        sub.w   #90,d4
+        bge.s   .ln_go
+        moveq   #0,d4
+.ln_go: asr.w   #1,d4
+        addq.w  #6,d4
         move.w  #160,d0
         ifd FULL_RES
         move.w  #150,d1
