@@ -6,6 +6,14 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.0.5] - 2026-11-25
+
+- **Wieloaktowe Intro Top Gun (`src/af_vector_scenes.i`):** sekwencja dojazdu motocykla pod hangar Solis, podejścia pilota do kokpitu XF-14, startu z dopalaczem oraz pojawienia się logo i tytułu gry na tle lecącego w dal myśliwca.
+- **Podwójne wiązki działek plazmowych (`src/af_gameplay_3d.i`, `input_ctrl.i`):** natychmiastowy ostrzał działkami pod `Spacja / Fire / Alt / Enter` + salwy rakiet Multi-Lock.
+- **Klawiszologia na Briefingu i pod `H` wyłącznie w grze (`src/af_campaigns.i`, `hud_fps.i`):** czysty licznik `FPS` w Intro/Briefingu/Debriefingu oraz dedykowana tabela sterowania gry.
+
+---
+
 ## [v0.0.4] - 2026-11-25
 
 - **Plynna fizyka lotu i ograniczniki sterow (`src/aether_falcon.s`):** dodano progresywne tlumienie przechylow (`Roll`) oraz twarde ograniczniki pochylenia (`Pitch` `-110..+110`), eliminujace wyjscie kamery poza korytarz kanionu.
