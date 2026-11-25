@@ -283,7 +283,7 @@ af_update_and_draw_missiles:
         moveq   #2,d3
         move.b  #$FF,d6
         bsr.w   af_fill_chunky_diamond
-        moveq   #SFX_LASER,d0
+        moveq   #SFX_MISSILE,d0
         bsr.w   af_trigger_sfx
 
         ; Sprawdz bezposrednie trafienie dzialkiem w wroga pod celownikiem
