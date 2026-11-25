@@ -20,13 +20,15 @@
 | :--- | :--- | :--- |
 | **1. Standard `020` (`--profile standard`)** | Bazowa **Amiga 1200 (`68EC020`)** + Fast RAM — tryb **`320×128`** | [.LHA](docs/) · [.ZIP (FS-UAE/WinUAE)](docs/) |
 | **2. THEA1200 (`--profile thea1200`)** | Konsola **THEA1200**, **Amiberry (PC)**, **FS-UAE** — pełny PAL **`320×256`** **16:9 Widescreen** (`-DFULL_RES -DWIDESCREEN_16_9`) | [.LHA](docs/) · [.ZIP (FS-UAE/WinUAE)](docs/) |
-| **3. Turbo 060 (`--profile 060`)** | **Amiga 1200 + Blizzard/Apollo 1260** (`MC68060`) — pełny PAL **320×256** **16:9** (`-m68060 -DM68060`) | [.LHA](https://github.com) · [.ZIP](https://github.com) |
+| **3. Turbo 060 (`--profile 060`)** | **Amiga 1200 + Blizzard/Apollo 1260** (`MC68060`) — pełny PAL **320×256** **16:9** (`-m68060 -DM68060`) | [.LHA](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/AetherFalcon_AGA_060.lha) · [.ZIP](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/AetherFalcon_AGA_060_FSUAE.zip) |
 
 ---
 
 ## Wideo z Rozgrywki (v0.1.3.1 — Gameplay & Silnik 3D)
 
-https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4
+[![▶ Kliknij, aby odtworzyć / pobrać wideo z rozgrywki 3D (H.264 MP4, 1080p)](docs/screenshots/v010_02_hud_score_clouds.png)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4)
+
+**[▶ Kliknij, aby odtworzyć / pobrać wideo z rozgrywki 3D (H.264 MP4, 1080p)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4)**
 
 ## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3.1)
 
@@ -47,8 +49,8 @@ https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/dem
 
 | Logo | Silnik i Repozytorium | Rola w projekcie |
 | :---: | :--- | :--- |
-| <a href="docs//malek69//aura3d-aga-engine"><img src="docs/logo_aura3d.png" alt="AURA-3D AGA Engine" width="180" /></a> | **[AURA-3D AGA Engine](docs//malek69//aura3d-aga-engine)** | Główny potok 3D (`STATE_GAMEPLAY`), teren wysokościowy (`terrain_3d.i`), myśliwiec **XF-14 Albatros** (`aura3d_v2.i`), C2P 256 kolorów (`c2p_chunky.i`), niebo Coppera (`copper_sky.i`), smugi (`particle_trail.i`), flary (`lens_flare.i`), sterowanie (`input_ctrl.i`), czcionka 5x7 (`hud_fps.i`) oraz audio `.MOD` (`pt_player.i`). |
-| <a href="docs//malek69//amiga1200-vector-engine"><img src="docs/logo_vector.png" alt="Amiga 1200 Vector Engine" width="180" /></a> | **[Amiga 1200 Vector Engine](docs//malek69//amiga1200-vector-engine)** | Architektura ekranów taktyczno-wektorowych (**Intro**, **Briefing** z mapą sektora i **Debriefing** z oceną pilota w `src/af_campaigns.i`), zintegrowana ze wspólnym buforem 256 kolorów AGA. |
+| <a href="https://github.com/malek69/aura3d-aga-engine"><img src="docs/logo_aura3d.png" alt="AURA-3D AGA Engine" width="180" /></a> | **[AURA-3D AGA Engine](https://github.com/malek69/aura3d-aga-engine)** | Główny potok 3D (`STATE_GAMEPLAY`), teren wysokościowy (`terrain_3d.i`), myśliwiec **XF-14 Albatros** (`aura3d_v2.i`), C2P 256 kolorów (`c2p_chunky.i`), niebo Coppera (`copper_sky.i`), smugi (`particle_trail.i`), flary (`lens_flare.i`), sterowanie (`input_ctrl.i`), czcionka 5x7 (`hud_fps.i`) oraz audio `.MOD` (`pt_player.i`). |
+| <a href="https://github.com/malek69/amiga1200-vector-engine"><img src="docs/logo_vector.png" alt="Amiga 1200 Vector Engine" width="180" /></a> | **[Amiga 1200 Vector Engine](https://github.com/malek69/amiga1200-vector-engine)** | Architektura ekranów taktyczno-wektorowych (**Intro**, **Briefing** z mapą sektora i **Debriefing** z oceną pilota w `src/af_campaigns.i`), zintegrowana ze wspólnym buforem 256 kolorów AGA. |
 ---
 
 ## Fabuła i Kampania (3 Misje)
