@@ -295,12 +295,18 @@ af_update_flight:
         muls.w  d3,d4
         asr.l   #8,d4
         move.w  d4,af_ship_dx
+        move.w  d4,d0
+        neg.w   d0
+        asr.w   #2,d0
+        move.w  d0,af_yaw_center      ; dziob skierowany w poziomie do srodka okregu
+        move.w  d5,d0
+        neg.w   d0
+        asr.w   #2,d0
+        move.w  d0,af_pitch_center    ; dziob skierowany w pionie do srodka okregu
         moveq   #64,d0
         sub.w   af_orbit_angle,d0
         and.w   #255,d0
-        muls.w  #360,d0
-        asr.l   #8,d0
-        move.w  d0,af_roll            ; kadlub skierowany do srodka okregu (Gyruss!)
+        move.w  d0,af_roll            ; 0..255 = pelne 360 st. brzuchem na zewnatrz!            ; kadlub skierowany do srodka okregu (Gyruss!)
         muls.w  d3,d5
         asr.l   #8,d5
         muls.w  #190,d5
@@ -322,6 +328,8 @@ af_orbit_angle: dc.w 64
 af_orbit_radius:dc.w 62
 af_ship_dx:     dc.w 0
 af_ship_dy:     dc.w 31
+af_yaw_center:  dc.w 0
+af_pitch_center:dc.w -28
 af_update_entities:
         lea     af_entities,a0
         move.l  af_pos_z,d4
