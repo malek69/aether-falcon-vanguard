@@ -1,80 +1,390 @@
 ; ============================================================================
-; AETHER FALCON: VANGUARD - Sceny wektorowe N-gon (wypukle bryly bez artefaktow)
+; AETHER FALCON: VANGUARD - Silnik scen wektorowych N-gon (16.16 + move.l)
+; Styl: Another World / Delphine Software (Amiga 1200 AGA 256 kolorow)
 ; ============================================================================
+        section code,code
 
+; ----------------------------------------------------------------------------
+; af_aw_fill_ngon
+; Wypelnia dowolny wielokat wypukly N-gon (3..16 wierzcholkow) wachlarzem
+; Wejscie: a0 -> [count.w, x0.w, y0.w, x1.w, y1.w, ...], d6.b = indeks koloru
+; ----------------------------------------------------------------------------
         cnop    0,4
-af_play_vector_frame:
-        movem.l d0-d5/a0-a2,-(sp)
-        moveq   #0,d0
-        move.w  cur_frame,d0
-        lea     af_vec_frame_table,a0
-        move.l  (a0,d0.l*4),a0
-        addq.l  #2,a0
-.poly_loop:
-        move.w  (a0)+,d0
-        bmi.s   .frame_done
+af_aw_fill_ngon:
+        movem.l d0-d7/a0-a1,-(sp)
+        move.w  (a0)+,d7                ; liczba wierzcholkow N
+        subq.w  #3,d7                   ; liczba trojkatow = N - 2
+        blt.s   .ng_done
+        move.w  (a0)+,d0                ; x0 (wierzcholek kotwicy wachlarza)
+        move.w  (a0)+,d1                ; y0
         move.l  a0,a1
-        jsr     draw_polygon_mode
-        moveq   #0,d1
-        move.w  (a0)+,d1
-        lsl.l   #2,d1
-        add.l   d1,a0
-        bra.s   .poly_loop
-.frame_done:
-        movem.l (sp)+,d0-d5/a0-a2
+.ng_lp: move.w  (a1),d2                 ; xi
+        move.w  2(a1),d3                ; yi
+        move.w  4(a1),d4                ; x(i+1)
+        move.w  6(a1),d5                ; y(i+1)
+        bsr.s   af_aw_fill_tri
+        addq.l  #4,a1
+        dbf     d7,.ng_lp
+.ng_done:
+        movem.l (sp)+,d0-d7/a0-a1
         rts
 
-        section vector_data,data
+; ----------------------------------------------------------------------------
+; af_aw_fill_tri
+; Szybki rasteryzer trojkatow 16.16 fixed-point z zapisem 32-bit move.l
+; Wejscie: d0.w=x0, d1.w=y0, d2.w=x1, d3.w=y1, d4.w=x2, d5.w=y2, d6.b=kolor
+; ----------------------------------------------------------------------------
+        cnop    0,4
+af_aw_fill_tri:
+        movem.l d0-d7/a0-a4,-(sp)
+        ; Sortowanie wierzcholkow wzgledem Y: y0 <= y1 <= y2
+        cmp.w   d1,d3
+        bge.s   .s01
+        exg     d0,d2
+        exg     d1,d3
+.s01:   cmp.w   d3,d5
+        bge.s   .s12
+        exg     d2,d4
+        exg     d3,d5
+        cmp.w   d1,d3
+        bge.s   .s12
+        exg     d0,d2
+        exg     d1,d3
+.s12:   move.w  d5,d7
+        sub.w   d1,d7                   ; total_dy = y2 - y0
+        ble.w   .tri_done
+
+        ; Zapisz posortowane (x0, y0, x1, y1, x2, y2) na stosie:
+        ; [sp+0]=x0, [sp+2]=y0, [sp+4]=x1, [sp+6]=y1, [sp+8]=x2, [sp+10]=y2
+        move.w  d5,-(sp)
+        move.w  d4,-(sp)
+        move.w  d3,-(sp)
+        move.w  d2,-(sp)
+        move.w  d1,-(sp)
+        move.w  d0,-(sp)
+
+        ; Rozszerz kolor d6.b na 32 bity (4 piksele naraz)
+        and.l   #$ff,d6
+        move.l  d6,d0
+        lsl.w   #8,d0
+        or.w    d0,d6
+        move.w  d6,d0
+        swap    d6
+        move.w  d0,d6
+        move.l  d6,a4                   ; a4 = 4x kolor
+
+        ; step_long (d6.l) = ((x2 - x0) << 16) / (y2 - y0)
+        move.w  8(sp),d6
+        sub.w   (sp),d6
+        swap    d6
+        clr.w   d6
+        divs.l  d7,d6
+
+        move.w  (sp),d4
+        swap    d4
+        move.w  #$8000,d4               ; cur_x_long (d4.l)
+
+        move.w  2(sp),d1                ; aktualny Y = y0
+        lea     chunky_buf,a0
+        move.w  d1,d7
+        mulu.w  #320,d7
+        add.l   d7,a0
+
+        ; --- GORNA POLOWKA: y0 .. y1-1 ---
+        move.w  6(sp),d7                ; y1
+        sub.w   2(sp),d7                ; - y0
+        ble.s   .do_bot
+
+        move.w  4(sp),d0                ; x1
+        sub.w   (sp),d0                 ; - x0
+        swap    d0
+        clr.w   d0
+        divs.l  d7,d0                   ; step_short_top (d0.l)
+
+        move.w  (sp),d2                 ; x0
+        swap    d2
+        move.w  #$8000,d2               ; cur_x_short (d2.l)
+        subq.w  #1,d7
+.top_lp:
+        bsr.s   .draw_span
+        add.l   d6,d4
+        add.l   d0,d2
+        lea     320(a0),a0
+        addq.w  #1,d1
+        dbf     d7,.top_lp
+
+.do_bot:
+        ; --- DOLNA POLOWKA: y1 .. y2-1 ---
+        move.w  10(sp),d7               ; y2
+        sub.w   6(sp),d7                ; - y1
+        ble.s   .tri_pop
+
+        move.w  8(sp),d0                ; x2
+        move.w  4(sp),d2                ; x1
+        sub.w   d2,d0                   ; x2 - x1
+        swap    d0
+        clr.w   d0
+        divs.l  d7,d0                   ; step_short_bot (d0.l)
+
+        swap    d2
+        move.w  #$8000,d2               ; cur_x_short (d2.l)
+        subq.w  #1,d7
+.bot_lp:
+        bsr.s   .draw_span
+        add.l   d6,d4
+        add.l   d0,d2
+        lea     320(a0),a0
+        addq.w  #1,d1
+        dbf     d7,.bot_lp
+
+.tri_pop:
+        lea     12(sp),sp
+.tri_done:
+        movem.l (sp)+,d0-d7/a0-a4
+        rts
+
+.draw_span:
+        tst.w   d1
+        blt.s   .sp_ret
+        ifd FULL_RES
+        cmp.w   #255,d1
+        else
+        cmp.w   #127,d1
+        endif
+        bgt.s   .sp_ret
+
+        move.l  d4,d3
+        swap    d3                      ; xl
+        move.l  d2,d5
+        swap    d5                      ; xr
+        cmp.w   d3,d5
+        bge.s   .sp_ord
+        exg     d3,d5
+.sp_ord:
+        tst.w   d5
+        blt.s   .sp_ret
+        cmp.w   #319,d3
+        bgt.s   .sp_ret
+        tst.w   d3
+        bge.s   .sp_cl
+        moveq   #0,d3
+.sp_cl:
+        cmp.w   #319,d5
+        ble.s   .sp_cr
+        move.w  #319,d5
+.sp_cr:
+        lea     (a0,d3.w),a1
+        sub.w   d3,d5                   ; szerokosc - 1
+        move.l  a4,d3                   ; 4 bajty koloru
+        move.w  d5,a2
+        lsr.w   #2,d5
+        beq.s   .sp_rem
+        subq.w  #1,d5
+.sp_l4:
+        move.l  d3,(a1)+                ; szybki zapis 4 pikseli naraz
+        dbf     d5,.sp_l4
+.sp_rem:
+        move.w  a2,d5
+        and.w   #3,d5
+.sp_l1:
+        move.b  d3,(a1)+
+        dbf     d5,.sp_l1
+.sp_ret:
+        rts
+
+; ----------------------------------------------------------------------------
+; af_draw_aw_intro: Lotniskowiec CVS-01 "SOLIS" + Wrota Hangaru + Start XF-14
+; ----------------------------------------------------------------------------
+        cnop    0,4
+af_draw_aw_intro:
+        movem.l d0-d7/a0-a1,-(sp)
+        move.l  af_state_timer,d7
+        cmp.l   #120,d7
+        ble.s   .t_ok
+        moveq   #120,d7
+.t_ok:
+        lea     poly_intro_mountains(pc),a0
+        move.b  #$11,d6
+        bsr.w   af_aw_fill_ngon
+
+        lea     poly_intro_deck(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+
+        lea     poly_intro_bridge(pc),a0
+        move.b  #$15,d6
+        bsr.w   af_aw_fill_ngon
+
+        ; Wrota hangaru rozsuwajace sie na boki
+        move.w  d7,d5
+        lsr.w   #2,d5                   ; 0..30 px rozwarcia
+        move.w  #112,d0
+        sub.w   d5,d0
+        moveq   #66,d1
+        move.w  #160,d2
+        sub.w   d5,d2
+        moveq   #66,d3
+        move.w  #160,d4
+        sub.w   d5,d4
+        moveq   #92,d5
+        move.b  #$17,d6
+        bsr.w   af_aw_fill_tri
+
+        move.w  d7,d5
+        lsr.w   #2,d5
+        move.w  #112,d0
+        sub.w   d5,d0
+        moveq   #66,d1
+        move.w  #160,d2
+        sub.w   d5,d2
+        moveq   #92,d3
+        move.w  #112,d4
+        sub.w   d5,d4
+        moveq   #92,d5
+        move.b  #$17,d6
+        bsr.w   af_aw_fill_tri
+
+        move.w  d7,d5
+        lsr.w   #2,d5
+        move.w  #160,d0
+        add.w   d5,d0
+        moveq   #66,d1
+        move.w  #208,d2
+        add.w   d5,d2
+        moveq   #66,d3
+        move.w  #208,d4
+        add.w   d5,d4
+        moveq   #92,d5
+        move.b  #$16,d6
+        bsr.w   af_aw_fill_tri
+
+        move.w  d7,d5
+        lsr.w   #2,d5
+        move.w  #160,d0
+        add.w   d5,d0
+        moveq   #66,d1
+        move.w  #208,d2
+        add.w   d5,d2
+        moveq   #92,d3
+        move.w  #160,d4
+        add.w   d5,d4
+        moveq   #92,d5
+        move.b  #$16,d6
+        bsr.w   af_aw_fill_tri
+
+        lea     poly_intro_stripe(pc),a0
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_ngon
+
+        ; Startujacy mysliwiec XF-14 "Albatros"
+        move.w  d7,d4
+        asr.w   #1,d4
+        addq.w  #8,d4
+        move.w  #160,d0
+        moveq   #86,d1
+        move.w  d7,d5
+        asr.w   #2,d5
+        sub.w   d5,d1
+
+        move.w  #160,d2
+        sub.w   d4,d2
+        move.w  d1,d3
+        add.w   d4,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #16,d5
+        move.b  #$FF,d6
+        bsr.w   af_aw_fill_tri
+
+        move.w  d7,d4
+        asr.w   #1,d4
+        addq.w  #8,d4
+        move.w  #160,d2
+        add.w   d4,d2
+        move.w  d1,d3
+        add.w   d4,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #16,d5
+        move.b  #$FD,d6
+        bsr.w   af_aw_fill_tri
+
+        move.w  #155,d0
+        move.w  d5,d1
+        move.w  #165,d2
+        move.w  d5,d3
+        move.w  #160,d4
+        add.w   #9,d5
+        btst    #1,d7
+        beq.s   .fl_ok
+        addq.w  #6,d5
+.fl_ok: move.b  #$FC,d6
+        bsr.w   af_aw_fill_tri
+
+        movem.l (sp)+,d0-d7/a0-a1
+        rts
+
+; ----------------------------------------------------------------------------
+; af_draw_aw_briefing: Taktyczna sylwetka celu misji (N-gon)
+; ----------------------------------------------------------------------------
+        cnop    0,4
+af_draw_aw_briefing:
+        movem.l d0-d7/a0,-(sp)
+        lea     poly_brief_panel(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+
+        move.w  af_mission,d0
+        cmp.w   #1,d0
+        beq.s   .bm2
+        cmp.w   #2,d0
+        beq.s   .bm3
+        lea     poly_brief_m1(pc),a0
+        bra.s   .bdraw
+.bm2:   lea     poly_brief_m2(pc),a0
+        bra.s   .bdraw
+.bm3:   lea     poly_brief_m3(pc),a0
+.bdraw: move.b  #$FD,d6
+        bsr.w   af_aw_fill_ngon
+        movem.l (sp)+,d0-d7/a0
+        rts
+
+; ----------------------------------------------------------------------------
+; af_draw_aw_debrief: Reakcyjna scena po misji (zalezna od af_energy)
+; ----------------------------------------------------------------------------
+        cnop    0,4
+af_draw_aw_debrief:
+        movem.l d0-d7/a0,-(sp)
+        lea     poly_intro_deck(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+
+        lea     poly_debrief_ship(pc),a0
+        move.b  #$FF,d6
+        cmp.w   #60,af_energy
+        bge.s   .ship_ok
+        move.b  #$FC,d6
+.ship_ok:
+        bsr.w   af_aw_fill_ngon
+        movem.l (sp)+,d0-d7/a0
+        rts
+
         even
-
-af_vec_frame_count:
-        dc.w    3
-
-af_vec_frame_table:
-        dc.l    af_vec_scene_intro
-        dc.l    af_vec_scene_briefing
-        dc.l    af_vec_scene_debriefing
-
-; KLATKA 0: INTRO - Emblem Skrzydla Solis (3 wypukle wielokaty)
-af_vec_scene_intro:
-        dc.w    0
-        dc.w    0                       ; Lewe skrzydlo
-        dc.w    4
-        dc.w    154,50, 154,105, 68,125, 96,75
-        dc.w    0
-        dc.w    0                       ; Prawe skrzydlo
-        dc.w    4
-        dc.w    166,50, 224,75, 252,125, 166,105
-        dc.w    0
-        dc.w    2                       ; Centralny grot (bitplan 2 - inny kolor)
-        dc.w    4
-        dc.w    160,36, 184,115, 160,185, 136,115
-        dc.w    -1
-
-; KLATKA 1: BRIEFING - Mapa sektora i 2 cele taktyczne
-af_vec_scene_briefing:
-        dc.w    0
-        dc.w    0                       ; Wyspa / Kanion (wypukly pieciokat)
-        dc.w    5
-        dc.w    64,155, 115,105, 215,105, 260,155, 160,182
-        dc.w    0
-        dc.w    2                       ; Cel taktyczny Alfa
-        dc.w    4
-        dc.w    120,58, 138,76, 120,94, 102,76
-        dc.w    0
-        dc.w    2                       ; Cel taktyczny Beta
-        dc.w    4
-        dc.w    204,52, 222,70, 204,88, 186,70
-        dc.w    -1
-
-; KLATKA 2: DEBRIEFING - Odznaka Awansu Pilota
-af_vec_scene_debriefing:
-        dc.w    0
-        dc.w    2
-        dc.w    4
-        dc.w    160,38, 204,110, 160,182, 116,110
-        dc.w    0
-        dc.w    0
-        dc.w    4
-        dc.w    160,68, 186,110, 160,152, 134,110
-        dc.w    -1
+poly_intro_mountains:
+        dc.w    5, 0,92, 65,74, 155,82, 245,70, 319,92
+poly_intro_deck:
+        dc.w    4, 0,92, 319,92, 319,127, 0,127
+poly_intro_bridge:
+        dc.w    5, 18,92, 26,44, 58,44, 68,66, 74,92
+poly_intro_stripe:
+        dc.w    4, 156,92, 164,92, 178,127, 142,127
+poly_brief_panel:
+        dc.w    4, 48,26, 272,26, 272,88, 48,88
+poly_brief_m1:
+        dc.w    5, 160,34, 210,56, 188,80, 132,80, 110,56
+poly_brief_m2:
+        dc.w    4, 96,42, 224,42, 200,78, 120,78
+poly_brief_m3:
+        dc.w    6, 160,30, 232,48, 220,74, 160,84, 100,74, 88,48
+poly_debrief_ship:
+        dc.w    5, 160,36, 212,68, 176,76, 144,76, 108,68

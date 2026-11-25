@@ -30,6 +30,9 @@ def build_profile(profile):
     s_dir = os.path.join(tmp_w, "S")
     os.makedirs(pkg_dir, exist_ok=True)
     os.makedirs(s_dir, exist_ok=True)
+    data_src = os.path.join(ROOT, "data")
+    if os.path.isdir(data_src):
+        shutil.copytree(data_src, os.path.join(pkg_dir, "data"), dirs_exist_ok=True)
 
     exe_path = os.path.join(pkg_dir, "AETHER_FALCON")
     slave_path = os.path.join(pkg_dir, "AetherFalcon.slave")
@@ -55,7 +58,7 @@ def build_profile(profile):
 
     with open(os.path.join(pkg_dir, "README.txt"), "w", newline=chr(10)) as rf:
         rf.write(
-            f"AETHER FALCON: VANGUARD v0.0.2 [{profile}] (2026)" + chr(10) +
+            f"AETHER FALCON: VANGUARD v0.0.3 [{profile}] (2026)" + chr(10) +
             "Bare-Metal Amiga 1200 AGA / THEA1200 3D Combat Sim" + chr(10) +
             "Controls: Joy2 / THEA1200 Pad / Arrows + Space | Exit: LMB or ESC" + chr(10)
         )

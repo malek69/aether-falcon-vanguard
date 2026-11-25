@@ -24,13 +24,8 @@ start:
         jsr     -30(a6)
         move.l  d0,af_vbr_base
 
-        ; 2. Alokacja 512 KB w Fast RAM dla fill_lut (MEMF_PUBLIC|MEMF_FAST|MEMF_CLEAR)
-        move.l  4.w,a6
-        move.l  #524288,d0
-        move.l  #$00010005,d1
-        jsr     -198(a6)
-        move.l  d0,af_fill_lut_ptr
-        beq.w   exit_program
+        ; 2. Wczytanie danych z dysku twardego (DH0:data/ przed sys_takeover)
+        jsr     af_disk_load_all
 
         ; 3. Przejecie sprzetu AGA (bitplany $80000..$a8000, Copper, Audio .MOD)
         bsr.w   sys_takeover
@@ -47,6 +42,8 @@ start:
 .vbr_ready:
 
         move.l  #0,vbl_tick
+        moveq   #0,d0
+        jsr     copper_set_sky_theme
         lea     aga_pal256,a0
         move.l  #$00FF3040,252*4(a0)    ; $FC = czerwien bojowa (wrogowie / celownik)
         move.l  #$0020E8FF,253*4(a0)    ; $FD = blekit Eteru (skrzydla / rdzenie)
@@ -56,9 +53,9 @@ start:
         move.b  #1,pal_loaded
         jsr     hud_fps_init
         clr.b   info_visible
-        bsr.w   init_fill_lut
         jsr     terrain_3d_init
         bsr.w   af_init_campaign
+        jsr     af_play_intro_pcm
 
         cnop    0,16
 mainloop:
@@ -135,15 +132,28 @@ mainloop:
 
         move.l  af_pos_z,d0
         swap    d0
-        cmp.w   #8192,d0
+        cmp.w   af_mission_len,d0
         blo.w   mainloop
 
+        ; W Misji 03 (af_mission == 2) przywolaj Bossa "Lewiatan" przed Debriefingiem
+        cmp.w   #2,af_mission
+        bne.s   .mission_clear
+        tst.b   af_boss_done
+        bne.s   .mission_clear
+        tst.b   af_boss_active
+        bne.w   mainloop
+        st      af_boss_done
+        jsr     af_init_boss_leviathan
+        bra.w   mainloop
+
+.mission_clear:
         clr.l   af_state_timer
         move.w  #STATE_DEBRIEF,af_state
         bra.w   mainloop
 
 shutdown:
         bsr.w   sys_restore
+        jsr     af_disk_save_hiscore
 exit_program:
         movem.l (sp)+,d0-a6
         moveq   #0,d0
@@ -165,16 +175,27 @@ af_init_mission:
         clr.l   af_pos_x
         move.l  #140<<16,af_pos_y
         clr.l   af_pos_z
-        moveq   #10,d0
-        add.w   af_mission,d0
-        add.w   af_mission,d0
+        lea     af_mission_table,a1
+        move.w  af_mission,d0
+        cmp.w   #2,d0
+        ble.s   .m_idx_ok
+        moveq   #2,d0
+.m_idx_ok:
+        lsl.w   #4,d0
+        adda.w  d0,a1
+        move.w  (a1),d0                 ; vel_z z data/missions.dat
         swap    d0
         clr.w   d0
         move.l  d0,af_vel_z
+        move.w  2(a1),af_mission_len    ; dlugosc trasy misji
+        move.w  4(a1),d0
+        jsr     copper_set_sky_theme
         clr.w   af_roll
         clr.w   af_pitch
         move.w  #200,af_energy
         clr.w   af_locks
+        clr.b   af_boss_active
+        clr.b   af_boss_done
         move.w  #80,af_reticle_x
         move.w  #56,af_reticle_y
 
@@ -352,6 +373,7 @@ af_update_entities:
         include "terrain_3d.i"
         include "af_vector_scenes.i"
         section code,code
+        include "af_disk_loader.i"
         include "af_audio_sfx.i"
         include "af_campaigns.i"
         include "af_fighter_mesh.i"
@@ -364,6 +386,13 @@ af_update_entities:
         even
 af_state:       dc.w    0
 af_mission:     dc.w    0
+af_mission_len: dc.w    8192
+af_boss_reactors_left: dc.w 0
+af_boss_active: dc.b    0
+af_boss_done:   dc.b    0
+        even
+af_boss_reactors: ds.b  24
+af_particles:   ds.b    10*MAX_PARTICLES
 af_roll:        dc.w    0
 af_pitch:       dc.w    0
 af_energy:      dc.w    200

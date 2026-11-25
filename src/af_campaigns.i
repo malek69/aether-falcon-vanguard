@@ -6,9 +6,40 @@
         cnop    0,4
 af_render_vector_screen:
         movem.l d0-d7/a0-a5,-(sp)
+        cmp.b   #2,pal_loaded
+        beq.s   .pal_cached
+        move.b  #2,pal_loaded
         lea     aga_pal256,a0
+        move.l  #$00FF3040,252*4(a0)
+        move.l  #$0020E8FF,253*4(a0)
+        move.l  #$00FFD020,254*4(a0)
+        move.l  #$00FFFFFF,255*4(a0)
         jsr     load_aga_256_palette
+.pal_cached:
         jsr     clear_chunky
+        ; Wlasne tlo sceny fabularnej (osobne dla Intro, Briefingu i Debriefingu)
+        move.w  af_state,d0
+        cmp.w   #STATE_BRIEFING,d0
+        beq.s   .bg_brief
+        cmp.w   #STATE_DEBRIEF,d0
+        beq.s   .bg_deb
+        lea     poly_bg_full(pc),a0
+        move.b  #$01,d6
+        jsr     af_aw_fill_ngon
+        lea     poly_bg_horiz(pc),a0
+        move.b  #$12,d6
+        jsr     af_aw_fill_ngon
+        bra.s   .bg_stars
+.bg_brief:
+        lea     poly_bg_full(pc),a0
+        move.b  #$02,d6
+        jsr     af_aw_fill_ngon
+        bra.s   .bg_stars
+.bg_deb:
+        lea     poly_bg_full(pc),a0
+        move.b  #$01,d6
+        jsr     af_aw_fill_ngon
+.bg_stars:
         jsr     draw_256_starfield
 
         move.w  af_state,d0
@@ -17,7 +48,8 @@ af_render_vector_screen:
         cmp.w   #STATE_DEBRIEF,d0
         beq.w   .draw_debriefing
 
-        ; --- EKRAN 0: INTRO (Emblem Skrzydla Solis + Tytul) ---
+        ; --- EKRAN 0: INTRO (Zywa scena wektorowa Another World + Tytul) ---
+        jsr     af_draw_aw_intro
         ; Centralny romb (zloto $EC)
         move.w  #160,d0
         move.w  #54,d1
@@ -25,18 +57,7 @@ af_render_vector_screen:
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
 
-        ; Lewe i prawe skrzydlo emblemu (blekit $7C)
-        move.w  #122,d0
-        move.w  #62,d1
-        moveq   #14,d3
-        move.b  #$FD,d6
-        jsr     af_fill_chunky_diamond
 
-        move.w  #198,d0
-        move.w  #62,d1
-        moveq   #14,d3
-        move.b  #$FD,d6
-        jsr     af_fill_chunky_diamond
 
         ; Napisy tytulowe
         lea     str_game_title(pc),a0
@@ -60,6 +81,7 @@ af_render_vector_screen:
 
 .draw_briefing:
         ; --- EKRAN 1: BRIEFING (Mapa Taktyczna Sektora) ---
+        jsr     af_draw_aw_briefing
         ; Ramka mapy taktycznej
         move.w  #160,d0
         move.w  #54,d1
@@ -125,6 +147,7 @@ af_render_vector_screen:
         bra.w   .vec_blit
 
 .draw_debriefing:
+        jsr     af_draw_aw_debrief
         ; --- EKRAN 2: DEBRIEFING (Awans Pilota) ---
         move.w  #160,d0
         move.w  #52,d1
@@ -133,6 +156,10 @@ af_render_vector_screen:
         jsr     af_fill_chunky_diamond
 
         lea     str_deb_1(pc),a0
+        cmp.w   #2,af_mission
+        blo.s   .deb_hdr_ok
+        lea     str_deb_win(pc),a0
+.deb_hdr_ok:
         moveq   #52,d0
         moveq   #16,d1
         move.b  #$FF,d6
@@ -208,6 +235,11 @@ af_print_chunky_str:
         movem.l (sp)+,d0-d7/a0-a4
         rts
 
+poly_bg_full:
+        dc.w    4, 0,0, 319,0, 319,127, 0,127
+poly_bg_horiz:
+        dc.w    4, 0,56, 319,56, 319,96, 0,96
+
 str_game_title: dc.b    "AETHER FALCON: VANGUARD",0
 str_intro_1:    dc.b    "SOLIS CONFEDERATION - VANGUARD WING",0
 str_intro_2:    dc.b    "PRESS FIRE OR SPACE TO LAUNCH",0
@@ -218,6 +250,7 @@ str_m2_obj:     dc.b    "HIGH SPEED INTERCEPT - MULTI-LOCK BARRAGE",0
 str_m3_title:   dc.b    "MISSION 03: LEVIATHAN CITADEL",0
 str_m3_obj:     dc.b    "ASSAULT CORE REACTORS - FINAL STRIKE",0
 str_deb_1:      dc.b    "MISSION ACCOMPLISHED - SORTIE REPORT",0
+str_deb_win:    dc.b    "CAMPAIGN VICTORY - LEVIATHAN DESTROYED",0
 str_rank_1:     dc.b    "PILOT RANK: SOLAR CADET",0
 str_rank_2:     dc.b    "PILOT RANK: VANGUARD WINGMAN",0
 str_rank_3:     dc.b    "PILOT RANK: ACE OF SOLIS",0

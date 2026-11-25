@@ -21,7 +21,7 @@ af_render_gameplay_3d:
         clr.w   v2_uv_anim_u
         clr.w   v2_uv_anim_v
         jsr     clear_chunky
-        jsr     clear_zbuffer_v2
+        bsr.w   af_clear_fighter_zbuffer
         jsr     draw_256_starfield
 
         move.l  af_pos_x,d0
@@ -40,8 +40,12 @@ af_render_gameplay_3d:
         ; 3. Rzutuj i rysuj wrogie cele (Dominium Vespera) oraz Rdzenie Eteru
         bsr.w   af_draw_world_entities
 
-        ; 4. Aktualizuj i rysuj salwy samonaprowadzajacych rakiet (Panzer Dragoon)
+        ; 3b. Renderuj i obsluguj Bossa Misji 03 (Latajaca Forteca Lewiatan)
+        bsr.w   af_update_and_draw_boss
+
+        ; 4. Aktualizuj i rysuj salwy samonaprowadzajacych rakiet + czasteczki 3D
         bsr.w   af_update_and_draw_missiles
+        bsr.w   af_update_and_draw_particles
 
         ; 5. Renderuj mysliwiec gracza XF-14 "Albatros" w widoku zza ogona
         tst.b   af_ptrail_init
@@ -59,8 +63,13 @@ af_render_gameplay_3d:
         ; Pozycja mysliwca na ekranie (dolna czesc kadru, przesuniecie boczne z roll)
         move.w  af_roll,d4
         asr.w   #3,d4                   ; X: lekki dryf przy przechyle
-        move.w  #12,d5                  ; Y: nizej w kadrze (lepszy widok na teren)
-        moveq   #22,d6                  ; Z: pelna sylwetka mysliwca XF-14
+        ifd FULL_RES
+        move.w  #18,d5                  ; Y: optymalna pozycja dla 320x256
+        moveq   #22,d6
+        else
+        move.w  #8,d5                   ; Y: idealnie w 128 liniach bez przycinania
+        moveq   #24,d6
+        endif
 
         lea     xf14_verts,a0
         lea     v2_proj_buf,a1
@@ -81,8 +90,13 @@ af_render_gameplay_3d:
         ; Podwojna smuga spalin z dysz mysliwca XF-14
         move.w  af_roll,d4
         asr.w   #3,d4
-        move.w  #12,d5
+        ifd FULL_RES
+        move.w  #18,d5
         moveq   #22,d6
+        else
+        move.w  #8,d5
+        moveq   #24,d6
+        endif
         jsr     ptrail_emit_twin_nozzles
         jsr     ptrail_update_and_draw
 
@@ -138,16 +152,23 @@ af_draw_world_entities:
         ext.l   d1
         asl.l   #6,d1
         divs.w  d2,d1
-        add.w   #96,d1                  ; scr_y
+        ifd FULL_RES
+        add.w   #112,d1                 ; scr_y dla 320x256
+        else
+        add.w   #56,d1                  ; scr_y dla 320x128
+        endif
 
-        ; Zapisz wspolrzedne ekranowe do tablicy (uzywane przez Lock-On i rakiety)
         cmp.w   #6,d0
         blt.w   .next_ent
         cmp.w   #310,d0
         bgt.w   .next_ent
         cmp.w   #6,d1
         blt.w   .next_ent
-        cmp.w   #230,d1
+        ifd FULL_RES
+        cmp.w   #244,d1
+        else
+        cmp.w   #120,d1
+        endif
         bgt.w   .next_ent
 
         ; Oblicz promien obiektu na podstawie glebi Z (2..6 px)
@@ -253,7 +274,10 @@ af_update_and_draw_missiles:
         move.w  #80,2(a1)               ; start X (z dyszy mysliwca)
         move.w  #104,4(a1)              ; start Y
         move.w  af_reticle_x,6(a1)    ; docelowy X na ekranie
-        ; Zniszcz cel po trafieniu i dodaj 500 pkt
+        ; Wyzwol eksplozje czasteczkowa 3D + dodaj 500 pkt
+        move.w  af_reticle_x,d0
+        move.w  af_reticle_y,d1
+        bsr.w   af_spawn_explosion
         add.l   #500,af_score
         add.l   #6400<<16,12(a0)        ; Respawn wroga dalej na trasie
 .sl_next:
@@ -304,24 +328,34 @@ af_update_and_draw_missiles:
 af_draw_reticle_and_hud:
         ; Aktualizuj pozycje celownika zgodnie z przechyłem i pochyleniem mysliwca
         move.w  af_roll,d0
-        asr.w   #1,d0
         add.w   #160,d0
-        cmp.w   #14,d0
+        cmp.w   #16,d0
         bge.s   .rx1
-        moveq   #14,d0
-.rx1:   cmp.w   #296,d0
+        moveq   #16,d0
+.rx1:   cmp.w   #304,d0
         ble.s   .rx2
-        move.w  #145,d0
+        move.w  #304,d0
 .rx2:   move.w  d0,af_reticle_x
 
         move.w  af_pitch,d1
-        add.w   #110,d1
+        ifd FULL_RES
+        add.w   #116,d1
+        cmp.w   #16,d1
+        bge.s   .ry1
+        moveq   #16,d1
+.ry1:   cmp.w   #236,d1
+        ble.s   .ry2
+        move.w  #236,d1
+        else
+        asr.w   #1,d1
+        add.w   #58,d1
         cmp.w   #14,d1
         bge.s   .ry1
         moveq   #14,d1
-.ry1:   cmp.w   #112,d1
+.ry1:   cmp.w   #114,d1
         ble.s   .ry2
-        move.w  #220,d1
+        move.w  #114,d1
+        endif
 .ry2:   move.w  d1,af_reticle_y
 
         ; Rysuj zewnetrzny celownik Lock-On (promien 9 px)
@@ -444,3 +478,273 @@ af_draw_chunky_rect:
         even
 af_ptrail_init: dc.b    0,0
 af_missiles:    dcb.b   8*MAX_MISSILES,0
+
+; ============================================================================
+; Selektywne czyszczenie Z-Buffera tylko w oknie mysliwca XF-14
+; Oszczedza ~90% przepustowosci Fast RAM na bazowej Amidze 1200 (14 MHz)
+; ============================================================================
+        cnop    0,4
+af_clear_fighter_zbuffer:
+        movem.l d0-d2/a0,-(sp)
+        move.l  #$7fff7fff,d0
+        ifd FULL_RES
+        lea     zbuf_3d+(110*640)+(96*2),a0
+        move.w  #129,d2                 ; 130 wierszy (Y=110..239)
+        else
+        lea     zbuf_3d+(48*640)+(96*2),a0
+        moveq   #71,d2                  ; 72 wiersze (Y=48..119)
+        endif
+.zb_row:
+        moveq   #15,d1                  ; 16 x 16 bajtow = 256 bajtow (128 px szerokosci)
+        move.l  a0,a1
+.zb_col:
+        move.l  d0,(a1)+
+        move.l  d0,(a1)+
+        move.l  d0,(a1)+
+        move.l  d0,(a1)+
+        dbf     d1,.zb_col
+        lea     640(a0),a0
+        dbf     d2,.zb_row
+        movem.l (sp)+,d0-d2/a0
+        rts
+
+; ============================================================================
+; MISJA 03 BOSS: Latajaca Forteca "LEWIATAN" (4 niezalezne reaktory Multi-Lock)
+; ============================================================================
+MAX_PARTICLES   equ     32
+
+        cnop    0,4
+af_init_boss_leviathan:
+        move.b  #1,af_boss_active
+        move.w  #4,af_boss_reactors_left
+        ; 4 reaktory: [hp.b, locked.b, off_x.w, off_y.w] (6 bajtow na reaktor)
+        lea     af_boss_reactors,a0
+        move.b  #2,(a0)+
+        clr.b   (a0)+
+        move.w  #-54,(a0)+
+        move.w  #-12,(a0)+
+
+        move.b  #2,(a0)+
+        clr.b   (a0)+
+        move.w  #54,(a0)+
+        move.w  #-12,(a0)+
+
+        move.b  #2,(a0)+
+        clr.b   (a0)+
+        move.w  #-28,(a0)+
+        move.w  #14,(a0)+
+
+        move.b  #2,(a0)+
+        clr.b   (a0)+
+        move.w  #28,(a0)+
+        move.w  #14,(a0)+
+        rts
+
+        cnop    0,4
+af_update_and_draw_boss:
+        tst.b   af_boss_active
+        beq.w   .boss_ret
+
+        movem.l d0-d7/a0-a3,-(sp)
+        ; Oscylacja boczna fortecy Lewiatan
+        move.l  vbl_tick,d0
+        and.w   #$ff,d0
+        lea     sin_tab,a1
+        move.w  (a1,d0.w*2),d4
+        asr.w   #3,d4
+        add.w   #160,d4                 ; d4 = boss_cx (128..192)
+        ifd FULL_RES
+        moveq   #84,d5                  ; d5 = boss_cy dla 320x256
+        else
+        moveq   #42,d5                  ; d5 = boss_cy dla 320x128
+        endif
+
+        ; Glowny pancerz cytadeli Lewiatan (wielokat wektorowy)
+        move.w  d4,d0
+        sub.w   #76,d0
+        move.w  d5,d1
+        sub.w   #18,d1
+        move.w  d4,d2
+        add.w   #76,d2
+        move.w  d5,d3
+        sub.w   #18,d3
+        move.w  d4,d4
+        move.w  d5,d6
+        add.w   #24,d6
+        move.l  d4,-(sp)
+        move.w  d6,d5
+        move.b  #$F4,d6
+        jsr     af_aw_fill_tri
+        move.l  (sp)+,d4
+        ifd FULL_RES
+        moveq   #84,d5
+        else
+        moveq   #42,d5
+        endif
+
+        ; Rysuj i sprawdzaj namierzanie 4 niezaleznych reaktorow
+        lea     af_boss_reactors,a2
+        moveq   #3,d7
+.br_lp:
+        tst.b   (a2)                    ; hp > 0?
+        beq.w   .br_next
+
+        move.w  d4,d0
+        add.w   2(a2),d0                ; rx
+        move.w  d5,d1
+        add.w   4(a2),d1                ; ry
+
+        ; Rysuj rdzen reaktora (pulsacja zloto/czerwien)
+        moveq   #6,d3
+        move.b  #$FC,d6
+        bsr.w   af_fill_chunky_diamond
+        moveq   #3,d3
+        move.b  #$FE,d6
+        bsr.w   af_fill_chunky_diamond
+
+        ; Sprawdz najazd celownika gracza na reaktor
+        move.w  af_reticle_x,d2
+        sub.w   d0,d2
+        bpl.s   .bdx
+        neg.w   d2
+.bdx:   cmp.w   #15,d2
+        bgt.s   .b_chk_lock
+
+        move.w  af_reticle_y,d2
+        sub.w   d1,d2
+        bpl.s   .bdy
+        neg.w   d2
+.bdy:   cmp.w   #15,d2
+        bgt.s   .b_chk_lock
+
+        tst.b   1(a2)                   ; juz namierzony?
+        bne.s   .b_chk_lock
+        cmp.w   #MAX_MISSILES,af_locks
+        bge.s   .b_chk_lock
+        st      1(a2)
+        addq.w  #1,af_locks
+        moveq   #SFX_LOCKON,d0
+        bsr.w   af_trigger_sfx
+
+.b_chk_lock:
+        tst.b   1(a2)
+        beq.s   .br_next
+        move.w  d4,d0
+        add.w   2(a2),d0
+        move.w  d5,d1
+        add.w   4(a2),d1
+        moveq   #8,d3
+        move.b  #$FF,d6
+        bsr.w   af_draw_chunky_rect
+
+        ; Jesli gracz nacisnal FIRE podczas namierzenia reaktora -> trafienie!
+        btst    #7,CIAAPRA
+        beq.s   .hit_reactor
+        cmp.b   #$40,kbd_held_raw
+        bne.s   .br_next
+
+.hit_reactor:
+        clr.b   1(a2)
+        subq.w  #1,af_locks
+        bpl.s   .lk_ok
+        clr.w   af_locks
+.lk_ok: subq.b  #1,(a2)
+        bsr.w   af_spawn_explosion
+        add.l   #1000,af_score
+        tst.b   (a2)
+        bne.s   .br_next
+        ; Reaktor zniszczony!
+        add.l   #1500,af_score
+        subq.w  #1,af_boss_reactors_left
+        bgt.s   .br_next
+        ; Wszystkie 4 reaktory zniszczone - koniec Bossa i Misji 03!
+        clr.b   af_boss_active
+        add.l   #5000,af_score
+
+.br_next:
+        addq.l  #6,a2
+        dbf     d7,.br_lp
+        movem.l (sp)+,d0-d7/a0-a3
+.boss_ret:
+        rts
+
+; ============================================================================
+; EKSPLOZJE CZASTECZKOWE 3D + BLYSK + PAULA SFX CH3
+; Wejscie af_spawn_explosion: d0.w = cx, d1.w = cy
+; ============================================================================
+        cnop    0,4
+af_spawn_explosion:
+        movem.l d0-d5/a0-a1,-(sp)
+        move.w  d0,d4
+        move.w  d1,d5
+        moveq   #SFX_EXPLODE,d0
+        bsr.w   af_trigger_sfx
+
+        lea     af_particles,a0
+        lea     .vel_tab(pc),a1
+        moveq   #11,d3                  ; 12 odlamkow na eksplozje
+        moveq   #MAX_PARTICLES-1,d2
+.sp_find:
+        tst.b   (a0)
+        bne.s   .sp_next
+        move.b  #16,(a0)                ; life = 16 klatek
+        move.b  #$FE,1(a0)              ; kolor zloto/ogien
+        btst    #0,d3
+        beq.s   .c_ok
+        move.b  #$FC,1(a0)              ; co drugi odlamek czerwony
+.c_ok:  move.w  d4,2(a0)                ; x
+        move.w  d5,4(a0)                ; y
+        move.w  (a1)+,6(a0)             ; vx
+        move.w  (a1)+,8(a0)             ; vy
+        subq.w  #1,d3
+        blt.s   .sp_done
+.sp_next:
+        lea     10(a0),a0
+        dbf     d2,.sp_find
+.sp_done:
+        movem.l (sp)+,d0-d5/a0-a1
+        rts
+.vel_tab:
+        dc.w    -5,-4, 5,-4, -6,1, 6,1, -4,5, 4,5
+        dc.w    -2,-6, 2,-6, -7,-1, 7,-1, -2,6, 2,6
+
+        cnop    0,4
+af_update_and_draw_particles:
+        movem.l d0-d3/d6-d7/a0,-(sp)
+        lea     af_particles,a0
+        moveq   #MAX_PARTICLES-1,d7
+.pt_lp:
+        tst.b   (a0)
+        beq.s   .pt_next
+        subq.b  #1,(a0)
+        beq.s   .pt_next
+        move.w  6(a0),d0
+        add.w   d0,2(a0)
+        move.w  8(a0),d1
+        add.w   d1,4(a0)
+        addq.w  #1,8(a0)                ; grawitacja odlamkow
+        move.w  2(a0),d0
+        move.w  4(a0),d1
+        cmp.w   #4,d0
+        blt.s   .pt_kill
+        cmp.w   #315,d0
+        bgt.s   .pt_kill
+        cmp.w   #4,d1
+        blt.s   .pt_kill
+        ifd FULL_RES
+        cmp.w   #250,d1
+        else
+        cmp.w   #122,d1
+        endif
+        bgt.s   .pt_kill
+        moveq   #2,d3
+        move.b  1(a0),d6
+        bsr.w   af_fill_chunky_diamond
+        bra.s   .pt_next
+.pt_kill:
+        clr.b   (a0)
+.pt_next:
+        lea     10(a0),a0
+        dbf     d7,.pt_lp
+        movem.l (sp)+,d0-d3/d6-d7/a0
+        rts

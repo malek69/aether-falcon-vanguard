@@ -58,3 +58,9 @@ python3 tools/build_game.py --profile all
 ```
 
 Szczegółowy rejestr zmian znajduje się w pliku [CHANGELOG.md](CHANGELOG.md).
+
+## Screenshots (v0.0.3)
+
+![01_intro_solis.png](docs/screenshots/01_intro_solis.png)
+![02_briefing_tactical.png](docs/screenshots/02_briefing_tactical.png)
+![03_gameplay_3d_canyon.png](docs/screenshots/03_gameplay_3d_canyon.png)
