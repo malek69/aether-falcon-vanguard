@@ -386,7 +386,7 @@ af_aw_fill_tri:
         moveq   #2,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
-af_intro_done:
+af_intro_done_alt:
         movem.l (sp)+,d0-d7/a0-a1
         rts
 
