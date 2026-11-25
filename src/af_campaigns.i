@@ -49,10 +49,20 @@ af_render_vector_screen:
 
         ; --- EKRAN 0: INTRO (Zywa scena wektorowa Another World + Tytul) ---
         jsr     af_draw_aw_intro
-
-
-
-
+        cmp.l   #230,af_state_timer
+        blo.w   .vec_blit
+        move.w  #160,d0
+        ifd FULL_RES
+        move.w  #112,d1
+        else
+        moveq   #54,d1
+        endif
+        moveq   #16,d3
+        move.b  #$FE,d6
+        jsr     af_fill_chunky_diamond
+        moveq   #9,d3
+        move.b  #$FD,d6
+        jsr     af_fill_chunky_diamond
         ; Napisy tytulowe
         lea     str_game_title(pc),a0
         moveq   #82,d0

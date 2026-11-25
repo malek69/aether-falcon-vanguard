@@ -125,6 +125,7 @@ af_render_gameplay_3d:
         jsr     draw_3d_lens_flare
         endif
         bsr.w   af_draw_reticle_and_hud
+        bsr.w   af_draw_cannon_beams
 
         ; 7. Konwersja Chunky (160x128) -> 8 bitplanow AGA + obramowanie
         jsr     c2p_160x128_to_aga
@@ -818,4 +819,60 @@ af_update_and_draw_particles:
         lea     10(a0),a0
         dbf     d7,.pt_lp
         movem.l (sp)+,d0-d3/d6-d7/a0
+        rts
+
+af_draw_cannon_beams:
+        btst    #7,CIAAPRA
+        beq.s   .cb_fire
+        move.b  kbd_held_raw,d0
+        cmp.b   #$40,d0
+        beq.s   .cb_fire
+        cmp.b   #$64,d0
+        beq.s   .cb_fire
+        cmp.b   #$65,d0
+        beq.s   .cb_fire
+        cmp.b   #$44,d0
+        beq.s   .cb_fire
+        rts
+.cb_fire:
+        movem.l d0-d7/a0-a1,-(sp)
+        move.w  af_roll,d4
+        asr.w   #1,d4
+        add.w   #160,d4
+        move.w  af_pitch,d5
+        asr.w   #2,d5
+        ifd FULL_RES
+        add.w   #156,d5
+        else
+        add.w   #78,d5
+        endif
+        moveq   #7,d7
+.cb_lp:
+        move.w  af_reticle_x,d0
+        sub.w   d4,d0
+        add.w   #22,d0
+        muls.w  d7,d0
+        asr.w   #3,d0
+        add.w   d4,d0
+        sub.w   #22,d0
+        move.w  af_reticle_y,d1
+        sub.w   d5,d1
+        muls.w  d7,d1
+        asr.w   #3,d1
+        add.w   d5,d1
+        moveq   #2,d3
+        move.b  #$FD,d6
+        bsr.w   af_fill_chunky_diamond
+        move.w  af_reticle_x,d0
+        sub.w   d4,d0
+        sub.w   #22,d0
+        muls.w  d7,d0
+        asr.w   #3,d0
+        add.w   d4,d0
+        add.w   #22,d0
+        moveq   #2,d3
+        move.b  #$FF,d6
+        bsr.w   af_fill_chunky_diamond
+        dbf     d7,.cb_lp
+        movem.l (sp)+,d0-d7/a0-a1
         rts

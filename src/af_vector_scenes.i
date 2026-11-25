@@ -199,219 +199,22 @@ af_aw_fill_tri:
         rts
 
 ; ----------------------------------------------------------------------------
-; af_draw_aw_intro: Lotniskowiec CVS-01 "SOLIS" + Wrota Hangaru + Start XF-14
-; ----------------------------------------------------------------------------
-        cnop    0,4
-af_draw_aw_intro:
+; af_draw_aw_intro:
         movem.l d0-d7/a0-a1,-(sp)
         move.l  af_state_timer,d7
-        cmp.l   #360,d7
+        cmp.l   #420,d7
         ble.s   .t_ok
-        move.w  #360,d7
+        move.w  #420,d7
 .t_ok:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
         bsr.w   af_aw_fill_ngon
-
         lea     poly_intro_deck(pc),a0
         move.b  #$13,d6
         bsr.w   af_aw_fill_ngon
-
         lea     poly_intro_bridge(pc),a0
         move.b  #$15,d6
         bsr.w   af_aw_fill_ngon
-
-        ; Wrota hangaru rozsuwajace sie na boki
-        move.w  d7,d5
-        cmp.w   #160,d5
-        ble.s   .dr_ok
-        move.w  #160,d5
-.dr_ok: lsr.w   #2,d5                   ; 0..40 px rozwarcia wrót hangaru
-        move.w  #112,d0
-        sub.w   d5,d0
-        ifd FULL_RES
-        move.w  #112,d1
-        else
-        moveq   #66,d1
-        endif
-        move.w  #160,d2
-        sub.w   d5,d2
-        ifd FULL_RES
-        move.w  #112,d3
-        else
-        moveq   #66,d3
-        endif
-        move.w  #160,d4
-        sub.w   d5,d4
-        ifd FULL_RES
-        move.w  #160,d5
-        else
-        moveq   #92,d5
-        endif
-        move.b  #$17,d6
-        bsr.w   af_aw_fill_tri
-
-        move.w  d7,d5
-        lsr.w   #2,d5
-        move.w  #112,d0
-        sub.w   d5,d0
-        ifd FULL_RES
-        move.w  #112,d1
-        else
-        moveq   #66,d1
-        endif
-        move.w  #160,d2
-        sub.w   d5,d2
-        ifd FULL_RES
-        move.w  #160,d3
-        else
-        moveq   #92,d3
-        endif
-        move.w  #112,d4
-        sub.w   d5,d4
-        ifd FULL_RES
-        move.w  #160,d5
-        else
-        moveq   #92,d5
-        endif
-        move.b  #$17,d6
-        bsr.w   af_aw_fill_tri
-
-        move.w  d7,d5
-        lsr.w   #2,d5
-        move.w  #160,d0
-        add.w   d5,d0
-        ifd FULL_RES
-        move.w  #112,d1
-        else
-        moveq   #66,d1
-        endif
-        move.w  #208,d2
-        add.w   d5,d2
-        ifd FULL_RES
-        move.w  #112,d3
-        else
-        moveq   #66,d3
-        endif
-        move.w  #208,d4
-        add.w   d5,d4
-        ifd FULL_RES
-        move.w  #160,d5
-        else
-        moveq   #92,d5
-        endif
-        move.b  #$16,d6
-        bsr.w   af_aw_fill_tri
-
-        move.w  d7,d5
-        lsr.w   #2,d5
-        move.w  #160,d0
-        add.w   d5,d0
-        ifd FULL_RES
-        move.w  #112,d1
-        else
-        moveq   #66,d1
-        endif
-        move.w  #208,d2
-        add.w   d5,d2
-        ifd FULL_RES
-        move.w  #160,d3
-        else
-        moveq   #92,d3
-        endif
-        move.w  #160,d4
-        add.w   d5,d4
-        ifd FULL_RES
-        move.w  #160,d5
-        else
-        moveq   #92,d5
-        endif
-        move.b  #$16,d6
-        bsr.w   af_aw_fill_tri
-
-        lea     poly_intro_stripe(pc),a0
-        move.b  #$FE,d6
-        bsr.w   af_aw_fill_ngon
-
-        ; Startujacy mysliwiec XF-14 "Albatros" (odpala dopalacz po otwarciu wrot)
-        move.w  d7,d4
-        sub.w   #90,d4
-        bge.s   .ln_go
-        moveq   #0,d4
-.ln_go: asr.w   #1,d4
-        addq.w  #6,d4
-        move.w  #160,d0
-        ifd FULL_RES
-        move.w  #150,d1
-        else
-        moveq   #86,d1
-        endif
-        move.w  d7,d5
-        asr.w   #2,d5
-        sub.w   d5,d1
-
-        move.w  #160,d2
-        sub.w   d4,d2
-        move.w  d1,d3
-        add.w   d4,d3
-        move.w  #160,d4
-        move.w  d1,d5
-        add.w   #16,d5
-        move.b  #$FF,d6
-        bsr.w   af_aw_fill_tri
-
-        move.w  d7,d4
-        asr.w   #1,d4
-        addq.w  #8,d4
-        move.w  #160,d2
-        add.w   d4,d2
-        move.w  d1,d3
-        add.w   d4,d3
-        move.w  #160,d4
-        move.w  d1,d5
-        add.w   #16,d5
-        move.b  #$FD,d6
-        bsr.w   af_aw_fill_tri
-
-        ; Trojwarstwowy ognisty dopalacz startujacego XF-14
-        move.w  #153,d0
-        move.w  d5,d1
-        move.w  #167,d2
-        move.w  d5,d3
-        move.w  #160,d4
-        add.w   #14,d5
-        btst    #1,d7
-        beq.s   .fl1
-        addq.w  #8,d5
-.fl1:   move.b  #$FC,d6
-        bsr.w   af_aw_fill_tri
-
-        move.w  #156,d0
-        move.w  d3,d1
-        move.w  #164,d2
-        move.w  #160,d4
-        move.w  d3,d5
-        add.w   #9,d5
-        move.b  #$FE,d6
-        bsr.w   af_aw_fill_tri
-
-        ; Migajace swiatla naprowadzajace pasa startowego lotniskowca Solis
-        move.w  d7,d0
-        and.w   #15,d0
-        cmp.w   #8,d0
-        bge.s   .no_deck_lights
-        move.w  #128,d0
-        ifd FULL_RES
-        move.w  #184,d1
-        else
-        moveq   #104,d1
-        endif
-        moveq   #3,d3
-        move.b  #$FC,d6
-        jsr     af_fill_chunky_diamond
-        move.w  #192,d0
-        jsr     af_fill_chunky_diamond
-.no_deck_lights:
 
         ; Obrotowy sygnal radaru na wiezy lotniskowca Solis
         move.w  #38,d0
@@ -420,42 +223,215 @@ af_draw_aw_intro:
         else
         moveq   #40,d1
         endif
-        move.w  d7,d3
-        lsr.w   #2,d3
+        move.l  vbl_tick(pc),d3
+        lsr.l   #2,d3
         and.w   #7,d3
         addq.w  #2,d3
         move.b  #$FD,d6
         jsr     af_fill_chunky_diamond
 
-        ; Przelot klucza 2 skrzydlowych Vanguard po przekatnej nieba!
-        move.l  vbl_tick(pc),d4
-        and.w   #255,d4
-        move.w  #300,d0
-        sub.w   d4,d0                   ; przelot z prawej do lewej (300 -> 45)
-        move.w  d4,d1
-        lsr.w   #2,d1
-        add.w   #24,d1
-        move.w  d0,d2
-        add.w   #16,d2
+        ; Pas startowy + migajace swiatla naprowadzajace
+        lea     poly_intro_stripe(pc),a0
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_ngon
+        move.l  vbl_tick(pc),d0
+        and.w   #15,d0
+        cmp.w   #8,d0
+        bge.s   .no_lights
+        move.w  #124,d0
+        ifd FULL_RES
+        move.w  #194,d1
+        else
+        moveq   #104,d1
+        endif
+        moveq   #3,d3
+        move.b  #$FC,d6
+        jsr     af_fill_chunky_diamond
+        move.w  #196,d0
+        jsr     af_fill_chunky_diamond
+.no_lights:
+        cmp.w   #180,d7
+        bge.w   .act3_takeoff
+
+        ; AKT 1 & 2: XF-14 na pokladzie, podjezdza czerwony motocykl i pilot idzie do kokpitu
+        move.w  #160,d0
+        ifd FULL_RES
+        move.w  #146,d1
+        else
+        moveq   #82,d1
+        endif
+        move.w  #134,d2
         move.w  d1,d3
-        subq.w  #4,d3
-        move.w  d0,d4
-        add.w   #14,d4
+        add.w   #20,d3
+        move.w  #160,d4
         move.w  d1,d5
-        addq.w  #5,d5
+        add.w   #14,d5
+        move.b  #$FF,d6
+        bsr.w   af_aw_fill_tri
+        move.w  #160,d0
+        move.w  #186,d2
+        move.w  d1,d3
+        add.w   #20,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #14,d5
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
 
-        ; Drugi skrzydlowy w szyku
-        add.w   #24,d0
-        add.w   #12,d1
-        add.w   #24,d2
-        add.w   #12,d3
-        add.w   #24,d4
-        add.w   #12,d5
-        move.b  #$FF,d6
+        move.w  d7,d4
+        cmp.w   #95,d4
+        ble.s   .moto_mv
+        moveq   #95,d4
+.moto_mv:
+        add.w   #14,d4
+        ifd FULL_RES
+        move.w  #186,d5
+        else
+        moveq   #104,d5
+        endif
+        move.w  d4,d0
+        subq.w  #8,d0
+        move.w  d5,d1
+        moveq   #4,d3
+        move.b  #$01,d6
+        jsr     af_fill_chunky_diamond
+        move.w  d4,d0
+        addq.w  #8,d0
+        jsr     af_fill_chunky_diamond
+
+        move.w  d4,d0
+        subq.w  #8,d0
+        move.w  d5,d1
+        subq.w  #3,d1
+        move.w  d4,d2
+        addq.w  #8,d2
+        move.w  d5,d3
+        subq.w  #5,d3
+        move.b  #$FC,d6
         bsr.w   af_aw_fill_tri
 
+        cmp.w   #95,d7
+        bge.s   .pilot_dismount
+        move.w  d7,d0
+        add.w   #26,d0
+        ifd FULL_RES
+        move.w  #181,d1
+        else
+        moveq   #101,d1
+        endif
+        moveq   #3,d3
+        move.b  #$FE,d6
+        jsr     af_fill_chunky_diamond
+
+.pilot_dismount:
+        cmp.w   #95,d7
+        bge.s   .pilot_walk
+        move.w  d7,d0
+        add.w   #12,d0
+        bra.s   .draw_pilot
+.pilot_walk:
+        move.w  d7,d0
+        sub.w   #95,d0
+        asr.w   #1,d0
+        add.w   #110,d0
+.draw_pilot:
+        ifd FULL_RES
+        move.w  #174,d1
+        else
+        moveq   #97,d1
+        endif
+        moveq   #3,d3
+        move.b  #$FD,d6
+        jsr     af_fill_chunky_diamond
+        subq.w  #5,d1
+        moveq   #2,d3
+        move.b  #$FE,d6
+        jsr     af_fill_chunky_diamond
+        bra.w   .intro_done
+
+        ; AKT 3 & 4: Start XF-14 z dopalaczem i lot w dal w niebo
+.act3_takeoff:
+        move.w  #101,d0
+        ifd FULL_RES
+        move.w  #186,d1
+        else
+        moveq   #104,d1
+        endif
+        moveq   #4,d3
+        move.b  #$01,d6
+        jsr     af_fill_chunky_diamond
+        move.w  #117,d0
+        jsr     af_fill_chunky_diamond
+
+        move.w  d7,d4
+        sub.w   #180,d4
+        move.w  d4,d5
+        asr.w   #1,d5
+        ifd FULL_RES
+        move.w  #146,d1
+        sub.w   d5,d1
+        cmp.w   #58,d1
+        bge.s   .fy_ok
+        moveq   #58,d1
+        else
+        moveq   #82,d1
+        asr.w   #1,d5
+        sub.w   d5,d1
+        cmp.w   #30,d1
+        bge.s   .fy_ok
+        moveq   #30,d1
+        endif
+.fy_ok:
+        move.w  d4,d3
+        lsr.w   #3,d3
+        moveq   #26,d2
+        sub.w   d3,d2
+        cmp.w   #6,d2
+        bge.s   .fw_ok
+        moveq   #6,d2
+.fw_ok:
+        move.w  d4,d0
+        asr.w   #3,d0
+        add.w   #160,d0
+
+        movem.w d0-d2,-(sp)
+        move.w  d2,d4
+        move.w  d0,d2
+        sub.w   d4,d2
+        move.w  d1,d3
+        add.w   d4,d3
+        move.w  d0,d4
+        move.w  d1,d5
+        addq.w  #6,d5
+        move.b  #$FF,d6
+        bsr.w   af_aw_fill_tri
+        movem.w (sp)+,d0-d2
+
+        movem.w d0-d2,-(sp)
+        move.w  d2,d4
+        move.w  d0,d2
+        add.w   d4,d2
+        move.w  d1,d3
+        add.w   d4,d3
+        move.w  d0,d4
+        move.w  d1,d5
+        addq.w  #6,d5
+        move.b  #$FD,d6
+        bsr.w   af_aw_fill_tri
+        movem.w (sp)+,d0-d2
+
+        addq.w  #6,d1
+        moveq   #3,d3
+        btst    #1,d7
+        beq.s   .ab_col
+        moveq   #5,d3
+.ab_col:
+        move.b  #$FC,d6
+        jsr     af_fill_chunky_diamond
+        moveq   #2,d3
+        move.b  #$FE,d6
+        jsr     af_fill_chunky_diamond
+.intro_done:
         movem.l (sp)+,d0-d7/a0-a1
         rts
 
