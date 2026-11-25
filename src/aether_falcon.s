@@ -488,7 +488,7 @@ sin_tab:
 
         section chip_mod,data_c
         even
-mod_data:       incbin "demo_tune.mod"
+mod_data:       incbin "../data/vanguard_anthem.mod"
 
         section uv_data,data_p
         even
