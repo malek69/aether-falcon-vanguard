@@ -338,7 +338,7 @@ af_draw_world_entities:
 .after_3d_ent:
         moveq   #10,d3
         cmp.b   #2,1(a4)
-        bne.s   .not_ether_core
+        bne.w   .not_ether_core
         ; Sprawdz czy gracz wlecial w Rdzen Eteru (d2 <= 420 i blisko af_ship_sx/sy)
         cmp.w   #480,d2
         bgt.w   .next_ent
