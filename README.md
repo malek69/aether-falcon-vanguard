@@ -12,7 +12,7 @@
 
 ---
 
-## Pobieranie (v0.0.3 — 3 Obozy Wydawnicze)
+## Pobieranie (v0.0.3 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -25,9 +25,9 @@
 
 <table>
   <tr>
-    <td align="center"><img src="docs/shot_v002_1.png" width="260" /><br/><sub><b>1. Ekran Tytulowy / Intro</b></sub></td>
-    <td align="center"><img src="docs/shot_v002_2.png" width="260" /><br/><sub><b>2. Odprawa Misji (Briefing)</b></sub></td>
-    <td align="center"><img src="docs/shot_v002_3.png" width="260" /><br/><sub><b>3. Lot 3D XF-14 &amp; Lock-On</b></sub></td>
+    <td align="center"><img src="docs/screenshots/01_intro_solis.png" width="260" /><br/><sub><b>1. Ekran Tytulowy / Intro</b></sub></td>
+    <td align="center"><img src="docs/screenshots/02_briefing_tactical.png" width="260" /><br/><sub><b>2. Odprawa Misji (Briefing)</b></sub></td>
+    <td align="center"><img src="docs/screenshots/03_gameplay_3d_canyon.png" width="260" /><br/><sub><b>3. Lot 3D XF-14 &amp; Lock-On</b></sub></td>
   </tr>
 </table>
 
@@ -37,8 +37,8 @@
 
 | Logo | Silnik i Repozytorium | Rola w projekcie |
 | :---: | :--- | :--- |
-| <a href="https://github.commalek69/aura3d-aga-engine"><img src="docs/logo_aura3d.png" alt="AURA-3D AGA Engine" width="180" /></a> | **[AURA-3D AGA Engine](https://github.commalek69/aura3d-aga-engine)** | Główny potok 3D (`STATE_GAMEPLAY`), teren wysokościowy (`terrain_3d.i`), myśliwiec **XF-14 Albatros** (`aura3d_v2.i`), C2P 256 kolorów (`c2p_chunky.i`), niebo Coppera (`copper_sky.i`), smugi (`particle_trail.i`), flary (`lens_flare.i`), sterowanie (`input_ctrl.i`), czcionka 5x7 (`hud_fps.i`) oraz audio `.MOD` (`pt_player.i`). |
-| <a href="https://github.commalek69/amiga1200-vector-engine"><img src="docs/logo_vector.png" alt="Amiga 1200 Vector Engine" width="180" /></a> | **[Amiga 1200 Vector Engine](https://github.commalek69/amiga1200-vector-engine)** | Architektura ekranów taktyczno-wektorowych (**Intro**, **Briefing** z mapą sektora i **Debriefing** z oceną pilota w `src/af_campaigns.i`), zintegrowana ze wspólnym buforem 256 kolorów AGA. |
+| <a href="https://github.com/malek69//aura3d-aga-engine"><img src="docs/logo_aura3d.png" alt="AURA-3D AGA Engine" width="180" /></a> | **[AURA-3D AGA Engine](https://github.com/malek69//aura3d-aga-engine)** | Główny potok 3D (`STATE_GAMEPLAY`), teren wysokościowy (`terrain_3d.i`), myśliwiec **XF-14 Albatros** (`aura3d_v2.i`), C2P 256 kolorów (`c2p_chunky.i`), niebo Coppera (`copper_sky.i`), smugi (`particle_trail.i`), flary (`lens_flare.i`), sterowanie (`input_ctrl.i`), czcionka 5x7 (`hud_fps.i`) oraz audio `.MOD` (`pt_player.i`). |
+| <a href="https://github.com/malek69//amiga1200-vector-engine"><img src="docs/logo_vector.png" alt="Amiga 1200 Vector Engine" width="180" /></a> | **[Amiga 1200 Vector Engine](https://github.com/malek69//amiga1200-vector-engine)** | Architektura ekranów taktyczno-wektorowych (**Intro**, **Briefing** z mapą sektora i **Debriefing** z oceną pilota w `src/af_campaigns.i`), zintegrowana ze wspólnym buforem 256 kolorów AGA. |
 ---
 
 ## Sterowanie
@@ -58,9 +58,3 @@ python3 tools/build_game.py --profile all
 ```
 
 Szczegółowy rejestr zmian znajduje się w pliku [CHANGELOG.md](CHANGELOG.md).
-
-## Screenshots (v0.0.3)
-
-![01_intro_solis.png](docs/screenshots/01_intro_solis.png)
-![02_briefing_tactical.png](docs/screenshots/02_briefing_tactical.png)
-![03_gameplay_3d_canyon.png](docs/screenshots/03_gameplay_3d_canyon.png)

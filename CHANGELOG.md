@@ -6,6 +6,15 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.0.3] - 2026-11-25
+
+- **Obsluga dysku twardego (`src/af_disk_loader.i` - `dos.library`):** wczytywanie z katalogu `data/` parametrow kampanii (`missions.dat`), rekordu punktow (`hiscore.dat` z automatycznym zapisem przy wyjsciu), ekranu AGA (`title.chk` + `title.pal`) oraz sampla PCM dla Pauli (`intro.pcm`), automatycznie pakowanych do `.lha` i `_FSUAE.zip`.
+- **Silnik scen wektorowych N-gon w stylu *Another World* (`src/af_vector_scenes.i`):** niezalezna paleta fabularna AGA i tla, szybki rasteryzer wielokatow N-gon (`16.16` fixed-point + zapisy 32-bitowe `move.l`), animowany start **XF-14 Albatros** z lotniskowca *Solis* oraz reakcyjny *Briefing* i *Debriefing*.
+- **Boss Misji 03 (*Latajaca Forteca Lewiatan*) i eksplozje czasteczkowe 3D:** cytadela na koncu Misji 03 z **4 niezaleznymi reaktorami** *Multi-Lock*, rozbryzg 3D odlamkow z efektem wybuchu na kanale 3 ukladu Paula oraz pelna petla kampanii (`Misje 01 -> 02 -> 03 -> Final`).
+- **Optymalizacja FPS pod bazowa Amige 1200 (`68EC020` 14 MHz):** redukcja siatki terenu z `16x13` do `12x10` z szybkim wypelnianiem 32-bitowym bez narzutu Z-buffera, selektywne czyszczenie `zbuf_3d` wylacznie pod mysliwcem XF-14 oraz pelna kalibracja celownika i HUD w trybie `320x128`.
+
+---
+
 ## [v0.0.2] - 2026-11-25
 
 - **Ujednolicony potok 256-kolorowy AGA (`Intro -> Briefing -> 3D Gameplay -> Debriefing`):** przeniesiono renderowanie ekranów wektorowych i odpraw misji do wspólnego bufora `chunky_buf` + C2P AGA z kontrastową paletą HUD (`$FC..$FF`).
