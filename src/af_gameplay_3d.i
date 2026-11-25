@@ -936,8 +936,11 @@ af_update_and_draw_boss:
         bne.w   .boss_ret
         tst.b   af_boss_active
         bne.s   .boss_is_on
+        tst.w   af_boss_reactors_left
+        beq.w   .boss_ret
         bsr.w   af_init_boss_leviathan
 .boss_is_on:
+        move.w  #3200,af_boss_best_d
 
         movem.l d0-d7/a0-a3,-(sp)
         ; Cytadela Lewiatan w centrum tunelu 360 st. z lekka oscylacja orbitalna
@@ -1085,44 +1088,55 @@ af_update_and_draw_boss:
         move.b  #253,d6
         bsr.w   af_draw_chunky_rect
 
-        ; Sprawdz najazd celownika lub promienia dziobu XF-14 na reaktor
-        move.w  af_reticle_x,d2
+        ; Wylicz odleglosc reaktora (d0,d1) od mysliwca XF-14 i przerzuc Auto-Lock na najblizszy!
+        move.w  2(a2),d0
+        move.w  4(a2),d1
+        move.w  af_ship_sx(pc),d2
         sub.w   d0,d2
         bpl.s   .bdx
         neg.w   d2
-.bdx:   cmp.w   #15,d2
-        bgt.s   .b_chk_lock
-
-        move.w  af_reticle_y,d2
-        sub.w   d1,d2
+.bdx:   move.w  af_ship_sy(pc),d3
+        sub.w   d1,d3
         bpl.s   .bdy
-        neg.w   d2
-.bdy:   cmp.w   #15,d2
-        bgt.s   .b_chk_lock
-
-        tst.b   1(a2)                   ; juz namierzony?
-        bne.s   .b_chk_lock
-        cmp.w   #MAX_MISSILES,af_locks
+        neg.w   d3
+.bdy:   add.w   d3,d2
+        cmp.w   af_boss_best_d(pc),d2
         bge.s   .b_chk_lock
+        move.w  d2,af_boss_best_d
+        move.w  d0,af_reticle_x
+        move.w  d1,af_reticle_y
+        move.w  #115,af_auto_min_z
+        tst.b   1(a2)
+        bne.s   .b_chk_lock
         st      1(a2)
-        addq.w  #1,af_locks
+        move.w  #1,af_locks
         moveq   #SFX_LOCKON,d0
         bsr.w   af_trigger_sfx
 
 .b_chk_lock:
-        tst.b   1(a2)
-        beq.s   .br_next
+        ; Tylko aktualnie namierzony najblizszy reaktor otrzymuje biala ramke i trafienia
         move.w  2(a2),d0
         move.w  4(a2),d1
-        moveq   #8,d3
+        cmp.w   af_reticle_x,d0
+        bne.w   .br_next
+        cmp.w   af_reticle_y,d1
+        bne.w   .br_next
+        moveq   #10,d3
         move.b  #$FF,d6
         bsr.w   af_draw_chunky_rect
 
-        ; Jesli gracz nacisnal FIRE podczas namierzenia reaktora -> trafienie!
+        ; Jesli gracz nacisnal FIRE (co 10 klatek) -> trafienie w namierzony reaktor!
+        tst.b   af_boss_hit_cd
+        beq.s   .b_can_hit
+        subq.b  #1,af_boss_hit_cd
+        bra.w   .br_next
+.b_can_hit:
         btst    #7,CIAAPRA
-        beq.s   .hit_reactor
+        beq.s   .do_hit_reac
         cmp.b   #$40,kbd_held_raw
-        bne.s   .br_next
+        bne.w   .br_next
+.do_hit_reac:
+        move.b  #12,af_boss_hit_cd
 
 .hit_reactor:
         clr.b   1(a2)
@@ -1138,9 +1152,11 @@ af_update_and_draw_boss:
         add.l   #1500,af_score
         subq.w  #1,af_boss_reactors_left
         bgt.s   .br_next
-        ; Wszystkie 4 reaktory zniszczone - koniec Bossa i Misji 03!
+        ; Wszystkie 4 reaktory zniszczone - zwyciestwo kampanii!
         clr.b   af_boss_active
         add.l   #5000,af_score
+        clr.l   af_state_timer
+        move.w  #STATE_DEBRIEF,af_state
 
 .br_next:
         addq.l  #6,a2
@@ -1494,3 +1510,7 @@ af_draw_live_score_hud:
 str_hud_mis:    dc.b    "M1/3",0
 str_hud_score:  dc.b    "SCORE: 000000",0
         even
+
+        even
+af_boss_best_d: dc.w 3200
+af_boss_hit_cd: dc.b 0,0

@@ -252,6 +252,9 @@ render_3d_terrain_flyover:
 .vp2:   cmp.b   #2,d1
         bne.s   .vp3
         move.w  #122,d1
+        cmp.w   #2,af_mission
+        bne.s   .vps
+        move.w  #24,d1                  ; mroczny bazalt wokol Cytadeli Lewiatana
         bra.s   .vps
 .vp3:   cmp.b   #3,d1
         bne.s   .vp4
