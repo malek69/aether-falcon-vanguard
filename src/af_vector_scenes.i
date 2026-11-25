@@ -200,386 +200,290 @@ af_aw_fill_tri:
 
 ; ----------------------------------------------------------------------------
 ; af_draw_aw_intro:
-        movem.l d0-d7/a0-a1,-(sp)
+        movem.l d0-d7/a0-a5,-(sp)
         move.l  af_state_timer,d7
-        cmp.l   #420,d7
+        cmp.l   #480,d7
         ble.s   .t_ok
-        move.w  #420,d7
+        move.w  #480,d7
 .t_ok:
+        cmp.w   #115,d7
+        blo.w   .cut1_bike
+        cmp.w   #230,d7
+        blo.w   .cut2_pilot
+        bra.w   .cut34_3d_jet
+
+.cut1_bike:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
         bsr.w   af_aw_fill_ngon
         lea     poly_intro_deck(pc),a0
         move.b  #$13,d6
         bsr.w   af_aw_fill_ngon
-        lea     poly_intro_bridge(pc),a0
-        move.b  #$15,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_stripe(pc),a0
+        move.w  d7,d5
+        lsl.w   #3,d5
+        and.w   #255,d5
+        move.w  #290,d0
+        sub.w   d5,d0
+        ifd FULL_RES
+        move.w  #226,d1
+        else
+        moveq   #116,d1
+        endif
+        moveq   #22,d3
         move.b  #$FE,d6
-        bsr.w   af_aw_fill_ngon
-        move.w  #38,d0
-        ifd FULL_RES
-        move.w  #70,d1
-        else
-        moveq   #40,d1
-        endif
-        move.l  vbl_tick(pc),d3
-        lsr.l   #2,d3
-        and.w   #7,d3
-        addq.w  #2,d3
-        move.b  #$FD,d6
         jsr     af_fill_chunky_diamond
-        cmp.w   #170,d7
-        bge.w   .act3_takeoff
-        move.w  #160,d0
-        ifd FULL_RES
-        move.w  #146,d1
-        else
-        moveq   #82,d1
-        endif
-        move.w  #134,d2
-        move.w  d1,d3
-        add.w   #20,d3
-        move.w  #160,d4
-        move.w  d1,d5
-        add.w   #14,d5
-        move.b  #$FF,d6
-        bsr.w   af_aw_fill_tri
-        move.w  #160,d0
-        move.w  #186,d2
-        move.w  d1,d3
-        add.w   #20,d3
-        move.w  #160,d4
-        move.w  d1,d5
-        add.w   #14,d5
-        move.b  #$FD,d6
-        bsr.w   af_aw_fill_tri
         move.w  d7,d4
-        cmp.w   #95,d4
-        ble.s   .moto_mv
-        moveq   #95,d4
-.moto_mv:
-        add.w   #14,d4
+        asr.w   #1,d4
+        add.w   #70,d4
         ifd FULL_RES
-        move.w  #186,d5
+        move.w  #194,d5
         else
         moveq   #104,d5
         endif
         move.w  d4,d0
-        subq.w  #8,d0
+        add.w   #56,d0
         move.w  d5,d1
-        moveq   #4,d3
+        sub.w   #22,d1
+        move.w  d4,d2
+        add.w   #150,d2
+        move.w  d5,d3
+        sub.w   #36,d3
+        move.w  d2,d4
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_tri
+        move.w  d7,d4
+        asr.w   #1,d4
+        add.w   #70,d4
+        ifd FULL_RES
+        move.w  #194,d5
+        else
+        moveq   #104,d5
+        endif
+        move.w  d4,d0
+        sub.w   #46,d0
+        move.w  d5,d1
+        moveq   #22,d3
         move.b  #$01,d6
         jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        addq.w  #8,d0
+        moveq   #10,d3
+        move.b  #$16,d6
         jsr     af_fill_chunky_diamond
         move.w  d4,d0
-        subq.w  #8,d0
+        add.w   #48,d0
+        moveq   #22,d3
+        move.b  #$01,d6
+        jsr     af_fill_chunky_diamond
+        moveq   #10,d3
+        move.b  #$16,d6
+        jsr     af_fill_chunky_diamond
+        move.w  d4,d0
+        sub.w   #54,d0
         move.w  d5,d1
-        subq.w  #3,d1
+        sub.w   #26,d1
         move.w  d4,d2
-        addq.w  #8,d2
+        add.w   #58,d2
         move.w  d5,d3
-        subq.w  #5,d3
+        sub.w   #28,d3
+        subq.w  #4,d5
         move.b  #$FC,d6
         bsr.w   af_aw_fill_tri
-        cmp.w   #95,d7
-        bge.s   .pilot_walk
-        move.w  d7,d0
-        add.w   #12,d0
-        bra.s   .draw_pilot
-.pilot_walk:
-        move.w  d7,d0
-        sub.w   #95,d0
-        asr.w   #1,d0
-        add.w   #110,d0
-.draw_pilot:
+        move.w  d7,d4
+        asr.w   #1,d4
+        add.w   #70,d4
         ifd FULL_RES
-        move.w  #174,d1
+        move.w  #194,d5
         else
-        moveq   #97,d1
+        moveq   #104,d5
         endif
-        moveq   #3,d3
+        move.w  d4,d0
+        add.w   #14,d0
+        move.w  d5,d1
+        sub.w   #44,d1
+        move.w  d4,d2
+        add.w   #58,d2
+        move.w  d5,d3
+        sub.w   #28,d3
+        sub.w   #10,d4
+        sub.w   #26,d5
+        move.b  #$FF,d6
+        bsr.w   af_aw_fill_tri
+        move.w  d7,d0
+        asr.w   #1,d0
+        add.w   #68,d0
+        ifd FULL_RES
+        move.w  #146,d1
+        else
+        moveq   #78,d1
+        endif
+        moveq   #16,d3
         move.b  #$FD,d6
         jsr     af_fill_chunky_diamond
-        subq.w  #5,d1
-        moveq   #2,d3
+        add.w   #12,d0
+        sub.w   #16,d1
+        moveq   #11,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
         bra.w   .intro_done
-.act3_takeoff:
-        move.w  #101,d0
+
+.cut2_pilot:
+        lea     poly_intro_deck(pc),a0
+        move.b  #$12,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_bridge(pc),a0
+        move.b  #$15,d6
+        bsr.w   af_aw_fill_ngon
+        move.w  #275,d0
         ifd FULL_RES
-        move.w  #186,d1
+        move.w  #62,d1
         else
-        moveq   #104,d1
+        moveq   #32,d1
         endif
-        moveq   #4,d3
-        move.b  #$01,d6
-        jsr     af_fill_chunky_diamond
-        move.w  #117,d0
-        jsr     af_fill_chunky_diamond
-        move.w  d7,d4
-        sub.w   #170,d4
-        move.w  d4,d5
-        asr.w   #1,d5
-        ifd FULL_RES
-        move.w  #146,d1
-        sub.w   d5,d1
-        cmp.w   #56,d1
-        bge.s   .fy_ok
-        moveq   #56,d1
-        else
-        moveq   #82,d1
-        asr.w   #1,d5
-        sub.w   d5,d1
-        cmp.w   #28,d1
-        bge.s   .fy_ok
-        moveq   #28,d1
-        endif
-.fy_ok:
-        move.w  d4,d3
-        lsr.w   #3,d3
-        moveq   #26,d2
-        sub.w   d3,d2
-        cmp.w   #6,d2
-        bge.s   .fw_ok
-        moveq   #6,d2
-.fw_ok:
-        move.w  d4,d0
-        asr.w   #3,d0
-        add.w   #160,d0
-        movem.w d0-d2,-(sp)
-        move.w  d2,d4
-        move.w  d0,d2
-        sub.w   d4,d2
+        move.w  #195,d2
         move.w  d1,d3
-        add.w   d4,d3
-        move.w  d0,d4
+        add.w   #96,d3
+        move.w  #319,d4
         move.w  d1,d5
-        addq.w  #6,d5
+        add.w   #82,d5
         move.b  #$FF,d6
         bsr.w   af_aw_fill_tri
-        movem.w (sp)+,d0-d2
-        movem.w d0-d2,-(sp)
-        move.w  d2,d4
-        move.w  d0,d2
-        add.w   d4,d2
-        move.w  d1,d3
-        add.w   d4,d3
-        move.w  d0,d4
-        move.w  d1,d5
-        addq.w  #6,d5
+        move.w  d7,d4
+        sub.w   #115,d4
+        add.w   #76,d4
+        move.w  d4,d2
+        lsr.w   #3,d2
+        and.w   #3,d2
+        ifd FULL_RES
+        move.w  #138,d5
+        else
+        moveq   #74,d5
+        endif
+        sub.w   d2,d5
+        move.w  d4,d0
+        move.w  d5,d1
+        moveq   #26,d3
         move.b  #$FD,d6
-        bsr.w   af_aw_fill_tri
-        movem.w (sp)+,d0-d2
-        addq.w  #6,d1
-        moveq   #3,d3
-        btst    #1,d7
-        beq.s   .ab_col
-        moveq   #5,d3
-.ab_col:
-        move.b  #$FC,d6
         jsr     af_fill_chunky_diamond
-        moveq   #2,d3
+        move.w  d4,d0
+        sub.w   #12,d0
+        move.w  d5,d1
+        add.w   #32,d1
+        moveq   #15,d3
+        move.b  #$16,d6
+        jsr     af_fill_chunky_diamond
+        move.w  d4,d0
+        add.w   #12,d0
+        jsr     af_fill_chunky_diamond
+        move.w  d4,d0
+        move.w  d5,d1
+        sub.w   #34,d1
+        moveq   #14,d3
+        move.b  #$FF,d6
+        jsr     af_fill_chunky_diamond
+        addq.w  #5,d0
+        moveq   #8,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
+        bra.w   .intro_done
+
+.cut34_3d_jet:
+        lea     poly_intro_mountains(pc),a0
+        move.b  #$11,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_deck(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_stripe(pc),a0
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_ngon
+        jsr     af_clear_fighter_zbuffer
+        move.w  #0,cam_ox
+        move.w  #0,cam_oy
+        move.w  #-155,cam_oz
+        clr.w   cam_sin
+        move.w  #256,cam_cos
+        move.w  d7,d3
+        sub.w   #230,d3
+        moveq   #0,d0
+        moveq   #-14,d1
+        move.w  d3,d2
+        asr.w   #1,d2
+        cmp.w   #48,d2
+        ble.s   .rl_ok
+        moveq   #48,d2
+.rl_ok: jsr     build_rot_matrix_3d
+        move.w  d3,d4
+        asr.w   #3,d4
+        move.w  d3,d5
+        asr.w   #2,d5
+        ifd FULL_RES
+        move.w  #26,d1
+        sub.w   d5,d1
+        move.w  d1,d5
+        else
+        moveq   #12,d1
+        asr.w   #1,d5
+        sub.w   d5,d1
+        move.w  d1,d5
+        endif
+        move.w  d3,d6
+        asr.w   #2,d6
+        add.w   #14,d6
+        movem.w d4-d6,-(sp)
+        lea     xf14_verts,a0
+        lea     v2_proj_buf,a1
+        move.w  #xf14_vert_count,d7
+        jsr     transform_and_project_verts
+        lea     xf14_norms,a0
+        lea     v2_env_buf,a1
+        move.w  #xf14_vert_count,d7
+        jsr     transform_normals_envmap
+        lea     xf14_env_mesh,a0
+        lea     v2_proj_buf,a1
+        lea     v2_tex_bank,a2
+        lea     v2_env_buf,a3
+        jsr     draw_gouraud_env_mesh_v2
+        movem.w (sp)+,d4-d6
+        jsr     ptrail_emit_twin_nozzles
+        jsr     ptrail_update_and_draw
 .intro_done:
-        movem.l (sp)+,d0-d7/a0-a1
+        movem.l (sp)+,d0-d7/a0-a5
         rts
 
-; ----------------------------------------------------------------------------
-af_draw_aw_intro:
-        movem.l d0-d7/a0-a1,-(sp)
-        move.l  af_state_timer,d7
-        cmp.l   #420,d7
-        ble.s   .t_ok
-        move.w  #420,d7
-.t_ok:
-        lea     poly_intro_mountains(pc),a0
-        move.b  #$11,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_deck(pc),a0
-        move.b  #$13,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_bridge(pc),a0
-        move.b  #$15,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_stripe(pc),a0
-        move.b  #$FE,d6
-        bsr.w   af_aw_fill_ngon
-        move.w  #38,d0
+af_draw_vanguard_crest:
+        movem.l d0-d6,-(sp)
         ifd FULL_RES
-        move.w  #70,d1
+        move.w  #112,d1
         else
-        moveq   #40,d1
+        moveq   #54,d1
         endif
-        move.l  vbl_tick(pc),d3
-        lsr.l   #2,d3
-        and.w   #7,d3
-        addq.w  #2,d3
-        move.b  #$FD,d6
-        jsr     af_fill_chunky_diamond
-        cmp.w   #170,d7
-        bge.w   .act3_takeoff
         move.w  #160,d0
-        ifd FULL_RES
-        move.w  #146,d1
-        else
-        moveq   #82,d1
-        endif
-        move.w  #134,d2
+        move.w  #104,d2
         move.w  d1,d3
-        add.w   #20,d3
+        sub.w   #16,d3
         move.w  #160,d4
         move.w  d1,d5
-        add.w   #14,d5
-        move.b  #$FF,d6
+        add.w   #12,d5
+        move.b  #$FE,d6
         bsr.w   af_aw_fill_tri
         move.w  #160,d0
-        move.w  #186,d2
+        move.w  #216,d2
         move.w  d1,d3
-        add.w   #20,d3
+        sub.w   #16,d3
         move.w  #160,d4
         move.w  d1,d5
-        add.w   #14,d5
-        move.b  #$FD,d6
-        bsr.w   af_aw_fill_tri
-        move.w  d7,d4
-        cmp.w   #95,d4
-        ble.s   .moto_mv
-        moveq   #95,d4
-.moto_mv:
-        add.w   #14,d4
-        ifd FULL_RES
-        move.w  #186,d5
-        else
-        moveq   #104,d5
-        endif
-        move.w  d4,d0
-        subq.w  #8,d0
-        move.w  d5,d1
-        moveq   #4,d3
-        move.b  #$01,d6
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        addq.w  #8,d0
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        subq.w  #8,d0
-        move.w  d5,d1
-        subq.w  #3,d1
-        move.w  d4,d2
-        addq.w  #8,d2
-        move.w  d5,d3
-        subq.w  #5,d3
-        move.b  #$FC,d6
-        bsr.w   af_aw_fill_tri
-        cmp.w   #95,d7
-        bge.s   .pilot_walk
-        move.w  d7,d0
-        add.w   #12,d0
-        bra.s   .draw_pilot
-.pilot_walk:
-        move.w  d7,d0
-        sub.w   #95,d0
-        asr.w   #1,d0
-        add.w   #110,d0
-.draw_pilot:
-        ifd FULL_RES
-        move.w  #174,d1
-        else
-        moveq   #97,d1
-        endif
-        moveq   #3,d3
-        move.b  #$FD,d6
-        jsr     af_fill_chunky_diamond
-        subq.w  #5,d1
-        moveq   #2,d3
+        add.w   #12,d5
         move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
-        bra.w   .intro_done
-.act3_takeoff:
-        move.w  #101,d0
-        ifd FULL_RES
-        move.w  #186,d1
-        else
-        moveq   #104,d1
-        endif
-        moveq   #4,d3
-        move.b  #$01,d6
-        jsr     af_fill_chunky_diamond
-        move.w  #117,d0
-        jsr     af_fill_chunky_diamond
-        move.w  d7,d4
-        sub.w   #170,d4
-        move.w  d4,d5
-        asr.w   #1,d5
-        ifd FULL_RES
-        move.w  #146,d1
-        sub.w   d5,d1
-        cmp.w   #56,d1
-        bge.s   .fy_ok
-        moveq   #56,d1
-        else
-        moveq   #82,d1
-        asr.w   #1,d5
-        sub.w   d5,d1
-        cmp.w   #28,d1
-        bge.s   .fy_ok
-        moveq   #28,d1
-        endif
-.fy_ok:
-        move.w  d4,d3
-        lsr.w   #3,d3
-        moveq   #26,d2
-        sub.w   d3,d2
-        cmp.w   #6,d2
-        bge.s   .fw_ok
-        moveq   #6,d2
-.fw_ok:
-        move.w  d4,d0
-        asr.w   #3,d0
-        add.w   #160,d0
-        movem.w d0-d2,-(sp)
-        move.w  d2,d4
-        move.w  d0,d2
-        sub.w   d4,d2
-        move.w  d1,d3
-        add.w   d4,d3
-        move.w  d0,d4
-        move.w  d1,d5
-        addq.w  #6,d5
-        move.b  #$FF,d6
         bsr.w   af_aw_fill_tri
-        movem.w (sp)+,d0-d2
-        movem.w d0-d2,-(sp)
-        move.w  d2,d4
-        move.w  d0,d2
-        add.w   d4,d2
+        move.w  #160,d0
+        sub.w   #14,d1
+        move.w  #142,d2
         move.w  d1,d3
-        add.w   d4,d3
-        move.w  d0,d4
-        move.w  d1,d5
-        addq.w  #6,d5
+        add.w   #18,d3
+        move.w  #178,d4
+        move.w  d3,d5
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
-        movem.w (sp)+,d0-d2
-        addq.w  #6,d1
-        moveq   #3,d3
-        btst    #1,d7
-        beq.s   .ab_col
-        moveq   #5,d3
-.ab_col:
-        move.b  #$FC,d6
-        jsr     af_fill_chunky_diamond
-        moveq   #2,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
-.intro_done:
-        movem.l (sp)+,d0-d7/a0-a1
+        movem.l (sp)+,d0-d6
         rts
 
 ; af_draw_aw_briefing: Taktyczna sylwetka celu misji (N-gon)
