@@ -200,6 +200,282 @@ af_aw_fill_tri:
 
 ; ----------------------------------------------------------------------------
 ; af_draw_aw_intro:
+        movem.l d0-d7/a0-a1,-(sp)
+        move.l  af_state_timer,d7
+        cmp.l   #420,d7
+        ble.s   .t_ok
+        move.w  #420,d7
+.t_ok:
+        lea     poly_intro_mountains(pc),a0
+        move.b  #$11,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_deck(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_bridge(pc),a0
+        move.b  #$15,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_stripe(pc),a0
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_ngon
+        move.w  #38,d0
+        ifd FULL_RES
+        move.w  #70,d1
+        else
+        moveq   #40,d1
+        endif
+        move.l  vbl_tick(pc),d3
+        lsr.l   #2,d3
+        and.w   #7,d3
+        addq.w  #2,d3
+        move.b  #$FD,d6
+        jsr     af_fill_chunky_diamond
+        cmp.w   #170,d7
+        bge.w   .act3_takeoff
+        move.w  #160,d0
+        ifd FULL_RES
+        move.w  #146,d1
+        else
+        moveq   #82,d1
+        endif
+        move.w  #134,d2
+        move.w  d1,d3
+        add.w   #20,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #14,d5
+        move.b  #$FF,d6
+        bsr.w   af_aw_fill_tri
+        move.w  #160,d0
+        move.w  #186,d2
+        move.w  d1,d3
+        add.w   #20,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #14,d5
+        move.b  #$FD,d6
+        bsr.w   af_aw_fill_tri
+        move.w  d7,d4
+        cmp.w   #95,d4
+        ble.s   .moto_mv
+        moveq   #95,d4
+.moto_mv:
+        add.w   #14,d4
+        ifd FULL_RES
+        move.w  #186,d5
+        else
+        moveq   #104,d5
+        endif
+        move.w  d4,d0
+        subq.w  #8,d0
+        move.w  d5,d1
+        moveq   #4,d3
+        move.b  #$01,d6
+        jsr     af_fill_chunky_diamond
+        move.w  d4,d0
+        addq.w  #8,d0
+        jsr     af_fill_chunky_diamond
+        move.w  d4,d0
+        subq.w  #8,d0
+        move.w  d5,d1
+        subq.w  #3,d1
+        move.w  d4,d2
+        addq.w  #8,d2
+        move.w  d5,d3
+        subq.w  #5,d3
+        move.b  #$FC,d6
+        bsr.w   af_aw_fill_tri
+        cmp.w   #95,d7
+        bge.s   .pilot_walk
+        move.w  d7,d0
+        add.w   #12,d0
+        bra.s   .draw_pilot
+.pilot_walk:
+        move.w  d7,d0
+        sub.w   #95,d0
+        asr.w   #1,d0
+        add.w   #110,d0
+.draw_pilot:
+        ifd FULL_RES
+        move.w  #174,d1
+        else
+        moveq   #97,d1
+        endif
+        moveq   #3,d3
+        move.b  #$FD,d6
+        jsr     af_fill_chunky_diamond
+        subq.w  #5,d1
+        moveq   #2,d3
+        move.b  #$FE,d6
+        jsr     af_fill_chunky_diamond
+        bra.w   .intro_done
+.act3_takeoff:
+        move.w  #101,d0
+        ifd FULL_RES
+        move.w  #186,d1
+        else
+        moveq   #104,d1
+        endif
+        moveq   #4,d3
+        move.b  #$01,d6
+        jsr     af_fill_chunky_diamond
+        move.w  #117,d0
+        jsr     af_fill_chunky_diamond
+        move.w  d7,d4
+        sub.w   #170,d4
+        move.w  d4,d5
+        asr.w   #1,d5
+        ifd FULL_RES
+        move.w  #146,d1
+        sub.w   d5,d1
+        cmp.w   #56,d1
+        bge.s   .fy_ok
+        moveq   #56,d1
+        else
+        moveq   #82,d1
+        asr.w   #1,d5
+        sub.w   d5,d1
+        cmp.w   #28,d1
+        bge.s   .fy_ok
+        moveq   #28,d1
+        endif
+.fy_ok:
+        move.w  d4,d3
+        lsr.w   #3,d3
+        moveq   #26,d2
+        sub.w   d3,d2
+        cmp.w   #6,d2
+        bge.s   .fw_ok
+        moveq   #6,d2
+.fw_ok:
+        move.w  d4,d0
+        asr.w   #3,d0
+        add.w   #160,d0
+        movem.w d0-d2,-(sp)
+        move.w  d2,d4
+        move.w  d0,d2
+        sub.w   d4,d2
+        move.w  d1,d3
+        add.w   d4,d3
+        move.w  d0,d4
+        move.w  d1,d5
+        addq.w  #6,d5
+        move.b  #$FF,d6
+        bsr.w   af_aw_fill_tri
+        movem.w (sp)+,d0-d2
+        movem.w d0-d2,-(sp)
+        move.w  d2,d4
+        move.w  d0,d2
+        add.w   d4,d2
+        move.w  d1,d3
+        add.w   d4,d3
+        move.w  d0,d4
+        move.w  d1,d5
+        addq.w  #6,d5
+        move.b  #$FD,d6
+        bsr.w   af_aw_fill_tri
+        movem.w (sp)+,d0-d2
+        addq.w  #6,d1
+        moveq   #3,d3
+        btst    #1,d7
+        beq.s   .ab_col
+        moveq   #5,d3
+.ab_col:
+        move.b  #$FC,d6
+        jsr     af_fill_chunky_diamond
+        moveq   #2,d3
+        move.b  #$FE,d6
+        jsr     af_fill_chunky_diamond
+.intro_done:
+        movem.l (sp)+,d0-d7/a0-a1
+        rts
+
+; ----------------------------------------------------------------------------
+; af_draw_aw_briefing: Taktyczna sylwetka celu misji (N-gon)
+; ----------------------------------------------------------------------------
+        cnop    0,4
+af_draw_aw_briefing:
+        movem.l d0-d7/a0,-(sp)
+        lea     poly_brief_panel(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+
+        move.w  af_mission,d0
+        cmp.w   #1,d0
+        beq.s   .bm2
+        cmp.w   #2,d0
+        beq.s   .bm3
+        lea     poly_brief_m1(pc),a0
+        bra.s   .bdraw
+.bm2:   lea     poly_brief_m2(pc),a0
+        bra.s   .bdraw
+.bm3:   lea     poly_brief_m3(pc),a0
+.bdraw: move.b  #$FD,d6
+        bsr.w   af_aw_fill_ngon
+        movem.l (sp)+,d0-d7/a0
+        rts
+
+; ----------------------------------------------------------------------------
+; af_draw_aw_debrief: Reakcyjna scena po misji (zalezna od af_energy)
+; ----------------------------------------------------------------------------
+        cnop    0,4
+af_draw_aw_debrief:
+        movem.l d0-d7/a0,-(sp)
+        lea     poly_intro_deck(pc),a0
+        move.b  #$13,d6
+        bsr.w   af_aw_fill_ngon
+
+        lea     poly_debrief_ship(pc),a0
+        move.b  #$FF,d6
+        cmp.w   #60,af_energy
+        bge.s   .ship_ok
+        move.b  #$FC,d6
+.ship_ok:
+        bsr.w   af_aw_fill_ngon
+        movem.l (sp)+,d0-d7/a0
+        rts
+
+        even
+        ifd FULL_RES
+poly_intro_mountains:
+        dc.w    5, 0,160, 65,124, 155,140, 245,118, 319,160
+poly_intro_deck:
+        dc.w    4, 0,160, 319,160, 319,255, 0,255
+poly_intro_bridge:
+        dc.w    5, 18,160, 26,76, 58,76, 68,116, 74,160
+poly_intro_stripe:
+        dc.w    4, 156,160, 164,160, 186,255, 134,255
+poly_brief_panel:
+        dc.w    4, 40,48, 280,48, 280,176, 40,176
+poly_brief_m1:
+        dc.w    5, 160,64, 214,108, 190,156, 130,156, 106,108
+poly_brief_m2:
+        dc.w    4, 92,78, 228,78, 202,152, 118,152
+poly_brief_m3:
+        dc.w    6, 160,58, 236,92, 222,144, 160,164, 98,144, 84,92
+poly_debrief_ship:
+        dc.w    5, 160,68, 218,132, 178,152, 142,152, 102,132
+        else
+poly_intro_mountains:
+        dc.w    5, 0,92, 65,74, 155,82, 245,70, 319,92
+poly_intro_deck:
+        dc.w    4, 0,92, 319,92, 319,127, 0,127
+poly_intro_bridge:
+        dc.w    5, 18,92, 26,44, 58,44, 68,66, 74,92
+poly_intro_stripe:
+        dc.w    4, 156,92, 164,92, 178,127, 142,127
+poly_brief_panel:
+        dc.w    4, 48,26, 272,26, 272,88, 48,88
+poly_brief_m1:
+        dc.w    5, 160,34, 210,56, 188,80, 132,80, 110,56
+poly_brief_m2:
+        dc.w    4, 96,42, 224,42, 200,78, 120,78
+poly_brief_m3:
+        dc.w    6, 160,30, 232,48, 220,74, 160,84, 100,74, 88,48
+poly_debrief_ship:
+        dc.w    5, 160,36, 212,68, 176,76, 144,76, 108,68
+        endif
+af_draw_aw_intro:
         movem.l d0-d7/a0-a5,-(sp)
         move.l  af_state_timer,d7
         cmp.l   #480,d7
@@ -485,89 +761,3 @@ af_draw_vanguard_crest:
         bsr.w   af_aw_fill_tri
         movem.l (sp)+,d0-d6
         rts
-
-; af_draw_aw_briefing: Taktyczna sylwetka celu misji (N-gon)
-; ----------------------------------------------------------------------------
-        cnop    0,4
-af_draw_aw_briefing:
-        movem.l d0-d7/a0,-(sp)
-        lea     poly_brief_panel(pc),a0
-        move.b  #$13,d6
-        bsr.w   af_aw_fill_ngon
-
-        move.w  af_mission,d0
-        cmp.w   #1,d0
-        beq.s   .bm2
-        cmp.w   #2,d0
-        beq.s   .bm3
-        lea     poly_brief_m1(pc),a0
-        bra.s   .bdraw
-.bm2:   lea     poly_brief_m2(pc),a0
-        bra.s   .bdraw
-.bm3:   lea     poly_brief_m3(pc),a0
-.bdraw: move.b  #$FD,d6
-        bsr.w   af_aw_fill_ngon
-        movem.l (sp)+,d0-d7/a0
-        rts
-
-; ----------------------------------------------------------------------------
-; af_draw_aw_debrief: Reakcyjna scena po misji (zalezna od af_energy)
-; ----------------------------------------------------------------------------
-        cnop    0,4
-af_draw_aw_debrief:
-        movem.l d0-d7/a0,-(sp)
-        lea     poly_intro_deck(pc),a0
-        move.b  #$13,d6
-        bsr.w   af_aw_fill_ngon
-
-        lea     poly_debrief_ship(pc),a0
-        move.b  #$FF,d6
-        cmp.w   #60,af_energy
-        bge.s   .ship_ok
-        move.b  #$FC,d6
-.ship_ok:
-        bsr.w   af_aw_fill_ngon
-        movem.l (sp)+,d0-d7/a0
-        rts
-
-        even
-        ifd FULL_RES
-poly_intro_mountains:
-        dc.w    5, 0,160, 65,124, 155,140, 245,118, 319,160
-poly_intro_deck:
-        dc.w    4, 0,160, 319,160, 319,255, 0,255
-poly_intro_bridge:
-        dc.w    5, 18,160, 26,76, 58,76, 68,116, 74,160
-poly_intro_stripe:
-        dc.w    4, 156,160, 164,160, 186,255, 134,255
-poly_brief_panel:
-        dc.w    4, 40,48, 280,48, 280,176, 40,176
-poly_brief_m1:
-        dc.w    5, 160,64, 214,108, 190,156, 130,156, 106,108
-poly_brief_m2:
-        dc.w    4, 92,78, 228,78, 202,152, 118,152
-poly_brief_m3:
-        dc.w    6, 160,58, 236,92, 222,144, 160,164, 98,144, 84,92
-poly_debrief_ship:
-        dc.w    5, 160,68, 218,132, 178,152, 142,152, 102,132
-        else
-poly_intro_mountains:
-        dc.w    5, 0,92, 65,74, 155,82, 245,70, 319,92
-poly_intro_deck:
-        dc.w    4, 0,92, 319,92, 319,127, 0,127
-poly_intro_bridge:
-        dc.w    5, 18,92, 26,44, 58,44, 68,66, 74,92
-poly_intro_stripe:
-        dc.w    4, 156,92, 164,92, 178,127, 142,127
-poly_brief_panel:
-        dc.w    4, 48,26, 272,26, 272,88, 48,88
-poly_brief_m1:
-        dc.w    5, 160,34, 210,56, 188,80, 132,80, 110,56
-poly_brief_m2:
-        dc.w    4, 96,42, 224,42, 200,78, 120,78
-poly_brief_m3:
-        dc.w    6, 160,30, 232,48, 220,74, 160,84, 100,74, 88,48
-poly_debrief_ship:
-        dc.w    5, 160,36, 212,68, 176,76, 144,76, 108,68
-        endif
-
