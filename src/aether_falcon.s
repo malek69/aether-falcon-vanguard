@@ -42,7 +42,7 @@ start:
 .vbr_ready:
 
         move.l  #0,vbl_tick
-        moveq   #0,d0
+        moveq   #3,d0
         jsr     copper_set_sky_theme
         lea     aga_pal256,a0
         move.l  #$00FF3040,252*4(a0)    ; $FC = czerwien bojowa (wrogowie / celownik)
@@ -147,6 +147,8 @@ mainloop:
         bra.w   mainloop
 
 .mission_clear:
+        moveq   #3,d0
+        jsr     copper_set_sky_theme
         clr.l   af_state_timer
         move.w  #STATE_DEBRIEF,af_state
         bra.w   mainloop
@@ -301,7 +303,10 @@ af_update_flight:
 
         move.l  af_vel_z,d0
         btst    #7,CIAAPRA
+        beq.s   .do_boost
+        cmp.b   #$40,kbd_held_raw
         bne.s   .no_boost
+.do_boost:
         tst.w   af_energy
         beq.s   .no_boost
         add.l   #8<<16,d0

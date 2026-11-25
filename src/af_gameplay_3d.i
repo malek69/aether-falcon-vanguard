@@ -35,8 +35,11 @@ af_render_gameplay_3d:
         move.w  d0,cam_oy
         move.w  #-155,d0
         btst    #7,CIAAPRA
+        beq.s   .cam_boost
+        cmp.b   #$40,kbd_held_raw
         bne.s   .cam_z_ok
-        move.w  #-168,d0
+.cam_boost:
+        move.w  #-170,d0
 .cam_z_ok:
         move.w  d0,cam_oz
         clr.w   cam_sin
@@ -67,20 +70,21 @@ af_render_gameplay_3d:
         move.w  af_roll,d2              ; Przechyl skrzydel (bank angle)
         jsr     build_rot_matrix_3d
 
-        ; Pozycja mysliwca na ekranie (dolna czesc kadru, przesuniecie boczne z roll)
+        ; Pelny swobodny lot mysliwca XF-14 po calym ekranie (Roll -> X, Pitch -> Y)
         move.w  af_roll,d4
-        asr.w   #3,d4                   ; X: lekki dryf przy przechyle
+        asr.w   #1,d4                   ; X: -64..+64 (pelna szerokosc ekranu!)
+        move.w  af_pitch,d5
+        asr.w   #2,d5                   ; Y: -27..+27 (wznoszenie i nurkowanie!)
         move.l  vbl_tick(pc),d0
         lsr.l   #2,d0
         and.w   #3,d0
-        subq.w  #1,d0                   ; -1..+2 px mikrokolebanie aerodynamiczne
-        ifd FULL_RES
-        move.w  #18,d5
+        subq.w  #1,d0
         add.w   d0,d5
+        ifd FULL_RES
+        add.w   #20,d5
         moveq   #22,d6
         else
-        move.w  #8,d5
-        add.w   d0,d5
+        add.w   #10,d5
         moveq   #24,d6
         endif
 
@@ -508,17 +512,17 @@ af_missiles:    dcb.b   8*MAX_MISSILES,0
 ; ============================================================================
         cnop    0,4
 af_clear_fighter_zbuffer:
-        movem.l d0-d2/a0,-(sp)
+        movem.l d0-d2/a0-a1,-(sp)
         move.l  #$7fff7fff,d0
         ifd FULL_RES
-        lea     zbuf_3d+(110*640)+(96*2),a0
-        move.w  #129,d2                 ; 130 wierszy (Y=110..239)
+        lea     zbuf_3d+(40*640),a0
+        move.w  #215,d2                 ; 216 wierszy x pelne 320 px szerokosci (zero prostokata!)
         else
-        lea     zbuf_3d+(48*640)+(96*2),a0
-        moveq   #71,d2                  ; 72 wiersze (Y=48..119)
+        lea     zbuf_3d+(20*640),a0
+        moveq   #107,d2                 ; 108 wierszy x pelne 320 px szerokosci
         endif
 .zb_row:
-        moveq   #15,d1                  ; 16 x 16 bajtow = 256 bajtow (128 px szerokosci)
+        moveq   #39,d1                  ; 40 x 16 bajtow = 640 bajtow (cale 320 px!)
         move.l  a0,a1
 .zb_col:
         move.l  d0,(a1)+
@@ -528,7 +532,7 @@ af_clear_fighter_zbuffer:
         dbf     d1,.zb_col
         lea     640(a0),a0
         dbf     d2,.zb_row
-        movem.l (sp)+,d0-d2/a0
+        movem.l (sp)+,d0-d2/a0-a1
         rts
 
 ; ============================================================================
