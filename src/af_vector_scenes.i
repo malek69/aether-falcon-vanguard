@@ -369,7 +369,10 @@ af_intro_cut1:
 
 ; Akt 2 (130..254): Alarm bojowy na lotnisku Solis + dojazd pilota do XF-14
 af_intro_cut2:
-        jsr     af_blit_airbase_bg
+        moveq   #0,d4
+        moveq   #0,d5
+        lea     eon_airbase_bg_scene(pc),a2
+        bsr.w   af_play_eon_scene
         move.w  d7,d0
         sub.w   #130,d0
         lsl.w   #1,d0
@@ -399,7 +402,10 @@ af_intro_cut2:
 
 ; Akt 3 (255..379): Wielotonowe zblizenie Eon na kabine XF-14 i odpalenie dopalaczy
 af_intro_cut2b:
-        jsr     af_blit_airbase_bg
+        moveq   #0,d4
+        moveq   #0,d5
+        lea     eon_airbase_bg_scene(pc),a2
+        bsr.w   af_play_eon_scene
         move.w  d7,d4
         sub.w   #255,d4
         asr.w   #2,d4
@@ -427,7 +433,10 @@ af_intro_cut2b:
 
 ; Akt 4 (380..559): Start 3D XF-14 Albatros w niebo z pelnymi smugami i flara!
 af_intro_cut34:
-        jsr     af_blit_airbase_bg
+        moveq   #0,d4
+        moveq   #0,d5
+        lea     eon_airbase_bg_scene(pc),a2
+        bsr.w   af_play_eon_scene
         jsr     af_clear_fighter_zbuffer
         move.w  #0,cam_ox
         move.w  #0,cam_oy
@@ -494,6 +503,19 @@ af_intro_done:
 
         even
 ; --- KADR 1 EON (TBL): Sylwetka pilota z uniesiona piescia na srebrnym niebie ---
+; --- TLO BAZY SOLIS W STYLU EON (TBL): Bez bitmapy, czyste wielotonowe wielokaty ---
+eon_airbase_bg_scene:
+        dc.w    16,  4,  -10,-10, 330,-10, 330,142, -10,142   ; nocne niebo Eon (#16)
+        dc.w    22,  5,  -10,142,  80,104, 175,122, 265,98, 330,142 ; gory w tle (#22)
+        dc.w    24,  4,   28,142,  36,84,  68,84,  76,142     ; wieza kontroli lotow (#24)
+        dc.w    253, 4,   34,88,   70,88,  70,96,  34,96      ; turkusowa szyba wiezy (#253)
+        dc.w    23,  4,   92,142, 108,116, 178,116, 192,142   ; hangar eskadry Vanguard (#23)
+        dc.w    215, 4,  118,142, 124,124, 162,124, 168,142   ; swiatlo z otwartego hangaru
+        dc.w    20,  4,  -10,142, 330,142, 330,265, -10,265   ; plyta lotniska (#20)
+        dc.w    254, 4,  -10,142, 330,142, 330,145, -10,145   ; zlota linia horyzontu Solis (#254)
+        dc.w    215, 4,  154,145, 166,145, 196,265, 124,265   ; turkusowy pas startowy
+        dc.w    -1
+
 eon_salute_scene:
         dc.w    30, 4,  -40,-40, 360,-40, 360,295, -40,295   ; srebrzyste niebo Eon
         dc.w    215, 5,  46,174, 88,128, 124,116, 118,136, 62,196

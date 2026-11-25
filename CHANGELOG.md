@@ -6,6 +6,13 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.1.3] - 2026-11-25
+
+- **Boss Lewiatan i 4 Wirujace Reaktory w Misji 03 (`src/af_gameplay_3d.i`):** automatyczna aktywacja Latajacej Fortecy Lewiatan 3D oraz 4 niezaleznych reaktorow orbitalnych z celownikami po rozpoczeciu Misji 03 (*Leviathan Citadel*).
+- **Pelna Spojnosc Stylistyczna Filmu *Eon* (TBL) (`src/af_vector_scenes.i`):** zastapienie bitmapowej scenerii lotniska w Aktach 2–4 jednolita, bezkonturowa architektura wielotonowych wielokatow w palecie *Eon* (`#16`, `#22..#24`, `#215`, `#253`, `#254`).
+
+---
+
 ## [v0.1.2] - 2026-11-25
 
 - **Pelne 5-Aktowe Filmy Rotoskopowe w Stylu *Eon* (TBL) (`src/af_vector_scenes.i`):** rozbudowane, wieloscenowe przerywniki filmowe na poczatek gry (**Intro** — 5 aktow: *Salute to the Sky*, alarm w bazie Solis, zblizenie na kokpit XF-14 z dopalaczami, start 3D w niebo oraz tytul), start kazdej misji (**Briefing** z animowanym portretem Dowodcy i hologramem) oraz zakonczenie misji (**Debriefing / Game Over** z animowanym portretem Pilota 3/4).

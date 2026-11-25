@@ -932,8 +932,12 @@ af_init_boss_leviathan:
 
         cnop    0,4
 af_update_and_draw_boss:
+        cmp.w   #2,af_mission
+        bne.w   .boss_ret
         tst.b   af_boss_active
-        beq.w   .boss_ret
+        bne.s   .boss_is_on
+        bsr.w   af_init_boss_leviathan
+.boss_is_on:
 
         movem.l d0-d7/a0-a3,-(sp)
         ; Cytadela Lewiatan w centrum tunelu 360 st. z lekka oscylacja orbitalna
@@ -1077,6 +1081,9 @@ af_update_and_draw_boss:
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
         movem.l (sp)+,d0-d7/a0-a3
+        moveq   #8,d3
+        move.b  #253,d6
+        bsr.w   af_draw_chunky_rect
 
         ; Sprawdz najazd celownika lub promienia dziobu XF-14 na reaktor
         move.w  af_reticle_x,d2

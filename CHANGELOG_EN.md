@@ -6,6 +6,13 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.1.3] - 2026-11-25
+
+- **Mission 03 Boss Leviathan & 4 Orbiting Reactors (`src/af_gameplay_3d.i`):** automatically spawns the 3D Leviathan Flying Fortress and its 4 orbiting reactor cores with target brackets upon entering Mission 03 (*Leviathan Citadel*).
+- **Unified *Eon* (TBL) Visual Style Across All 5 Intro Acts (`src/af_vector_scenes.i`):** replaced the legacy bitmap airbase backdrop in Acts 2–4 with a cohesive borderless multi-tone vector scene matching the *Eon* palette (`#16`, `#22..#24`, `#215`, `#253`, `#254`).
+
+---
+
 ## [v0.1.2] - 2026-11-25
 
 - **Full 5-Act Rotoscoped *Eon* (TBL) Style Cinematics (`src/af_vector_scenes.i`):** expanded multi-scene animated movies for the game opening (**Intro** — 5 acts: *Salute to the Sky*, Solis airbase alert, XF-14 cockpit afterburner ignition, 3D launch into space, and title), mission start (**Briefing** with animated Commander portrait & hologram), and mission end (**Debriefing / Game Over** with animated 3/4 Pilot portrait).
