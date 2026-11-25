@@ -31,7 +31,8 @@ af_render_gameplay_3d:
         asr.w   #2,d0
         move.w  d0,cam_ox
         move.w  af_pitch,d0
-        asr.w   #1,d0
+        asr.w   #2,d0
+        sub.w   #26,d0
         move.w  d0,cam_oy
         move.w  #-155,d0
         btst    #7,CIAAPRA
@@ -82,10 +83,10 @@ af_render_gameplay_3d:
         subq.w  #1,d0
         add.w   d0,d5
         ifd FULL_RES
-        add.w   #20,d5
+        add.w   #48,d5
         moveq   #22,d6
         else
-        add.w   #10,d5
+        add.w   #24,d5
         moveq   #24,d6
         endif
 
@@ -111,10 +112,10 @@ af_render_gameplay_3d:
         move.w  af_pitch,d5
         asr.w   #2,d5
         ifd FULL_RES
-        add.w   #20,d5
+        add.w   #48,d5
         moveq   #22,d6
         else
-        add.w   #10,d5
+        add.w   #24,d5
         moveq   #24,d6
         endif
         jsr     ptrail_emit_twin_nozzles
@@ -142,37 +143,42 @@ af_render_gameplay_3d:
 af_draw_world_entities:
         lea     af_entities,a4
         move.l  af_pos_x,d4
-        swap    d4                      ; Kamera X
+        swap    d4
         move.l  af_pos_z,d5
-        swap    d5                      ; Kamera Z
+        swap    d5
+        move.w  #3200,af_auto_min_z
         moveq   #MAX_ENTITIES-1,d7
-
 .ent_lp:
         tst.b   (a4)
         beq.w   .next_ent
-
-        ; Wzgledne Z obiektu (rel_z = ent_z - cam_z)
-        move.l  12(a4),d2
+        ; Wrogowie aktywnie zblizaja sie do gracza!
+        cmp.b   #2,1(a4)
+        beq.s   .z_chk
+        sub.l   #26<<16,12(a4)
+.z_chk: move.l  12(a4),d2
         swap    d2
         sub.w   d5,d2
-        cmp.w   #32,d2                  ; Za blisko lub za kamera?
-        blt.w   .next_ent
-        cmp.w   #3200,d2                ; Za daleko na horyzoncie?
+        cmp.w   #48,d2
+        bge.s   .z_far
+        ; Gdy wrog minal gracza, odrodz go na horyzoncie w nowej pozycji X
+        move.l  af_pos_z,d0
+        add.l   #2800<<16,d0
+        move.l  d0,12(a4)
+        clr.b   2(a4)
+        bra.w   .next_ent
+.z_far: cmp.w   #3200,d2
         bgt.w   .next_ent
-
-        ; Wzgledne X i Y (w buforze 160x128: centrum = 80, 56)
         move.l  4(a4),d0
         swap    d0
         sub.w   d4,d0
         ext.l   d0
-        asl.l   #7,d0                   ; x * 128
+        asl.l   #7,d0
         divs.w  d2,d0
         ifd WIDESCREEN_16_9
         muls.w  #3,d0
         asr.w   #2,d0
         endif
-        add.w   #160,d0                  ; scr_x (0..159)
-
+        add.w   #160,d0
         move.l  8(a4),d1
         swap    d1
         sub.w   #110,d1
@@ -180,84 +186,136 @@ af_draw_world_entities:
         asl.l   #6,d1
         divs.w  d2,d1
         ifd FULL_RES
-        add.w   #112,d1                 ; scr_y dla 320x256
+        add.w   #104,d1
         else
-        add.w   #56,d1                  ; scr_y dla 320x128
+        add.w   #52,d1
         endif
-
-        cmp.w   #6,d0
+        cmp.w   #12,d0
         blt.w   .next_ent
-        cmp.w   #310,d0
+        cmp.w   #308,d0
         bgt.w   .next_ent
-        cmp.w   #6,d1
+        cmp.w   #12,d1
         blt.w   .next_ent
         ifd FULL_RES
-        cmp.w   #244,d1
+        cmp.w   #236,d1
         else
-        cmp.w   #120,d1
+        cmp.w   #116,d1
         endif
         bgt.w   .next_ent
-
-        ; Oblicz promien obiektu na podstawie glebi Z (2..6 px)
-        move.w  #600,d3
+        ; Rozmiar obiektu rosnie wyraznie w miare zblizania sie (3..12 px)
+        move.w  #1200,d3
         ext.l   d3
         divs.w  d2,d3
-        cmp.w   #2,d3
+        cmp.w   #3,d3
         bge.s   .r_min
-        moveq   #2,d3
-.r_min: cmp.w   #6,d3
+        moveq   #3,d3
+.r_min: cmp.w   #12,d3
         ble.s   .r_max
-        moveq   #6,d3
-.r_max:
-        ; Wybierz kolor: Rdzen Eteru (type=2) = cyjan/zloto ($EC), Wrog = czerwien ($B8)
-        move.b  #$FC,d6
+        moveq   #12,d3
+.r_max: move.b  #$FC,d6
         cmp.b   #2,1(a4)
         bne.s   .draw_box
         move.b  #$FD,d6
-
 .draw_box:
-        ; Narysuj wypelniony romb/kapsule 3D w chunky_buf
         bsr.w   af_fill_chunky_diamond
-
-        ; Sprawdz czy celownik gracza (af_reticle_x, af_reticle_y) najechal na obiekt!
-        move.w  af_reticle_x,d2
-        sub.w   d0,d2
-        bpl.s   .dx_ok
-        neg.w   d2
-.dx_ok: cmp.w   #14,d2
-        bgt.s   .chk_locked_box
-
-        move.w  af_reticle_y,d2
-        sub.w   d1,d2
-        bpl.s   .dy_ok
-        neg.w   d2
-.dy_ok: cmp.w   #14,d2
-        bgt.s   .chk_locked_box
-
-        ; Jesli to wrog (type != 2) -> oznacz Lock-On!
+        ; Skrzydla mysliwca wroga dla wiekszej czytelnosci sylwetki
         cmp.b   #2,1(a4)
-        beq.s   .chk_locked_box
+        beq.s   .next_ent
+        sub.w   d3,d0
+        asr.w   #1,d3
+        move.b  #$FE,d6
+        bsr.w   af_fill_chunky_diamond
+        add.w   d3,d0
+        add.w   d3,d0
+        add.w   d3,d0
+        add.w   d3,d0
+        bsr.w   af_fill_chunky_diamond
+        sub.w   d3,d0
+        sub.w   d3,d0
+        lsl.w   #1,d3
+        ; AUTOMATYCZNE NAMIERZANIE (Auto-Lock na najblizszym wrogu w kadrze!)
+        cmp.w   af_auto_min_z(pc),d2
+        bge.s   .chk_lk_box
+        move.w  d2,af_auto_min_z
+        move.w  d0,af_reticle_x
+        move.w  d1,af_reticle_y
         tst.b   2(a4)
-        bne.s   .chk_locked_box
-        cmp.w   #MAX_MISSILES,af_locks
-        bge.s   .chk_locked_box
+        bne.s   .chk_lk_box
         st      2(a4)
-        addq.w  #1,af_locks
+        move.w  #1,af_locks
         moveq   #SFX_LOCKON,d0
         bsr.w   af_trigger_sfx
-
-.chk_locked_box:
-        ; Jesli cel jest namierzony (locked != 0), narysuj ramke Lock-On!
+        move.w  af_reticle_x,d0
+.chk_lk_box:
         tst.b   2(a4)
         beq.s   .next_ent
-        moveq   #7,d3
-        move.b  #$FE,d6                 ; Jasny kolor ramki namierzania
+        addq.w  #3,d3
+        move.b  #$FE,d6
         bsr.w   af_draw_chunky_rect
-
 .next_ent:
         lea     16(a4),a4
         dbf     d7,.ent_lp
+        ; Wrogie pociski lecace w strone gracza (do unikania!)
+        bsr.s   af_update_enemy_bolts
         rts
+
+af_auto_min_z:  dc.w 3200
+af_ebolt_z:     dc.w 0
+af_ebolt_x:     dc.w 160
+af_ebolt_y:     dc.w 100
+
+af_update_enemy_bolts:
+        tst.w   af_ebolt_z(pc)
+        bgt.s   .eb_move
+        cmp.w   #3200,af_auto_min_z(pc)
+        beq.s   .eb_rts
+        move.w  #240,af_ebolt_z
+        move.w  af_reticle_x,af_ebolt_x
+        move.w  af_reticle_y,af_ebolt_y
+.eb_rts:rts
+.eb_move:
+        sub.w   #6,af_ebolt_z
+        bgt.s   .eb_draw
+        ; Sprawdz czy gracz zrobil unik na boki (af_roll)
+        move.w  af_roll,d0
+        asr.w   #1,d0
+        move.w  d0,d1
+        asr.w   #1,d1
+        add.w   d1,d0
+        add.w   #160,d0
+        sub.w   af_ebolt_x(pc),d0
+        bpl.s   .eb_dx
+        neg.w   d0
+.eb_dx: cmp.w   #26,d0
+        bgt.s   .eb_rts
+        moveq   #SFX_EXPLOSION,d0
+        bsr.w   af_trigger_sfx
+        rts
+.eb_draw:
+        ; Interpoluj lot wrogiego pocisku od wroga do dolnej strefy gracza
+        move.w  #240,d2
+        sub.w   af_ebolt_z(pc),d2
+        move.w  af_ebolt_x(pc),d0
+        move.w  af_ebolt_y(pc),d1
+        ifd FULL_RES
+        move.w  #210,d3
+        else
+        moveq   #105,d3
+        endif
+        sub.w   d1,d3
+        muls.w  d2,d3
+        divs.w  #240,d3
+        add.w   d3,d1
+        lsr.w   #5,d2
+        addq.w  #2,d2
+        move.w  d2,d3
+        move.b  #$FC,d6
+        bsr.w   af_fill_chunky_diamond
+        subq.w  #1,d3
+        move.b  #$FF,d6
+        bsr.w   af_fill_chunky_diamond
+        rts
+
 
 ; ============================================================================
 ; Salwa samonaprowadzajacych rakiet (Panzer Dragoon Multi-Lock Barrage)
@@ -842,9 +900,9 @@ af_draw_cannon_beams:
         move.w  af_pitch,d5
         asr.w   #2,d5
         ifd FULL_RES
-        add.w   #156,d5
+        add.w   #192,d5
         else
-        add.w   #78,d5
+        add.w   #96,d5
         endif
         moveq   #7,d7
 .cb_lp:
