@@ -25,9 +25,9 @@
 
 ## Galeria (v0.0.7 — Amiga 1200 AGA / THEA1200)
 
-| ![1. Intro: Lotnisko 256 kol. & Pilot](docs/screenshots/01_intro_topgun.png) | ![2. Intro: Wsiadanie do Kokpitu](docs/screenshots/02_intro_takeoff_logo.png) | ![3. Briefing z Notatnikiem](docs/screenshots/03_briefing_controls.png) | ![4. Lot 3D po Okręgu 360°](docs/screenshots/04_gameplay_plasma_cannons.png) |
+| ![1. Orientacja 3D 360° XF-14](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Formacje Wrogów 360°](docs/screenshots/v007_02_formations_360.png) | ![3. Boss Lewiatan 360° (Misja 03)](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. Game Over / Debriefing](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|
-| **1. Intro: Lotnisko 256 kol. & Pilot** | **2. Intro: Wsiadanie do Kokpitu** | **3. Briefing z Notatnikiem** | **4. Lot 3D po Okręgu 360°** |
+| **1. Orientacja 3D 360° XF-14** | **2. Formacje Wrogów 360°** | **3. Boss Lewiatan 360° (Misja 03)** | **4. Game Over / Debriefing** |
 
 ## Wykorzystane Silniki i Powiązane Repozytoria
 

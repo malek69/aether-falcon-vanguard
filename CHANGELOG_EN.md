@@ -8,6 +8,10 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ## [v0.0.7] - 2026-11-25
 
+| <img src="docs/screenshots/v007_01_gyruss_360_flight.png" width="210"> | <img src="docs/screenshots/v007_02_formations_360.png" width="210"> | <img src="docs/screenshots/v007_03_leviathan_boss_360.png" width="210"> | <img src="docs/screenshots/v007_04_gameover_debrief.png" width="210"> |
+|:---:|:---:|:---:|:---:|
+| **1. 360° Rigid XF-14 Flight** | **2. 360° Enemy Formations** | **3. 360° Leviathan Boss** | **4. Game Over / Debriefing** |
+
 - **Rigid 360-Degree Cylindrical Orientation for XF-14 Albatros (`src/af_gameplay_3d.i`, `src/aether_falcon.s`):** orthonormal *Gyruss / Tempest*-style rotation matrix keeping the nose aimed toward screen center, belly outward toward screen perimeter, and wings tangent along the circle; Up/Down controls adjust orbit radius without pitching the hull.
 - **Shield Damage System & Game Over / Debriefing Screen (`src/af_gameplay_3d.i`, `src/af_campaigns.i`):** full 2D 360-degree hit detection, state-colored shield bar (cyan/gold/red), red alert flash with `SHIELD HIT!` / `CRITICAL SHIELD!` HUD warnings, and dedicated `GAME OVER - XF-14 DESTROYED` debriefing screen with instant campaign restart on shield depletion.
 - **New 360-Degree Enemy Formations & Mission 03 Leviathan Boss Fight (`src/af_gameplay_3d.i`):** spiral and double-helix 360-degree enemy waves plus a centered Leviathan citadel featuring 4 orbiting 360-degree reactors and radial plasma barrages.

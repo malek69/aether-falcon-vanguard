@@ -25,7 +25,7 @@
 
 ## Gallery (v0.0.7 — Amiga 1200 AGA / THEA1200)
 
-| ![1. Intro: 256-col Airbase & Pilot](docs/screenshots/01_intro_topgun.png) | ![2. Intro: Cockpit Boarding](docs/screenshots/02_intro_takeoff_logo.png) | ![3. Briefing & Tactical Notepad](docs/screenshots/03_briefing_controls.png) | ![4. 3D 360° Circular Orbit](docs/screenshots/04_gameplay_plasma_cannons.png) |
+| ![1. Intro: 256-col Airbase & Pilot](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Intro: Cockpit Boarding](docs/screenshots/v007_02_formations_360.png) | ![3. Briefing & Tactical Notepad](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. 3D 360° Circular Orbit](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|
 | **1. Intro: 256-col Airbase & Pilot** | **2. Intro: Cockpit Boarding** | **3. Briefing & Tactical Notepad** | **4. 3D 360° Circular Orbit** |
 
