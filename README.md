@@ -23,9 +23,9 @@
 
 ## Galeria (v0.0.6 — Amiga 1200 AGA / THEA1200)
 
-| ![1. Intro: Lotnisko & Motocykl](https://github.com) | ![2. Briefing & Notatnik](https://github.com) | ![3. Lot 3D po Okręgu 360°](https://github.com) | ![4. Walka 3D & Lasery](https://github.com) |
+| ![1. Intro: Lotnisko 256 kol. & Pilot](https://github.com/01_intro_topgun.png) | ![2. Intro: Wsiadanie do Kokpitu](https://github.com/02_intro_takeoff_logo.png) | ![3. Briefing z Notatnikiem](https://github.com/03_briefing_controls.png) | ![4. Lot 3D po Okręgu 360°](https://github.com/04_gameplay_plasma_cannons.png) |
 |:---:|:---:|:---:|:---:|
-| **1. Intro: Lotnisko 256 kol. & Pilot** | **2. Briefing z Notatnikiem** | **3. Lot 3D po Okręgu 360°** | **4. Walka 3D & Auto-Lock** |
+| **1. Intro: Lotnisko 256 kol. & Pilot** | **2. Intro: Wsiadanie do Kokpitu** | **3. Briefing z Notatnikiem** | **4. Lot 3D po Okręgu 360°** |
 
 ## Wykorzystane Silniki i Powiązane Repozytoria
 

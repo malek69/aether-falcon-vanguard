@@ -23,9 +23,9 @@
 
 ## Gallery (v0.0.6 — Amiga 1200 AGA / THEA1200)
 
-| ![1. Intro: 256-col Airbase & Pilot](https://github.com) | ![2. Briefing & Tactical Notepad](https://github.com) | ![3. 3D 360° Circular Orbit](https://github.com) | ![4. 3D Combat & Auto-Lock Lasers](https://github.com) |
+| ![1. Intro: 256-col Airbase & Pilot](https://github.com/01_intro_topgun.png) | ![2. Intro: Cockpit Boarding](https://github.com/02_intro_takeoff_logo.png) | ![3. Briefing & Tactical Notepad](https://github.com/03_briefing_controls.png) | ![4. 3D 360° Circular Orbit](https://github.com/04_gameplay_plasma_cannons.png) |
 |:---:|:---:|:---:|:---:|
-| **1. Intro: 256-col Airbase & Pilot** | **2. Briefing & Tactical Notepad** | **3. 3D 360° Circular Orbit** | **4. 3D Combat & Auto-Lock Lasers** |
+| **1. Intro: 256-col Airbase & Pilot** | **2. Intro: Cockpit Boarding** | **3. Briefing & Tactical Notepad** | **4. 3D 360° Circular Orbit** |
 
 ## Engines Used & Related Repositories
 
