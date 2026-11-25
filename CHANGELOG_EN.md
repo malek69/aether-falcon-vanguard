@@ -1,10 +1,24 @@
+<p align="right"><a href="CHANGELOG.md">Polski</a> | <strong>English</strong> | <a href="README_EN.md">README</a></p>
+
 # Changelog — AETHER FALCON: VANGUARD
 
-## [0.0.2] - 2026-11-25
-- **Unified 256-Color AGA Pipeline (`Intro -> Briefing -> 3D Gameplay -> Debriefing`):** unified vector/briefing screens in `chunky_buf` + AGA C2P with high-contrast HUD palette (`$FC..$FF`).
-- **5x7 Font & HUD Primitives:** fixed 8-byte stride in `hud_ascii_5x7` and implemented 4-sided Lock-On reticle frames and filled emblem diamonds.
-- **XF-14 Albatros & Dual Controls:** elevated fighter above 3D terrain (`Y=12, Z=22`), added keyboard flight/reticle controls (Arrows + Space) alongside Joy2, and enabled `-DM68060`.
-- **Chip/Fast RAM & VBR Hardening:** allocated AGA bitplanes (`MEMF_CHIP`) and `fill_lut` (`MEMF_FAST`) via `Exec AllocMem` and read `VBR` via `Exec Supervisor()`.
+All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
-## [0.0.1] - 2026-11-25
-- Initial bare-metal skeleton for Amiga 1200 AGA / THEA1200 (XF-14 mesh, 3 missions, Lock-On, `.MOD` + Paula SFX).
+---
+
+## [v0.0.2] - 2026-11-25
+
+- **Unified 256-Color AGA Pipeline (`Intro -> Briefing -> 3D Gameplay -> Debriefing`):** unified vector and mission briefing screens into the shared `chunky_buf` + AGA C2P pipeline with high-contrast HUD palette indices (`$FC..$FF`).
+- **Fixed `5×7` Bitmap Font & HUD Primitives:** corrected 8-byte stride decoding in `hud_ascii_5x7` (bits `4..0`), implemented full 4-sided **Lock-On** reticle frames, and added filled Solis Confederation emblem diamonds.
+- **XF-14 "Albatros" Elevation & Keyboard Controls:** raised the interceptor mesh cleanly above the scrolling 3D heightmap terrain (`Y=12`, `Z=22`), added full keyboard flight and reticle controls (`Arrows + Space`) alongside Joystick Port 2, and enabled `-DM68060` for the `060` profile.
+- **Chip/Fast RAM & VBR Hardening:** allocated AGA bitplanes (`180 KB MEMF_CHIP`) and `fill_lut` (`512 KB MEMF_FAST`) via `Exec AllocMem`, installed the 50 Hz VBL interrupt using `VBR` read via `Exec Supervisor()`, and cached palette uploads on menu screens.
+
+---
+
+## [v0.0.1] - 2026-11-25
+
+- **Initial Bare-Metal M68k Skeleton:** implemented the campaign state machine (`Intro -> Briefing -> Gameplay -> Debriefing`) and 3 sorties (*Sargas Archipelago*, *Krell Storm Canyon*, *Leviathan Citadel*).
+- **Original XF-14 "Albatros" 3D Fighter Mesh:** procedurally generated multi-material 3D mesh (`29` vertices, `38` triangles with vertex normals for Gouraud/Specular shading) and twin-nozzle particle trails.
+- **Gameplay Loop & Multi-Lock System:** low-altitude 3D heightmap flyover, Ether Core energy harvesting, 2D/3D Lock-On reticle supporting up to 8 simultaneous target locks, and homing missile barrages.
+- **ProTracker `.MOD` + Paula SFX Audio:** 4-channel `.MOD` soundtrack paired with a bare-metal Paula channel 3 sound effects driver (`Lock-On` ping, missile launch, Ether Core pickup).
+- **3-Profile Release Build System (`tools/build_game.py`):** automated generation of `.lha` (WHDLoad Slave v17 + `.info` icon) and `_FSUAE.zip` archives for `standard` (`020`), `thea1200` (`FULL_RES`), and `060` (`MC68060`).
