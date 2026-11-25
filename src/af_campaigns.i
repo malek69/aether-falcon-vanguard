@@ -76,109 +76,160 @@ af_render_vector_screen:
         bra.w   .vec_blit
 
 .draw_briefing:
-        ; --- EKRAN 1: BRIEFING (Mapa Taktyczna Sektora) ---
+        ; --- EKRAN 1: BRIEFING (Tablica Odpraw Taktycznych z Fabula Kampanii) ---
         jsr     af_draw_aw_briefing
-        ; Ramka mapy taktycznej
+
+        ; Rysuj ciemna tablice odpraw na srodku ekranu (x=14..305)
+        lea     chunky_buf,a0
+        ifd FULL_RES
+        adda.l  #14*320+14,a0
+        move.w  #202,d7                 ; wysokosc tablicy 203 wiersze
+        else
+        adda.l  #6*320+14,a0
+        move.w  #96,d7                  ; wysokosc tablicy 97 wierszy
+        endif
+        move.l  #269488144,d1           ; 4 piksele ciemnego tla tablicy ($10101010)
+.brd_row:
+        move.l  a0,a1
+        moveq   #72,d6                  ; 73 * 4 = 292 px szerokosci (14..305)
+.brd_col:
+        move.l  d1,(a1)+
+        dbf     d6,.brd_col
+        lea     320(a0),a0
+        dbf     d7,.brd_row
+
+        ; Ramka zewnetrzna tablicy ($FD turkus) i wewnetrzna ($FE zloto Solis)
         move.w  #160,d0
         ifd FULL_RES
-        move.w  #96,d1
-        moveq   #42,d3
+        move.w  #115,d1
+        moveq   #100,d3
         else
-        move.w  #46,d1
-        moveq   #20,d3
+        move.w  #54,d1
+        moveq   #47,d3
         endif
-        move.b  #$FD,d6
+        move.b  #253,d6
         jsr     af_draw_chunky_rect
 
-        ; 2 punkty celow misji na mapie
-        move.w  #146,d0
+        ; Mini-radar taktyczny w prawym gornym rogu tablicy (x=268)
+        move.w  #268,d0
         ifd FULL_RES
-        move.w  #86,d1
+        move.w  #66,d1
+        moveq   #22,d3
         else
-        move.w  #42,d1
+        move.w  #32,d1
+        moveq   #11,d3
         endif
-        moveq   #5,d3
-        move.b  #$FC,d6
+        move.b  #254,d6
+        jsr     af_draw_chunky_rect
+        move.w  #262,d0
+        ifd FULL_RES
+        move.w  #60,d1
+        else
+        move.w  #29,d1
+        endif
+        moveq   #4,d3
+        move.b  #252,d6
+        jsr     af_fill_chunky_diamond
+        move.w  #275,d0
+        ifd FULL_RES
+        move.w  #73,d1
+        else
+        move.w  #35,d1
+        endif
+        moveq   #4,d3
+        move.b  #253,d6
         jsr     af_fill_chunky_diamond
 
-        move.w  #176,d0
+        ; Naglowek tablicy odpraw
+        lea     str_brd_hdr(pc),a0
+        moveq   #26,d0
         ifd FULL_RES
-        move.w  #108,d1
+        moveq   #22,d1
         else
-        move.w  #52,d1
+        moveq   #10,d1
         endif
-        moveq   #5,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
+        move.b  #254,d6
+        bsr.w   af_print_chunky_str
 
+        ; Wybierz tablice 6 wskaznikow tekstowych dla aktualnej misji
         move.w  af_mission,d2
         cmp.w   #1,d2
-        beq.w   .b_m2
+        beq.s   .b_sel2
         cmp.w   #2,d2
-        beq.w   .b_m3
+        beq.s   .b_sel3
+        lea     brd_m1_ptrs(pc),a4
+        bra.s   .b_draw_lines
+.b_sel2: lea     brd_m2_ptrs(pc),a4
+        bra.s   .b_draw_lines
+.b_sel3: lea     brd_m3_ptrs(pc),a4
 
-        lea     str_m1_title(pc),a0
-        lea     str_m1_obj(pc),a1
-        lea     str_m1_desc2(pc),a2
-        lea     str_m1_desc3(pc),a3
-        bra.s   .b_print_all
-
-.b_m2:
-        lea     str_m2_title(pc),a0
-        lea     str_m2_obj(pc),a1
-        lea     str_m2_desc2(pc),a2
-        lea     str_m2_desc3(pc),a3
-        bra.s   .b_print_all
-
-.b_m3:
-        lea     str_m3_title(pc),a0
-        lea     str_m3_obj(pc),a1
-        lea     str_m3_desc2(pc),a2
-        lea     str_m3_desc3(pc),a3
-
-.b_print_all:
-        movem.l a1-a3,-(sp)
-        moveq   #68,d0
+.b_draw_lines:
+        ; 1. Tytul misji (bialy $FF)
+        move.l  (a4)+,a0
+        moveq   #26,d0
         ifd FULL_RES
-        moveq   #18,d1
+        moveq   #38,d1
         else
-        moveq   #8,d1
+        moveq   #20,d1
         endif
-        move.b  #$FF,d6
+        move.b  #255,d6
         bsr.w   af_print_chunky_str
-        movem.l (sp)+,a1-a3
 
-        movem.l a2-a3,-(sp)
-        move.l  a1,a0
-        moveq   #36,d0
+        ; 2. Linia fabuly 1 (turkus $FD)
+        move.l  (a4)+,a0
+        moveq   #26,d0
         ifd FULL_RES
-        move.w  #174,d1
+        moveq   #62,d1
         else
-        moveq   #76,d1
+        moveq   #33,d1
         endif
-        move.b  #$FE,d6
+        move.b  #253,d6
         bsr.w   af_print_chunky_str
-        movem.l (sp)+,a2-a3
 
-        move.l  a3,-(sp)
-        move.l  a2,a0
-        moveq   #36,d0
+        ; 3. Linia fabuly 2 (bialy $FF)
+        move.l  (a4)+,a0
+        moveq   #26,d0
         ifd FULL_RES
-        move.w  #188,d1
+        moveq   #84,d1
         else
-        moveq   #85,d1
+        moveq   #45,d1
         endif
-        move.b  #$FD,d6
+        move.b  #255,d6
         bsr.w   af_print_chunky_str
-        move.l  (sp)+,a0
-        moveq   #36,d0
+
+        ; 4. Linia fabuly 3 (zloto $FE)
+        move.l  (a4)+,a0
+        moveq   #26,d0
         ifd FULL_RES
-        move.w  #202,d1
+        moveq   #112,d1
         else
-        moveq   #94,d1
+        moveq   #59,d1
         endif
-        move.b  #$FF,d6
+        move.b  #254,d6
         bsr.w   af_print_chunky_str
+
+        ; 5. Linia fabuly 4 (turkus $FD)
+        move.l  (a4)+,a0
+        moveq   #26,d0
+        ifd FULL_RES
+        move.w  #136,d1
+        else
+        moveq   #71,d1
+        endif
+        move.b  #253,d6
+        bsr.w   af_print_chunky_str
+
+        ; 6. Linia fabuly 5 (czerwony/zloto celu)
+        move.l  (a4)+,a0
+        moveq   #26,d0
+        ifd FULL_RES
+        move.w  #160,d1
+        else
+        moveq   #83,d1
+        endif
+        move.b  #255,d6
+        bsr.w   af_print_chunky_str
+
 .b_keys_hint:
         lea     str_brief_keys1(pc),a0
         moveq   #46,d0
@@ -392,4 +443,26 @@ str_rank_3:     dc.b    "PILOT RANK: ACE OF SOLIS",0
 str_go_title:   dc.b    "GAME OVER - XF-14 DESTROYED",0
 str_go_sub:     dc.b    "SHIELD DEPLETED - MISSION FAILED",0
 str_go_retry:   dc.b    "PRESS FIRE OR SPACE TO RESTART",0
+        even
+
+        even
+brd_m1_ptrs:    dc.l str_m1_title, str_m1_l1, str_m1_l2, str_m1_l3, str_m1_l4, str_m1_l5
+brd_m2_ptrs:    dc.l str_m2_title, str_m2_l1, str_m2_l2, str_m2_l3, str_m2_l4, str_m2_l5
+brd_m3_ptrs:    dc.l str_m3_title, str_m3_l1, str_m3_l2, str_m3_l3, str_m3_l4, str_m3_l5
+str_brd_hdr:    dc.b "SOLIS AIRBASE - VANGUARD BRIEFING",0
+str_m1_l1:      dc.b "VESPERA DOMINION INVADES SOLIS!",0
+str_m1_l2:      dc.b "LAUNCHED XF-14 FROM SOLIS AIRBASE.",0
+str_m1_l3:      dc.b "PATROL SARGAS OCEAN & VOXEL ISLANDS",0
+str_m1_l4:      dc.b "COLLECT BLUE ETHER CORES (+40 SHIELD)",0
+str_m1_l5:      dc.b "INTERCEPT 360 SPIRAL VESPERA SCOUTS!",0
+str_m2_l1:      dc.b "ENEMY FLEET ENTERS KRELL CANYON!",0
+str_m2_l2:      dc.b "HIGH-SPEED RUN BETWEEN CANYON PEAKS",0
+str_m2_l3:      dc.b "VESPERA ATTACKS IN 360 DOUBLE-HELIX",0
+str_m2_l4:      dc.b "FIRE MULTI-LOCK SALVOS TO CLEAR PATH",0
+str_m2_l5:      dc.b "EVADE PLASMA BOLTS & GATHER CORES!",0
+str_m3_l1:      dc.b "FINAL ASSAULT ON LEVIATHAN CITADEL!",0
+str_m3_l2:      dc.b "FLY OVER VOLCANIC CITADEL TOWERS",0
+str_m3_l3:      dc.b "3D FLYING FORTRESS IN TUNNEL CENTER",0
+str_m3_l4:      dc.b "POWERED BY 4 ORBITING REACTOR CORES",0
+str_m3_l5:      dc.b "DESTROY ALL 4 REACTORS (2 HITS EACH)!",0
         even
