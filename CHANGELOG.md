@@ -6,6 +6,15 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.1.1] - 2026-11-25
+
+- **Wielotonowe Sceny Rotoskopowe w Stylu *Eon* (The Black Lotus) (`src/af_vector_scenes.i`, `src/af_campaigns.i`):** bezkonturowy odtwarzacz wielokatow `af_play_eon_scene` dla 3 scen fabularnych:
+  - **Intro (Akt I — „Salute to the Sky”):** sylwetka pilota unoszacego zacisnieta piesc na tle srebrzystego nieba (`#30`) z chlodnym podswietleniem krawedziowym (`#215`/`#217`).
+  - **Briefing („Commander’s Vigil”):** wielotonowy portret dowodcy eskadry Vanguard wspierajacego podbrodek na dloni obok tablicy odpraw.
+  - **Debriefing / Game Over („Pilot’s Resolve”):** dramatyczny portret pilota 3/4 z bocznym oswietleniem na glebokiej czerni (`#16`).
+
+---
+
 ## [v0.1.0] - 2026-11-25
 
 | <img src="docs/screenshots/v010_01_briefing_board.png" width="340"> | <img src="docs/screenshots/v010_02_hud_score_clouds.png" width="340"> |

@@ -6,6 +6,15 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.1.1] - 2026-11-25
+
+- **Multi-Tone Rotoscoped *Eon* (The Black Lotus) Style Story Scenes (`src/af_vector_scenes.i`, `src/af_campaigns.i`):** borderless multi-faceted polygon scene player `af_play_eon_scene` across all 3 narrative screens:
+  - **Intro (Act I — "Salute to the Sky"):** silhouette of the Vanguard pilot raising a fist against a silver sky (`#30`) with cool steel-cyan rim lighting (`#215`/`#217`).
+  - **Briefing ("Commander’s Vigil"):** multi-tone portrait of the Vanguard Squadron Commander resting his chin on his hand alongside the tactical briefing panel.
+  - **Debriefing / Game Over ("Pilot’s Resolve"):** dramatic 3/4 side-lit pilot portrait against deep black (`#16`).
+
+---
+
 ## [v0.1.0] - 2026-11-25
 
 | <img src="docs/screenshots/v010_01_briefing_board.png" width="340"> | <img src="docs/screenshots/v010_02_hud_score_clouds.png" width="340"> |
