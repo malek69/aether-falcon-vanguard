@@ -111,3 +111,39 @@ python3 tools/mesh_conv.py --obj assets_raw/vespera_interceptor.obj --out src/cu
 ## Pełna Lista Narzędzi w Katalogu `tools/`
 
 Skrypt obejmuje kompleksowy zestaw narzędzi w katalogu `tools/` (m.in. `mesh_conv.py`, `obj2amiga.py`, `build_game.py`, `png_to_aga.py` oraz generatorów tekstur, scen i audio `.MOD`), które służą do konwersji modeli 3D, generowania zasobów graficznych AGA oraz budowania paczek `LHA` i FS-UAE.
+
+## Konwerter Wideo / YouTube na PCM i Dane Wektorowe (`tools/`)
+
+W katalogu `tools/` znajduja sie narzedzia obu zintegrowanych silników (**AURA-3D AGA Engine** oraz **Amiga 1200 Vector Stream Engine**), w tym konwerter wideo (np. z YouTube przez `yt-dlp` / `ffmpeg`) na 8-bitowe audio PCM oraz strumien wielokatow wektorowych N-gon:
+
+```bash
+python3 tools/build_demo.py --video input.mp4 --fps 50 --threshold 128 --crop-43
+```
+
+## Pelny Zestaw Narzedzi Deweloperskich (`tools/` — 16 Skryptow)
+
+| Skrypt | Silnik / Pochodzenie | Rola i mozliwosci |
+| :--- | :--- | :--- |
+| `tools/build_game.py` | **Aether Falcon** | Glowny potok budowania (`vasmm68k_mot`) paczek `.LHA` i `_FSUAE.zip` dla profili `standard` (`68EC020` `320x128`) oraz `thea1200` (`320x256` 16:9). |
+| `tools/build_demo.py` | **Vector Engine** | Uniwersalny konwerter wideo na strumien wektorowy N-gon (`scene_data.i` z wycinaniem otworow XOR LUT) i 8-bit signed PCM audio Paula DMA (`--video`, `--fps`, `--threshold`, `--crop-43`, `--thin-lines`). |
+| `tools/build_median.py` | **Vector Engine** | Dedykowany potok przetwarzania wideo (`624x496` -> `320x256` AGA + Blitter AA @ `50 FPS`, separacja 2 warstw kolorow, upraszczanie wielokatow i budowa `.LHA` / `.ZIP`). |
+| `tools/profile_patch.py` | **Vector Engine** | Konfigurator trybow AGA Hi-Res (`640x256`) oraz Interlace (`640x512`) dla silnika wektorowego. |
+| `tools/mesh_conv.py` | **AURA-3D** | Konwerter modeli 3D Wavefront `.OBJ` na natywne tablice wierzcholkow, normalnych i trojkatow M68k (wrogie mysliwce, Rdzenie Eteru, Boss Lewiatan). |
+| `tools/obj2amiga.py` | **AURA-3D** | Alternatywny parser siatek `.OBJ` z normalizacja skali i obsluga wielu materialow. |
+| `tools/png_to_aga.py` | **AURA-3D** | Konwerter plikow `.PNG` na tekstury `64x64` chunky (`--mode texture`) lub pelnoekranowe obrazy `320x256` w 8 bitplanach AGA + 24-bitowa paleta (`--mode bitplanes`). |
+| `tools/gen_aga_airbase_scenes.py` | **Aether Falcon** | Generator pelnoekranowych tel bazy lotniczej 256 kolorow AGA (`data/bg_airbase.bin`, `320x256`) i przezroczystych spriteow (`data/spr_moto.bin`). |
+| `tools/gen_topgun_mod.py` | **Aether Falcon** | Proceduralny generator 4-kanalowej sciezki dzwiekowej ProTracker `.MOD` (`data/vanguard_anthem.mod`) wolnej od praw autorskich. |
+| `tools/fetch_mod.py` | **AURA-3D** | Narzedzie pobierajace i weryfikujace zewnetrzne moduly muzyczne ProTracker `.MOD`. |
+| `tools/gen_phong_lut.py` | **AURA-3D** | Generator tablicy normalnych `phong_norm_lut.bin` do cieniowania Phonga oraz efektu *Fresnel Rim Glow*. |
+| `tools/gen_recip_table.py` | **AURA-3D** | Generator 32-bitowej tablicy odwrotnosci `recip_table_32.bin` (`1/Z` w formacie `16.16` fixed-point bez dzielenia `divs.l`). |
+| `tools/pack_scenes.py` | **AURA-3D** | Pakowacz zasobow scen i danych binarnych do wspolnych archiwow `.PAK`. |
+| `tools/make_logo.py` | **AURA-3D** | Generator bitplanowych logotypow i naglowkow AGA z obrazow zrodlowych. |
+| `tools/make_showcase.py` | **AURA-3D** | Narzedzie skladajace plansze prezentacyjne i podglady zasobow silnika. |
+| `tools/build_aura3d_demo.py` | **AURA-3D** | Skrypt budujacy pelne 8-scenowe demo technologiczne **AURA-3D AGA Engine** (`.ADF`, `.LHA`, `_FSUAE.zip`). |
+
+## Pelny Przeglad Modulow Silnikow (`src/` oraz `refs/`)
+
+- **Silnik Wokselowy 3D (`src/af_voxel_world.i`):** raycaster *Voxel Space* (Y-buffer horyzontu) generujacy ocean, wyspy i gory (Misja 01), kanion gorski z rzeka (Misja 02) oraz wulkaniczny lad i bastiony cytadeli (Misja 03).
+- **Potok 3D Gouraud / EnvMap (`refs/aura3d/engine/aura3d_v2.i`):** cieniowanie Gourauda + Environment Mapping z optymalizacja `bfextu` na M68020+, 16-bitowy Z-Buffer, blyski lustrzane (*Specular Highlights*), obsluga do 4 tekstur `64x64` na bryle oraz tablica odwrotnosci `1/Z`.
+- **Dodatkowe Efekty 3D w `refs/aura3d/engine/`:** cieniowanie Phonga + *Fresnel Rim Glow* (`phong_norm_lut.bin`), falujaca tafla wody (`ground_grid.i`), lustrzane odbicia 3D na wodzie (`mirror_reflect.i`), cienie rzucane (`planar_shadow.i`), rozblyski soczewkowe (`lens_flare.i`), mgla glebi `Z-Fog`, 3D Vertex Morphing (`morph_target.i`) oraz smugi czasteczek (`particle_trail.i`).
+- **Strumieniowe Wideo Wektorowe i PCM (`refs/vector/src/`):** dekoder skompresowanych klatek wielokatow N-gon z wycinaniem otworow (`scene_player.i` + `vec3d_engine.i`, 512 KB tablica XOR `fill_lut` w Fast RAM), strumieniowy odtwarzacz 8-bit signed PCM (`audio_player.i`, 4 kanaly Paula DMA IRQ Level 4 z wylaczonym filtrem LED) oraz tryby AGA Hi-Res `640x256` / Interlace `640x512`.

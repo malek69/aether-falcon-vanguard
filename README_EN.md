@@ -111,3 +111,39 @@ python3 tools/mesh_conv.py --obj assets_raw/vespera_interceptor.obj --out src/cu
 ## Complete Toolchain Reference (`tools/`)
 
 The `tools/` directory includes the complete 15-script toolchain (`mesh_conv.py`, `obj2amiga.py`, `build_game.py`, `png_to_aga.py`, LUT/table generators, and audio/scene packers) supporting the Amiga 1200 vector engine.
+
+## Video / YouTube to PCM & Vector Stream Converter (`tools/`)
+
+The `tools/` directory includes the complete toolchain from both integrated engines (**AURA-3D AGA Engine** and **Amiga 1200 Vector Stream Engine**), including a video converter (e.g. YouTube clips via `yt-dlp` / `ffmpeg`) producing 8-bit signed PCM audio and N-gon vector polygon streams:
+
+```bash
+python3 tools/build_demo.py --video input.mp4 --fps 50 --threshold 128 --crop-43
+```
+
+## Complete Developer Toolchain Reference (`tools/` — 16 Scripts)
+
+| Script | Engine / Origin | Role & Capabilities |
+| :--- | :--- | :--- |
+| `tools/build_game.py` | **Aether Falcon** | Master build pipeline (`vasmm68k_mot`) packaging `.LHA` and `_FSUAE.zip` archives for `standard` (`68EC020` `320x128`) and `thea1200` (`320x256` 16:9). |
+| `tools/build_demo.py` | **Vector Engine** | Universal video-to-vector converter generating closed N-gon streams (`scene_data.i` with XOR LUT cutouts) and 8-bit signed PCM audio for Paula DMA (`--video`, `--fps`, `--threshold`, `--crop-43`, `--thin-lines`). |
+| `tools/build_median.py` | **Vector Engine** | Dedicated 50 FPS video pipeline (`624x496` -> `320x256` AGA + Blitter AA, dual color layer separation, polygon simplification, `.LHA` / `.ZIP` packaging). |
+| `tools/profile_patch.py` | **Vector Engine** | Patcher for AGA Hi-Res (`640x256`) and Interlace (`640x512`) vector engine display modes. |
+| `tools/mesh_conv.py` | **AURA-3D** | Wavefront `.OBJ` to M68k vertex, normal, and triangle table converter (Vespera Interceptors, Ether Cores, Leviathan Boss). |
+| `tools/obj2amiga.py` | **AURA-3D** | Alternative `.OBJ` mesh parser with scale normalization and multi-material support. |
+| `tools/png_to_aga.py` | **AURA-3D** | Converts `.PNG` images into `64x64` chunky textures (`--mode texture`) or full-screen `320x256` 8-bitplane AGA screens + 24-bit palettes (`--mode bitplanes`). |
+| `tools/gen_aga_airbase_scenes.py` | **Aether Falcon** | Generates full-screen 256-color AGA sunset airbase backdrops (`data/bg_airbase.bin`, `320x256`) and transparent sprites (`data/spr_moto.bin`). |
+| `tools/gen_topgun_mod.py` | **Aether Falcon** | Procedural 4-channel ProTracker `.MOD` soundtrack generator (`data/vanguard_anthem.mod`) with royalty-free synth & drum samples. |
+| `tools/fetch_mod.py` | **AURA-3D** | Helper script to download and verify external ProTracker `.MOD` music modules. |
+| `tools/gen_phong_lut.py` | **AURA-3D** | Generates the `phong_norm_lut.bin` lookup table for Phong normal mapping and *Fresnel Rim Glow*. |
+| `tools/gen_recip_table.py` | **AURA-3D** | Generates the 32-bit reciprocal table `recip_table_32.bin` (`1/Z` in `16.16` fixed-point for division-free projection). |
+| `tools/pack_scenes.py` | **AURA-3D** | Packs scene assets and binary resources into consolidated `.PAK` archives. |
+| `tools/make_logo.py` | **AURA-3D** | Generates bitplane AGA logos and title headers from source artwork. |
+| `tools/make_showcase.py` | **AURA-3D** | Composes visual showcase sheets and engine feature previews. |
+| `tools/build_aura3d_demo.py` | **AURA-3D** | Master builder for the 8-scene **AURA-3D AGA Engine** showcase demo (`.ADF`, `.LHA`, `_FSUAE.zip`). |
+
+## Complete Engine Module Overview (`src/` & `refs/`)
+
+- **3D Voxel Space Terrain Engine (`src/af_voxel_world.i`):** column-based Voxel Space raycaster (with horizon Y-buffer) rendering ocean waves, islands, and mountains (Mission 01), deep canyon cliffs & river (Mission 02), and volcanic terrain with citadel towers (Mission 03).
+- **3D Gouraud / EnvMap Pipeline (`refs/aura3d/engine/aura3d_v2.i`):** Gouraud + Environment Mapping with M68020+ `bfextu` optimization, 16-bit Z-Buffer, specular highlights, up to 4 `64x64` textures per mesh, and `1/Z` reciprocal tables.
+- **Additional 3D Effects in `refs/aura3d/engine/`:** Phong normal mapping + *Fresnel Rim Glow* (`phong_norm_lut.bin`), sinusoidal water plane (`ground_grid.i`), 3D water mirror reflections (`mirror_reflect.i`), planar shadows (`planar_shadow.i`), 3D lens flare (`lens_flare.i`), depth `Z-Fog`, 3D vertex morphing (`morph_target.i`), and 3D particle trails (`particle_trail.i`).
+- **Vector Stream & PCM Engine (`refs/vector/src/`):** compressed N-gon polygon stream decoder with interior cutout support (`scene_player.i` + `vec3d_engine.i`, 512 KB XOR `fill_lut` in Fast RAM), streaming 8-bit signed PCM audio player (`audio_player.i`, 4-channel Paula DMA IRQ Level 4 with LED filter disabled), and AGA Hi-Res `640x256` / Interlace `640x512` modes.
