@@ -68,18 +68,17 @@ af_render_gameplay_3d:
         move.w  af_pitch,d1
         asr.w   #3,d1                   ; Naturalny kat pochylenia -13..+13 (bez stawania deba!)
         subq.w  #8,d1                   ; Lekki kat z gory na kadlub i skrzydla
-        move.w  af_roll,d2
-        asr.w   #1,d2                   ; Naturalny przechyl skrzydel +/-60 st.
+        move.w  af_roll,d2                   ; Naturalny przechyl skrzydel +/-60 st.
         jsr     build_rot_matrix_3d
 
         ; Pozycja XF-14 na okregu unikow (Lewo/Prawo = kat, Gora/Dol = promien)
         move.w  af_ship_dx,d4
         move.w  af_ship_dy,d5
         ifd FULL_RES
-        add.w   #12,d5
+        subq.w  #4,d5
         moveq   #22,d6
         else
-        addq.w  #6,d5
+        subq.w  #2,d5
         moveq   #24,d6
         endif
         lea     xf14_verts,a0
@@ -102,10 +101,10 @@ af_render_gameplay_3d:
         move.w  af_ship_dx,d4
         move.w  af_ship_dy,d5
         ifd FULL_RES
-        add.w   #12,d5
+        subq.w  #4,d5
         moveq   #22,d6
         else
-        addq.w  #6,d5
+        subq.w  #2,d5
         moveq   #24,d6
         endif
         jsr     ptrail_emit_twin_nozzles
@@ -890,9 +889,9 @@ af_draw_cannon_beams:
         add.w   #160,d4
         move.w  af_ship_dy,d5
         ifd FULL_RES
-        add.w   #136,d5
+        add.w   #120,d5
         else
-        add.w   #68,d5
+        add.w   #60,d5
         endif
         moveq   #7,d7
 .cb_lp:
