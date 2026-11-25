@@ -24,6 +24,10 @@
 
 ---
 
+## Gameplay & 3D Engine Video (v0.1.3.1)
+
+https://github.com
+
 ## Rotoscoped *Eon* (TBL) Vector Engine Cinematics Gallery (v0.1.3.1)
 
 | ![1. Act I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Act II: Solis Airbase (Eon Style)](docs/screenshots/v013_eon_02.png) | ![3. Act III: XF-14 Cockpit](docs/screenshots/v013_eon_03.png) |

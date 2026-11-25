@@ -24,6 +24,10 @@
 
 ---
 
+## Wideo z Rozgrywki (v0.1.3.1 — Gameplay & Silnik 3D)
+
+https://github.com
+
 ## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3.1)
 
 | ![1. Akt I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Akt II: Baza Solis (Styl Eon)](docs/screenshots/v013_eon_02.png) | ![3. Akt III: Kokpit XF-14](docs/screenshots/v013_eon_03.png) |
