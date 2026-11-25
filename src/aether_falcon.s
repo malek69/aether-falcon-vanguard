@@ -100,7 +100,9 @@ mainloop:
         bne.w   mainloop
 
 .advance_state:
-        clr.b   kbd_held_raw            ; Skonsumuj klawisz (brak przeskoku 2 ekranow naraz)
+        move.b  #$ff,kbd_held_raw
+        move.b  #$ff,kbd_last_sdr
+        clr.b   fire_held            ; Skonsumuj klawisz (brak przeskoku 2 ekranow naraz)
         clr.l   af_state_timer
         move.w  af_state,d0
         addq.w  #1,d0

@@ -215,8 +215,11 @@ af_aw_fill_tri:
         lea     poly_intro_bridge(pc),a0
         move.b  #$15,d6
         bsr.w   af_aw_fill_ngon
+        lea     poly_intro_stripe(pc),a0
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_ngon
 
-        ; Obrotowy sygnal radaru na wiezy lotniskowca Solis
+        ; Radar wiezy Solis
         move.w  #38,d0
         ifd FULL_RES
         move.w  #70,d1
@@ -230,30 +233,10 @@ af_aw_fill_tri:
         move.b  #$FD,d6
         jsr     af_fill_chunky_diamond
 
-        ; Pas startowy + migajace swiatla naprowadzajace
-        lea     poly_intro_stripe(pc),a0
-        move.b  #$FE,d6
-        bsr.w   af_aw_fill_ngon
-        move.l  vbl_tick(pc),d0
-        and.w   #15,d0
-        cmp.w   #8,d0
-        bge.s   .no_lights
-        move.w  #124,d0
-        ifd FULL_RES
-        move.w  #194,d1
-        else
-        moveq   #104,d1
-        endif
-        moveq   #3,d3
-        move.b  #$FC,d6
-        jsr     af_fill_chunky_diamond
-        move.w  #196,d0
-        jsr     af_fill_chunky_diamond
-.no_lights:
-        cmp.w   #180,d7
+        cmp.w   #170,d7
         bge.w   .act3_takeoff
 
-        ; AKT 1 & 2: XF-14 na pokladzie, podjezdza czerwony motocykl i pilot idzie do kokpitu
+        ; AKT 1 & 2: XF-14 na pokladzie, podjezdza czerwony motocykl i pilot idzie do samolotu
         move.w  #160,d0
         ifd FULL_RES
         move.w  #146,d1
@@ -278,6 +261,7 @@ af_aw_fill_tri:
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
 
+        ; Motocykl (X = 14 -> 109)
         move.w  d7,d4
         cmp.w   #95,d4
         ble.s   .moto_mv
@@ -310,20 +294,7 @@ af_aw_fill_tri:
         move.b  #$FC,d6
         bsr.w   af_aw_fill_tri
 
-        cmp.w   #95,d7
-        bge.s   .pilot_dismount
-        move.w  d7,d0
-        add.w   #26,d0
-        ifd FULL_RES
-        move.w  #181,d1
-        else
-        moveq   #101,d1
-        endif
-        moveq   #3,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
-
-.pilot_dismount:
+        ; Pilot na motocyklu (t < 95) -> Pilot idacy do XF-14 (t >= 95)
         cmp.w   #95,d7
         bge.s   .pilot_walk
         move.w  d7,d0
@@ -349,7 +320,7 @@ af_aw_fill_tri:
         jsr     af_fill_chunky_diamond
         bra.w   .intro_done
 
-        ; AKT 3 & 4: Start XF-14 z dopalaczem i lot w dal w niebo
+        ; AKT 3 & 4: Start XF-14 z dopalaczem i lot w dal na tle logo
 .act3_takeoff:
         move.w  #101,d0
         ifd FULL_RES
@@ -364,22 +335,22 @@ af_aw_fill_tri:
         jsr     af_fill_chunky_diamond
 
         move.w  d7,d4
-        sub.w   #180,d4
+        sub.w   #170,d4
         move.w  d4,d5
         asr.w   #1,d5
         ifd FULL_RES
         move.w  #146,d1
         sub.w   d5,d1
-        cmp.w   #58,d1
+        cmp.w   #56,d1
         bge.s   .fy_ok
-        moveq   #58,d1
+        moveq   #56,d1
         else
         moveq   #82,d1
         asr.w   #1,d5
         sub.w   d5,d1
-        cmp.w   #30,d1
+        cmp.w   #28,d1
         bge.s   .fy_ok
-        moveq   #30,d1
+        moveq   #28,d1
         endif
 .fy_ok:
         move.w  d4,d3
@@ -431,6 +402,7 @@ af_aw_fill_tri:
         moveq   #2,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
+
 .intro_done:
         movem.l (sp)+,d0-d7/a0-a1
         rts
