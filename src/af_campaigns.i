@@ -16,28 +16,21 @@ af_render_vector_screen:
         move.l  #$00FFFFFF,255*4(a0)
         jsr     load_aga_256_palette
 .pal_cached:
-        ; Wlasne tlo sceny fabularnej (osobne dla Intro, Briefingu i Debriefingu)
-        move.w  af_state,d0
-        cmp.w   #STATE_BRIEFING,d0
-        beq.s   .bg_brief
-        cmp.w   #STATE_DEBRIEF,d0
-        beq.s   .bg_deb
-        lea     poly_bg_full(pc),a0
-        move.b  #$01,d6
-        jsr     af_aw_fill_ngon
-        lea     poly_bg_horiz(pc),a0
-        move.b  #$12,d6
-        jsr     af_aw_fill_ngon
-        bra.s   .bg_stars
-.bg_brief:
-        lea     poly_bg_full(pc),a0
-        move.b  #$02,d6
-        jsr     af_aw_fill_ngon
-        bra.s   .bg_stars
-.bg_deb:
-        lea     poly_bg_full(pc),a0
-        move.b  #$01,d6
-        jsr     af_aw_fill_ngon
+                ; Ultraszybkie 32-bitowe czyszczenie tla ekranu fabularnego
+        lea     chunky_buf,a0
+        move.l  #,d1
+        cmp.w   #STATE_BRIEFING,af_state
+        bne.s   .bg_c_ok
+        move.l  #,d1
+.bg_c_ok:
+        ifd FULL_RES
+        move.w  #20479,d2
+        else
+        move.w  #10239,d2
+        endif
+.bg_f_lp:
+        move.l  d1,(a0)+
+        dbf     d2,.bg_f_lp
 .bg_stars:
         move.w  af_state,d0
         cmp.w   #STATE_BRIEFING,d0

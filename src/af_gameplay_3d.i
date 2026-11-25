@@ -197,7 +197,7 @@ af_draw_world_entities:
         bgt.w   .next_ent
         ; Na bazowej 68EC020 rysuj pelna bryle 3D dla bliskich celow (d2 <= 1100), dalsze jako sygnatury
         ifnd FULL_RES
-        cmp.w   #1100,d2
+        cmp.w   #750,d2
         ble.s   .do_3d_020
         moveq   #4,d3
         move.b  #252,d6

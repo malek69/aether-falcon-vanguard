@@ -150,10 +150,10 @@ render_3d_terrain_flyover:
         move.l  d1,d2
         muls.l  #80,d2
         else
-        lsl.l   #8,d1
+        lsl.l   #9,d1
         move.l  d1,vox_dx_step
         move.l  d1,d2
-        muls.l  #40,d2
+        muls.l  #20,d2
         endif
         sub.l   d2,d0
         lea     vox_ybuf(pc),a1
@@ -221,15 +221,16 @@ render_3d_terrain_flyover:
         swap    d4
         move.w  d1,d4
 .vcf:   move.l  d4,(a6)
+        move.l  d4,4(a6)
         lea     320(a6),a6
         dbf     d3,.vcf
 .vx_nx: addq.l  #2,a1
-        addq.l  #4,a2
+        addq.l  #8,a2
         add.l   vox_dx_step(pc),d0
         addq.w  #1,d5
-        cmp.w   #80,d5
+        cmp.w   #40,d5
         blo.w   .vx_lp
-        add.w   #12,d7
+        add.w   #14,d7
         endif
         cmp.w   #224,d7
         blo.w   .vz_lp
