@@ -226,13 +226,25 @@ af_draw_aw_intro:
         lsr.w   #2,d5                   ; 0..30 px rozwarcia
         move.w  #112,d0
         sub.w   d5,d0
+        ifd FULL_RES
+        move.w  #112,d1
+        else
         moveq   #66,d1
+        endif
         move.w  #160,d2
         sub.w   d5,d2
+        ifd FULL_RES
+        move.w  #112,d3
+        else
         moveq   #66,d3
+        endif
         move.w  #160,d4
         sub.w   d5,d4
+        ifd FULL_RES
+        move.w  #160,d5
+        else
         moveq   #92,d5
+        endif
         move.b  #$17,d6
         bsr.w   af_aw_fill_tri
 
@@ -240,13 +252,25 @@ af_draw_aw_intro:
         lsr.w   #2,d5
         move.w  #112,d0
         sub.w   d5,d0
+        ifd FULL_RES
+        move.w  #112,d1
+        else
         moveq   #66,d1
+        endif
         move.w  #160,d2
         sub.w   d5,d2
+        ifd FULL_RES
+        move.w  #160,d3
+        else
         moveq   #92,d3
+        endif
         move.w  #112,d4
         sub.w   d5,d4
+        ifd FULL_RES
+        move.w  #160,d5
+        else
         moveq   #92,d5
+        endif
         move.b  #$17,d6
         bsr.w   af_aw_fill_tri
 
@@ -254,13 +278,25 @@ af_draw_aw_intro:
         lsr.w   #2,d5
         move.w  #160,d0
         add.w   d5,d0
+        ifd FULL_RES
+        move.w  #112,d1
+        else
         moveq   #66,d1
+        endif
         move.w  #208,d2
         add.w   d5,d2
+        ifd FULL_RES
+        move.w  #112,d3
+        else
         moveq   #66,d3
+        endif
         move.w  #208,d4
         add.w   d5,d4
+        ifd FULL_RES
+        move.w  #160,d5
+        else
         moveq   #92,d5
+        endif
         move.b  #$16,d6
         bsr.w   af_aw_fill_tri
 
@@ -268,13 +304,25 @@ af_draw_aw_intro:
         lsr.w   #2,d5
         move.w  #160,d0
         add.w   d5,d0
+        ifd FULL_RES
+        move.w  #112,d1
+        else
         moveq   #66,d1
+        endif
         move.w  #208,d2
         add.w   d5,d2
+        ifd FULL_RES
+        move.w  #160,d3
+        else
         moveq   #92,d3
+        endif
         move.w  #160,d4
         add.w   d5,d4
+        ifd FULL_RES
+        move.w  #160,d5
+        else
         moveq   #92,d5
+        endif
         move.b  #$16,d6
         bsr.w   af_aw_fill_tri
 
@@ -287,7 +335,11 @@ af_draw_aw_intro:
         asr.w   #1,d4
         addq.w  #8,d4
         move.w  #160,d0
+        ifd FULL_RES
+        move.w  #150,d1
+        else
         moveq   #86,d1
+        endif
         move.w  d7,d5
         asr.w   #2,d5
         sub.w   d5,d1

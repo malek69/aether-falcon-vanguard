@@ -148,6 +148,10 @@ af_draw_world_entities:
         ext.l   d0
         asl.l   #7,d0                   ; x * 128
         divs.w  d2,d0
+        ifd FULL_RES
+        muls.w  #3,d0
+        asr.w   #2,d0
+        endif
         add.w   #160,d0                  ; scr_x (0..159)
 
         move.l  8(a4),d1
@@ -275,8 +279,12 @@ af_update_and_draw_missiles:
 .init_m:
         move.b  #1,(a1)                 ; active = 1
         move.b  #18,1(a1)               ; TTL = 18 klatek do trafienia
-        move.w  #80,2(a1)               ; start X (z dyszy mysliwca)
-        move.w  #104,4(a1)              ; start Y
+        move.w  #160,2(a1)              ; start X (z dyszy mysliwca)
+        ifd FULL_RES
+        move.w  #140,4(a1)
+        else
+        move.w  #104,4(a1)
+        endif
         move.w  af_reticle_x,6(a1)    ; docelowy X na ekranie
         ; Wyzwol eksplozje czasteczkowa 3D + dodaj 500 pkt
         move.w  af_reticle_x,d0

@@ -56,19 +56,31 @@ af_render_vector_screen:
         ; Napisy tytulowe
         lea     str_game_title(pc),a0
         moveq   #82,d0
+        ifd FULL_RES
+        moveq   #28,d1
+        else
         moveq   #18,d1
+        endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
 
         lea     str_intro_1(pc),a0
         moveq   #55,d0
+        ifd FULL_RES
+        move.w  #198,d1
+        else
         moveq   #92,d1
+        endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
 
         lea     str_intro_2(pc),a0
         moveq   #76,d0
+        ifd FULL_RES
+        move.w  #224,d1
+        else
         moveq   #108,d1
+        endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
         bra.w   .vec_blit
@@ -78,20 +90,33 @@ af_render_vector_screen:
         jsr     af_draw_aw_briefing
         ; Ramka mapy taktycznej
         move.w  #160,d0
+        ifd FULL_RES
+        move.w  #112,d1
+        moveq   #50,d3
+        else
         move.w  #54,d1
         moveq   #28,d3
+        endif
         move.b  #$FD,d6
         jsr     af_draw_chunky_rect
 
         ; 2 punkty celow misji na mapie
         move.w  #146,d0
+        ifd FULL_RES
+        move.w  #98,d1
+        else
         move.w  #48,d1
+        endif
         moveq   #5,d3
         move.b  #$FC,d6
         jsr     af_fill_chunky_diamond
 
         move.w  #176,d0
+        ifd FULL_RES
+        move.w  #124,d1
+        else
         move.w  #60,d1
+        endif
         moveq   #5,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
@@ -104,12 +129,20 @@ af_render_vector_screen:
 
         lea     str_m1_title(pc),a0
         moveq   #68,d0
+        ifd FULL_RES
+        moveq   #24,d1
+        else
         moveq   #12,d1
+        endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
         lea     str_m1_obj(pc),a0
         moveq   #36,d0
+        ifd FULL_RES
+        move.w  #208,d1
+        else
         moveq   #96,d1
+        endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
         bra.w   .vec_blit
@@ -117,12 +150,20 @@ af_render_vector_screen:
 .b_m2:
         lea     str_m2_title(pc),a0
         moveq   #68,d0
+        ifd FULL_RES
+        moveq   #24,d1
+        else
         moveq   #12,d1
+        endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
         lea     str_m2_obj(pc),a0
         moveq   #36,d0
+        ifd FULL_RES
+        move.w  #208,d1
+        else
         moveq   #96,d1
+        endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
         bra.w   .vec_blit
@@ -130,12 +171,20 @@ af_render_vector_screen:
 .b_m3:
         lea     str_m3_title(pc),a0
         moveq   #68,d0
+        ifd FULL_RES
+        moveq   #24,d1
+        else
         moveq   #12,d1
+        endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
         lea     str_m3_obj(pc),a0
         moveq   #44,d0
+        ifd FULL_RES
+        move.w  #208,d1
+        else
         moveq   #96,d1
+        endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
         bra.w   .vec_blit
@@ -144,7 +193,11 @@ af_render_vector_screen:
         jsr     af_draw_aw_debrief
         ; --- EKRAN 2: DEBRIEFING (Awans Pilota) ---
         move.w  #160,d0
+        ifd FULL_RES
+        move.w  #108,d1
+        else
         move.w  #52,d1
+        endif
         moveq   #20,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
@@ -155,7 +208,11 @@ af_render_vector_screen:
         lea     str_deb_win(pc),a0
 .deb_hdr_ok:
         moveq   #52,d0
+        ifd FULL_RES
+        moveq   #28,d1
+        else
         moveq   #16,d1
+        endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
 
@@ -170,7 +227,11 @@ af_render_vector_screen:
         bra.s   .rk_pr
 .rk3:   lea     str_rank_3(pc),a0
 .rk_pr: moveq   #78,d0
+        ifd FULL_RES
+        move.w  #198,d1
+        else
         moveq   #92,d1
+        endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
 
@@ -236,7 +297,11 @@ poly_bg_full:
         dc.w    4, 0,0, 319,0, 319,127, 0,127
         endif
 poly_bg_horiz:
+        ifd FULL_RES
+        dc.w    4, 0,104, 319,104, 319,164, 0,164
+        else
         dc.w    4, 0,56, 319,56, 319,96, 0,96
+        endif
 
 str_game_title: dc.b    "AETHER FALCON: VANGUARD",0
 str_intro_1:    dc.b    "SOLIS CONFEDERATION - VANGUARD WING",0
