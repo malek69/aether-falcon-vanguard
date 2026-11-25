@@ -150,7 +150,8 @@ render_3d_terrain_flyover:
         move.l  d1,d2
         muls.l  #80,d2
         else
-        lsl.l   #9,d1
+        lsl.l   #8,d1
+        add.l   d1,d1
         move.l  d1,vox_dx_step
         move.l  d1,d2
         muls.l  #20,d2
