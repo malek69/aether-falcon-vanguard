@@ -516,13 +516,17 @@ af_intro_cut1:
         sub.w   d5,d0
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d0,(a0)+ ; move.w #222,(a0)+
+        move.w  d0,(a0)+
+        move.w #222,(a0)+
         add.w   #55,d0
-        move.w  d0,(a0)+ ; move.w #222,(a0)+
+        move.w  d0,(a0)+
+        move.w #222,(a0)+
         sub.w   #12,d0
-        move.w  d0,(a0)+ ; move.w #232,(a0)+
+        move.w  d0,(a0)+
+        move.w #232,(a0)+
         sub.w   #55,d0
-        move.w  d0,(a0)+ ; move.w #232,(a0)+
+        move.w  d0,(a0)+
+        move.w #232,(a0)+
         move.b  #$FE,d6
         bsr.s   af_emit_dyn_poly
         ; Pozycja motocykla (d4 = srodek X)
@@ -532,82 +536,189 @@ af_intro_cut1:
         ; Stozek swiatla reflektora
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; add.w #62,d0 ; move.w d0,(a0)+ ; move.w #162,(a0)+
-        add.w   #115,d0 ; move.w d0,(a0)+ ; move.w #144,(a0)+
-        move.w  d0,(a0)+ ; move.w #196,(a0)+
-        move.w  d4,d0 ; add.w #62,d0 ; move.w d0,(a0)+ ; move.w #172,(a0)+
+        move.w  d4,d0
+        add.w #62,d0
+        move.w d0,(a0)+
+        move.w #162,(a0)+
+        add.w   #115,d0
+        move.w d0,(a0)+
+        move.w #144,(a0)+
+        move.w  d0,(a0)+
+        move.w #196,(a0)+
+        move.w  d4,d0
+        add.w #62,d0
+        move.w d0,(a0)+
+        move.w #172,(a0)+
         move.b  #$FE,d6
         bsr.w   af_emit_dyn_poly
         ; Tylne kolo (6-kat) + felga
-        move.w  d4,d0 ; sub.w #52,d0
+        move.w  d4,d0
+        sub.w #52,d0
         bsr.w   .draw_wheel
         ; Przednie kolo (6-kat) + felga
-        move.w  d4,d0 ; add.w #56,d0
+        move.w  d4,d0
+        add.w #56,d0
         bsr.w   .draw_wheel
         ; Ciemny dolny plug i silnik motocykla (4-kat)
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; sub.w #34,d0 ; move.w d0,(a0)+ ; move.w #178,(a0)+
-        move.w  d4,d0 ; add.w #42,d0 ; move.w d0,(a0)+ ; move.w #178,(a0)+
-        move.w  d4,d0 ; add.w #28,d0 ; move.w d0,(a0)+ ; move.w #198,(a0)+
-        move.w  d4,d0 ; sub.w #24,d0 ; move.w d0,(a0)+ ; move.w #198,(a0)+
+        move.w  d4,d0
+        sub.w #34,d0
+        move.w d0,(a0)+
+        move.w #178,(a0)+
+        move.w  d4,d0
+        add.w #42,d0
+        move.w d0,(a0)+
+        move.w #178,(a0)+
+        move.w  d4,d0
+        add.w #28,d0
+        move.w d0,(a0)+
+        move.w #198,(a0)+
+        move.w  d4,d0
+        sub.w #24,d0
+        move.w d0,(a0)+
+        move.w #198,(a0)+
         move.b  #$14,d6
         bsr.w   af_emit_dyn_poly
         ; Glowna czerwona owiewka i ogon motocykla (6-kat)
         lea     af_dyn_poly(pc),a0
         move.w  #6,(a0)+
-        move.w  d4,d0 ; sub.w #68,d0 ; move.w d0,(a0)+ ; move.w #156,(a0)+
-        move.w  d4,d0 ; sub.w #18,d0 ; move.w d0,(a0)+ ; move.w #162,(a0)+
-        move.w  d4,d0 ; add.w #18,d0 ; move.w d0,(a0)+ ; move.w #148,(a0)+
-        move.w  d4,d0 ; add.w #66,d0 ; move.w d0,(a0)+ ; move.w #160,(a0)+
-        move.w  d4,d0 ; add.w #48,d0 ; move.w d0,(a0)+ ; move.w #180,(a0)+
-        move.w  d4,d0 ; sub.w #46,d0 ; move.w d0,(a0)+ ; move.w #176,(a0)+
+        move.w  d4,d0
+        sub.w #68,d0
+        move.w d0,(a0)+
+        move.w #156,(a0)+
+        move.w  d4,d0
+        sub.w #18,d0
+        move.w d0,(a0)+
+        move.w #162,(a0)+
+        move.w  d4,d0
+        add.w #18,d0
+        move.w d0,(a0)+
+        move.w #148,(a0)+
+        move.w  d4,d0
+        add.w #66,d0
+        move.w d0,(a0)+
+        move.w #160,(a0)+
+        move.w  d4,d0
+        add.w #48,d0
+        move.w d0,(a0)+
+        move.w #180,(a0)+
+        move.w  d4,d0
+        sub.w #46,d0
+        move.w d0,(a0)+
+        move.w #176,(a0)+
         move.b  #$FC,d6
         bsr.w   af_emit_dyn_poly
         ; Jasny bialo-blekitny pas na owiewce i szyba
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; add.w #16,d0 ; move.w d0,(a0)+ ; move.w #148,(a0)+
-        move.w  d4,d0 ; add.w #34,d0 ; move.w d0,(a0)+ ; move.w #136,(a0)+
-        move.w  d4,d0 ; add.w #54,d0 ; move.w d0,(a0)+ ; move.w #154,(a0)+
-        move.w  d4,d0 ; add.w #24,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
+        move.w  d4,d0
+        add.w #16,d0
+        move.w d0,(a0)+
+        move.w #148,(a0)+
+        move.w  d4,d0
+        add.w #34,d0
+        move.w d0,(a0)+
+        move.w #136,(a0)+
+        move.w  d4,d0
+        add.w #54,d0
+        move.w d0,(a0)+
+        move.w #154,(a0)+
+        move.w  d4,d0
+        add.w #24,d0
+        move.w d0,(a0)+
+        move.w #158,(a0)+
         move.b  #$FD,d6
         bsr.w   af_emit_dyn_poly
         ; Pochylony kierowca (kurtka + kask + zloty wizjer)
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; sub.w #24,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
-        move.w  d4,d0 ; sub.w #6,d0  ; move.w d0,(a0)+ ; move.w #134,(a0)+
-        move.w  d4,d0 ; add.w #18,d0 ; move.w d0,(a0)+ ; move.w #142,(a0)+
-        move.w  d4,d0 ; add.w #4,d0  ; move.w d0,(a0)+ ; move.w #162,(a0)+
+        move.w  d4,d0
+        sub.w #24,d0
+        move.w d0,(a0)+
+        move.w #158,(a0)+
+        move.w  d4,d0
+        sub.w #6,d0 
+        move.w d0,(a0)+
+        move.w #134,(a0)+
+        move.w  d4,d0
+        add.w #18,d0
+        move.w d0,(a0)+
+        move.w #142,(a0)+
+        move.w  d4,d0
+        add.w #4,d0 
+        move.w d0,(a0)+
+        move.w #162,(a0)+
         move.b  #$17,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; add.w #2,d0  ; move.w d0,(a0)+ ; move.w #120,(a0)+
-        move.w  d4,d0 ; add.w #20,d0 ; move.w d0,(a0)+ ; move.w #120,(a0)+
-        move.w  d4,d0 ; add.w #24,d0 ; move.w d0,(a0)+ ; move.w #136,(a0)+
-        move.w  d4,d0 ; add.w #2,d0  ; move.w d0,(a0)+ ; move.w #136,(a0)+
+        move.w  d4,d0
+        add.w #2,d0 
+        move.w d0,(a0)+
+        move.w #120,(a0)+
+        move.w  d4,d0
+        add.w #20,d0
+        move.w d0,(a0)+
+        move.w #120,(a0)+
+        move.w  d4,d0
+        add.w #24,d0
+        move.w d0,(a0)+
+        move.w #136,(a0)+
+        move.w  d4,d0
+        add.w #2,d0 
+        move.w d0,(a0)+
+        move.w #136,(a0)+
         move.b  #$FF,d6
         bsr.w   af_emit_dyn_poly
         bra.w   af_intro_done
 .draw_wheel:
         lea     af_dyn_poly(pc),a0
         move.w  #6,(a0)+
-        move.w  d0,d1 ; sub.w #12,d1 ; move.w d1,(a0)+ ; move.w #174,(a0)+
-        move.w  d0,d1 ; add.w #12,d1 ; move.w d1,(a0)+ ; move.w #174,(a0)+
-        move.w  d0,d1 ; add.w #22,d1 ; move.w d1,(a0)+ ; move.w #194,(a0)+
-        move.w  d0,d1 ; add.w #12,d1 ; move.w d1,(a0)+ ; move.w #214,(a0)+
-        move.w  d0,d1 ; sub.w #12,d1 ; move.w d1,(a0)+ ; move.w #214,(a0)+
-        move.w  d0,d1 ; sub.w #22,d1 ; move.w d1,(a0)+ ; move.w #194,(a0)+
+        move.w  d0,d1
+        sub.w #12,d1
+        move.w d1,(a0)+
+        move.w #174,(a0)+
+        move.w  d0,d1
+        add.w #12,d1
+        move.w d1,(a0)+
+        move.w #174,(a0)+
+        move.w  d0,d1
+        add.w #22,d1
+        move.w d1,(a0)+
+        move.w #194,(a0)+
+        move.w  d0,d1
+        add.w #12,d1
+        move.w d1,(a0)+
+        move.w #214,(a0)+
+        move.w  d0,d1
+        sub.w #12,d1
+        move.w d1,(a0)+
+        move.w #214,(a0)+
+        move.w  d0,d1
+        sub.w #22,d1
+        move.w d1,(a0)+
+        move.w #194,(a0)+
         move.b  #$01,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d0,d1 ; subq.w #8,d1 ; move.w d1,(a0)+ ; move.w #186,(a0)+
-        move.w  d0,d1 ; addq.w #8,d1 ; move.w d1,(a0)+ ; move.w #186,(a0)+
-        move.w  d0,d1 ; addq.w #8,d1 ; move.w d1,(a0)+ ; move.w #202,(a0)+
-        move.w  d0,d1 ; subq.w #8,d1 ; move.w d1,(a0)+ ; move.w #202,(a0)+
+        move.w  d0,d1
+        subq.w #8,d1
+        move.w d1,(a0)+
+        move.w #186,(a0)+
+        move.w  d0,d1
+        addq.w #8,d1
+        move.w d1,(a0)+
+        move.w #186,(a0)+
+        move.w  d0,d1
+        addq.w #8,d1
+        move.w d1,(a0)+
+        move.w #202,(a0)+
+        move.w  d0,d1
+        subq.w #8,d1
+        move.w d1,(a0)+
+        move.w #202,(a0)+
         move.b  #$16,d6
         bra.w   af_emit_dyn_poly
 
@@ -624,18 +735,26 @@ af_intro_cut2:
         bsr.w   af_aw_fill_ngon
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  #255,(a0)+ ; move.w #46,(a0)+
-        move.w  #319,(a0)+ ; move.w #46,(a0)+
-        move.w  #319,(a0)+ ; move.w #176,(a0)+
-        move.w  #190,(a0)+ ; move.w #176,(a0)+
+        move.w  #255,(a0)+
+        move.w #46,(a0)+
+        move.w  #319,(a0)+
+        move.w #46,(a0)+
+        move.w  #319,(a0)+
+        move.w #176,(a0)+
+        move.w  #190,(a0)+
+        move.w #176,(a0)+
         move.b  #$16,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  #272,(a0)+ ; move.w #52,(a0)+
-        move.w  #319,(a0)+ ; move.w #52,(a0)+
-        move.w  #319,(a0)+ ; move.w #176,(a0)+
-        move.w  #224,(a0)+ ; move.w #176,(a0)+
+        move.w  #272,(a0)+
+        move.w #52,(a0)+
+        move.w  #319,(a0)+
+        move.w #52,(a0)+
+        move.w  #319,(a0)+
+        move.w #176,(a0)+
+        move.w  #224,(a0)+
+        move.w #176,(a0)+
         move.b  #$FF,d6
         bsr.w   af_emit_dyn_poly
         move.w  d7,d4
@@ -648,43 +767,106 @@ af_intro_cut2:
         sub.w   d2,d5
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; sub.w #16,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
-        move.w  d4,d0 ; subq.w #2,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
-        move.w  d4,d0 ; subq.w #8,d0 ; move.w d0,(a0)+ ; move.w #216,(a0)+
-        move.w  d4,d0 ; sub.w #22,d0 ; move.w d0,(a0)+ ; move.w #216,(a0)+
+        move.w  d4,d0
+        sub.w #16,d0
+        move.w d0,(a0)+
+        move.w #158,(a0)+
+        move.w  d4,d0
+        subq.w #2,d0
+        move.w d0,(a0)+
+        move.w #158,(a0)+
+        move.w  d4,d0
+        subq.w #8,d0
+        move.w d0,(a0)+
+        move.w #216,(a0)+
+        move.w  d4,d0
+        sub.w #22,d0
+        move.w d0,(a0)+
+        move.w #216,(a0)+
         move.b  #$14,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; addq.w #2,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
-        move.w  d4,d0 ; add.w #16,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
-        move.w  d4,d0 ; add.w #24,d0 ; move.w d0,(a0)+ ; move.w #216,(a0)+
-        move.w  d4,d0 ; add.w #10,d0 ; move.w d0,(a0)+ ; move.w #216,(a0)+
+        move.w  d4,d0
+        addq.w #2,d0
+        move.w d0,(a0)+
+        move.w #158,(a0)+
+        move.w  d4,d0
+        add.w #16,d0
+        move.w d0,(a0)+
+        move.w #158,(a0)+
+        move.w  d4,d0
+        add.w #24,d0
+        move.w d0,(a0)+
+        move.w #216,(a0)+
+        move.w  d4,d0
+        add.w #10,d0
+        move.w d0,(a0)+
+        move.w #216,(a0)+
         move.b  #$15,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #5,(a0)+
-        move.w  d4,d0 ; sub.w #22,d0 ; move.w d0,(a0)+ ; move.w d5,(a0)+
-        move.w  d4,d0 ; add.w #22,d0 ; move.w d0,(a0)+ ; move.w d5,(a0)+
-        move.w  d4,d0 ; add.w #18,d0 ; move.w d0,(a0)+ ; add.w #48,d5 ; move.w d5,(a0)+
-        move.w  d4,d0 ; sub.w #18,d0 ; move.w d0,(a0)+ ; move.w d5,(a0)+
-        move.w  d4,d0 ; sub.w #26,d0 ; move.w d0,(a0)+ ; sub.w #26,d5 ; move.w d5,(a0)+
+        move.w  d4,d0
+        sub.w #22,d0
+        move.w d0,(a0)+
+        move.w d5,(a0)+
+        move.w  d4,d0
+        add.w #22,d0
+        move.w d0,(a0)+
+        move.w d5,(a0)+
+        move.w  d4,d0
+        add.w #18,d0
+        move.w d0,(a0)+
+        add.w #48,d5
+        move.w d5,(a0)+
+        move.w  d4,d0
+        sub.w #18,d0
+        move.w d0,(a0)+
+        move.w d5,(a0)+
+        move.w  d4,d0
+        sub.w #26,d0
+        move.w d0,(a0)+
+        sub.w #26,d5
+        move.w d5,(a0)+
         move.b  #$FD,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; sub.w #12,d0 ; move.w d0,(a0)+ ; move.w #82,(a0)+
-        move.w  d4,d0 ; add.w #12,d0 ; move.w d0,(a0)+ ; move.w #82,(a0)+
-        move.w  d4,d0 ; add.w #14,d0 ; move.w d0,(a0)+ ; move.w #108,(a0)+
-        move.w  d4,d0 ; sub.w #12,d0 ; move.w d0,(a0)+ ; move.w #108,(a0)+
+        move.w  d4,d0
+        sub.w #12,d0
+        move.w d0,(a0)+
+        move.w #82,(a0)+
+        move.w  d4,d0
+        add.w #12,d0
+        move.w d0,(a0)+
+        move.w #82,(a0)+
+        move.w  d4,d0
+        add.w #14,d0
+        move.w d0,(a0)+
+        move.w #108,(a0)+
+        move.w  d4,d0
+        sub.w #12,d0
+        move.w d0,(a0)+
+        move.w #108,(a0)+
         move.b  #$FF,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
-        move.w  d4,d0 ; move.w d0,(a0)+ ; move.w #88,(a0)+
-        move.w  d4,d0 ; add.w #15,d0 ; move.w d0,(a0)+ ; move.w #88,(a0)+
-        move.w  d4,d0 ; add.w #15,d0 ; move.w d0,(a0)+ ; move.w #102,(a0)+
-        move.w  d4,d0 ; move.w d0,(a0)+ ; move.w #102,(a0)+
+        move.w  d4,d0
+        move.w d0,(a0)+
+        move.w #88,(a0)+
+        move.w  d4,d0
+        add.w #15,d0
+        move.w d0,(a0)+
+        move.w #88,(a0)+
+        move.w  d4,d0
+        add.w #15,d0
+        move.w d0,(a0)+
+        move.w #102,(a0)+
+        move.w  d4,d0
+        move.w d0,(a0)+
+        move.w #102,(a0)+
         move.b  #$FE,d6
         bsr.w   af_emit_dyn_poly
         bra.w   af_intro_done
