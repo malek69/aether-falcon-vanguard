@@ -905,7 +905,7 @@ af_draw_cannon_beams:
         ifd FULL_RES
         add.w   #120,d5
         else
-        addq.w  #60,d5
+        add.w   #60,d5
         endif
         moveq   #7,d7
 .cb_lp: ; Lewa koncowka skrzydla -> celownik
