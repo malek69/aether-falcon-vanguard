@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.8</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.9</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Pobierz .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Pobieranie (v0.0.8 — 2 Profile Sprzętowe)
+## Pobieranie (v0.0.9 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@
 
 ---
 
-## Galeria (v0.0.8 — Amiga 1200 AGA / THEA1200)
+## Galeria (v0.0.9 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Orientacja 3D 360° XF-14](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Formacje Wrogów 360°](docs/screenshots/v007_02_formations_360.png) | ![3. Boss Lewiatan 360° (Misja 03)](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. Game Over / Debriefing](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|
@@ -39,7 +39,7 @@
 
 ## Fabuła i Kampania (3 Misje)
 
-Jako pilot elitarnej eskadry **Vanguard** startujesz myśliwcem przechwytującym **XF-14 Albatros** z pokładu lotniskowca **Solis**, aby powstrzymać inwazję **Dominium Vespera** na Konfederację Solis:
+Jako pilot elitarnej eskadry **Vanguard** startujesz myśliwcem przechwytującym **XF-14 Albatros** z pokładu bazy lotniczej (lotniska) **Solis**, aby powstrzymać inwazję **Dominium Vespera** na Konfederację Solis:
 
 1. **Misja 01 — Sargas Archipelago:** Lot patrolowy nad archipelagiem, zbieranie rozproszonych **Rdzeni Eteru** i przechwytywanie eskadr zwiadowczych Vespera lecących w formacji spiralnej 360°.
 2. **Misja 02 — Krell Storm Canyon:** Szybki przelot przez burzowy kanion Krell, gdzie przeciwnicy atakują w podwójnej helisie 360° i wymagają salw rakiet *Multi-Lock*.

@@ -6,6 +6,13 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.0.9] - 2026-11-25
+
+- **3D Voxel Space Terrain Engine (`src/af_voxel_world.i`):** column-based Voxel Space raycaster (160 double columns = 320 px AGA with horizon Y-buffer) rendering animated ocean waves, sandy islands, and mountains in Mission 01, deep canyon cliffs & storm river in Mission 02, and volcanic terrain with citadel towers in Mission 03.
+- **3D Lock-On Reticle & Near-Plane Guard (`src/af_gameplay_3d.i`):** snapped Lock-On reticle to projected 3D enemy nose coordinates and added near-plane mesh clipping (`Z >= 180`).
+
+---
+
 ## [v0.0.8] - 2026-11-25
 
 - **True 3D Gouraud / EnvMap Meshes for Enemies, Ether Cores & Leviathan Boss (`src/af_enemy_meshes.i`, `src/af_gameplay_3d.i`):** generated via `refs/aura3d/tools/mesh_conv.py` multi-polygon 3D meshes for *Vespera Interceptors* (14 verts, 24 tris), rotating crystal *Ether Cores* (6 verts, 8 tris), and the Mission 03 *Leviathan Citadel* (16 verts, 28 tris + 4 orbiting 3D core reactors) rendered with full-screen Z-buffering (`320x256` / `320x128`).

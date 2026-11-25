@@ -6,6 +6,13 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.0.9] - 2026-11-25
+
+- **Silnik Wokselowy 3D dla 3 Misji (`src/af_voxel_world.i`):** proceduralny raycaster Voxel Space 3D (160 podwojnych kolumn = 320 px AGA, Y-buffer horyzontu) generujacy ocean, wyspy i gory w Misji 01, gleboki kanion gorski z rzeka w Misji 02 oraz wulkaniczny lad z wiezami cytadeli w Misji 03.
+- **Celownik 3D Lock-On i poprawka bliskiego planu (`src/af_gameplay_3d.i`):** przyklejenie ramki Lock-On do rzutowanej pozycji 3D dziobu wroga oraz klip bliskiego planu bryl 3D (`Z >= 180`).
+
+---
+
 ## [v0.0.8] - 2026-11-25
 
 - **Prawdziwe modele 3D Gouraud / EnvMap dla wrogow, Rdzeni Eteru i Bossa Lewiatana (`src/af_enemy_meshes.i`, `src/af_gameplay_3d.i`):** wygenerowano narzedziem silnika `refs/aura3d/tools/mesh_conv.py` wielobrylowe siatki 3D dla mysliwcow *Vespera Interceptor* (14 wierzcholkow, 24 trojkaty), wirujacych krysztalowych *Rdzeni Eteru* (6 wierzcholkow, 8 trojkatow) oraz *Cytadeli Lewiatan* w Misji 03 (16 wierzcholkow, 28 trojkatow + 4 wirujace reaktory 3D) z pelnoekranowym Z-bufferem (`320x256` / `320x128`).

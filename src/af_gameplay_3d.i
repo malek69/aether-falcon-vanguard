@@ -145,7 +145,7 @@ af_draw_world_entities:
 .z_chk: move.l  12(a4),d2
         swap    d2
         sub.w   d5,d2
-        cmp.w   #48,d2
+        cmp.w   #180,d2
         bge.s   .z_far
         ; Gdy wrog minal gracza, odrodz go na horyzoncie w nowej formacji 360 st.
         move.l  af_pos_z,d0
@@ -215,7 +215,7 @@ af_draw_world_entities:
         endif
 
         cmp.b   #2,1(a4)
-        beq.s   .render_core_3d
+        beq.w   .render_core_3d
 
         ; Wrogi mysliwiec 3D Vespera Interceptor (obrocony dziobem w strone gracza + przechyl)
         clr.w   user_yaw
@@ -243,6 +243,9 @@ af_draw_world_entities:
         lea     v2_tex_bank,a2
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
+        ; Zapisz dokladna pozycje ekranowa 3D dziobu wroga (wierzcholek 0 z v2_proj_buf)
+        move.w  (a1),vox_tmp_sx
+        move.w  2(a1),vox_tmp_sy
         bra.s   .ent_3d_done
 
 .render_core_3d:
@@ -279,8 +282,8 @@ af_draw_world_entities:
         cmp.w   af_auto_min_z(pc),d2
         bge.s   .chk_lk_box
         move.w  d2,af_auto_min_z
-        move.w  d0,af_reticle_x
-        move.w  d1,af_reticle_y
+        move.w  vox_tmp_sx(pc),af_reticle_x
+        move.w  vox_tmp_sy(pc),af_reticle_y
         tst.b   2(a4)
         bne.s   .chk_lk_box
         st      2(a4)
@@ -1323,3 +1326,7 @@ af_set_entity_360_slot:
 
         movem.l (sp)+,d0-d4/a1
         rts
+
+        even
+vox_tmp_sx:     dc.w 160
+vox_tmp_sy:     dc.w 128

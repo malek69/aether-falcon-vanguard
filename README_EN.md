@@ -3,7 +3,7 @@
 <p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.8</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.9</h1>
   <p><strong>Bare-metal 3D combat flight simulator for Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Download .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Downloads (v0.0.8 — 2 Hardware Profiles)
+## Downloads (v0.0.9 — 2 Hardware Profiles)
 
 | Profile (`--profile`) | Target Platform | Download Packages |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@
 
 ---
 
-## Gallery (v0.0.8 — Amiga 1200 AGA / THEA1200)
+## Gallery (v0.0.9 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Intro: 256-col Airbase & Pilot](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Intro: Cockpit Boarding](docs/screenshots/v007_02_formations_360.png) | ![3. Briefing & Tactical Notepad](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. 3D 360° Circular Orbit](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|
@@ -39,7 +39,7 @@
 
 ## Story & 3-Mission Campaign
 
-As an ace pilot of the **Vanguard** wing, you launch your **XF-14 Albatros** interceptor from the carrier **Solis** to repel the **Vespera Dominion** invasion:
+As an ace pilot of the **Vanguard** wing, you launch your **XF-14 Albatros** interceptor from the airfield base **Solis** to repel the **Vespera Dominion** invasion:
 
 1. **Mission 01 — Sargas Archipelago:** Patrol over the archipelago, harvesting scattered **Ether Cores** and intercepting Vespera scout squadrons flying in 360° spiral formations.
 2. **Mission 02 — Krell Storm Canyon:** High-speed run through Krell Storm Canyon against double-helix 360° enemy waves requiring *Multi-Lock* missile salvos.
