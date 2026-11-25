@@ -83,3 +83,24 @@ See [CHANGELOG_EN.md](CHANGELOG_EN.md) for the complete version history.
 | `tools/build_game.py` | Master build pipeline (`vasmm68k_mot`) packaging `.LHA` and FS-UAE/WinUAE `.ZIP` archives for `standard` and `thea1200` profiles. |
 | `tools/gen_aga_airbase_scenes.py` | Generator of full-screen 256-color AGA sunset airbase backdrops (`data/bg_airbase.bin`, `320×256`) and transparent sprites (`data/spr_moto.bin`) quantized to `pal256.bin`. |
 | `tools/gen_vanguard_mod.py` | Procedural 4-channel ProTracker `.MOD` soundtrack generator (`data/vanguard_anthem.mod`) with royalty-free synth & drum samples. |
+
+---
+
+## Graphics Engine Capabilities (AURA-3D AGA + Vector Engine)
+
+- **Real-Time 3D Rasterizer (M68020+):** **Gouraud** and **Environment Mapping** shading with a 16-bit **Z-Buffer**, texture support, and automatic near-plane clipping.
+- **Native 256-Color AGA & C2P:** fast *Chunky-to-Planar* pipeline (`320×128` for stock Amiga 1200 and full PAL `320×256` **16:9 Widescreen** for THEA1200/FS-UAE) paired with a dynamic **Copper** sky gradient.
+- **3D Terrain & Particle FX:** procedural 3D canyon corridor, twin engine exhaust trails, 3D lens flare, planar shadows, and multi-particle 3D explosions.
+- **Hybrid Vector-Polygon Pipeline:** fast `16.16` fixed-point N-gon polygon rasterizer for story screens (**Intro**, **Briefing**, **Debriefing / Game Over**) sharing the 256-color AGA framebuffer and 4-channel **Paula** audio (`.MOD` + `SFX`).
+
+## Converting 3D Models from Wavefront `.OBJ` Files
+
+The toolchain includes ready-to-use converters for turning any `.OBJ` 3D model into M68k assembly meshes:
+
+```bash
+python3 tools/mesh_conv.py --obj assets_raw/vespera_interceptor.obj --out src/custom_mesh.i --prefix custom --radius 42 --tex 0
+```
+
+## Complete Toolchain Reference (`tools/`)
+
+The `tools/` directory includes the complete 15-script toolchain (`mesh_conv.py`, `obj2amiga.py`, `build_game.py`, `png_to_aga.py`, LUT/table generators, and audio/scene packers) supporting the Amiga 1200 vector engine.
