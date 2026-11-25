@@ -25,9 +25,9 @@
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/01_intro_solis.png" width="260" /><br/><sub><b>1. Ekran Tytulowy / Intro</b></sub></td>
-    <td align="center"><img src="docs/screenshots/02_briefing_tactical.png" width="260" /><br/><sub><b>2. Odprawa Misji (Briefing)</b></sub></td>
-    <td align="center"><img src="docs/screenshots/03_gameplay_3d_canyon.png" width="260" /><br/><sub><b>3. Lot 3D XF-14 &amp; Lock-On</b></sub></td>
+| <img src="docs/screenshots/01_intro_topgun.png" width="210"> | <img src="docs/screenshots/02_intro_takeoff_logo.png" width="210"> | <img src="docs/screenshots/03_briefing_controls.png" width="210"> | <img src="docs/screenshots/04_gameplay_plasma_cannons.png" width="210"> |
+|:---:|:---:|:---:|:---:|
+| **1. Intro: Motocykl & Pilot** | **2. Briefing & Klawisze** | **3. Lot 3D & Działka** | **4. Raport Końcowy (Debriefing)** |
   </tr>
 </table>
 
