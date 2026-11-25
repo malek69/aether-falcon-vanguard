@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.1.3</h1>
+  <h1>AETHER FALCON: VANGUARD v0.1.3.1</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Pobierz .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Pobieranie (v0.1.3 — 2 Profile Sprzętowe)
+## Pobieranie (v0.1.3.1 — 3 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@
 
 ---
 
-## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3)
+## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3.1)
 
 | ![1. Akt I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Akt II: Baza Solis (Styl Eon)](docs/screenshots/v013_eon_02.png) | ![3. Akt III: Kokpit XF-14](docs/screenshots/v013_eon_03.png) |
 |:---:|:---:|:---:|
@@ -32,7 +32,7 @@
 |:---:|:---:|:---:|
 | **4. Akt IV: Start 3D XF-14** | **5. Briefing: Dowódca Eskadry** | **6. Debriefing: Portret Pilota 3/4** |
 
-## Galeria v0.1.3 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
+## Galeria v0.1.3.1 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
 
 | ![1. Tablica Odpraw Taktycznych (Briefing)](docs/screenshots/v010_01_briefing_board.png) | ![2. Lot 3D: Chmury 3D, Woksele i SCORE w HUD](docs/screenshots/v010_02_hud_score_clouds.png) |
 |:---:|:---:|
