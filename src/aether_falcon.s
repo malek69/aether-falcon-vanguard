@@ -295,13 +295,16 @@ af_update_flight:
         muls.w  d3,d4
         asr.l   #8,d4
         move.w  d4,af_ship_dx
-        move.w  af_orbit_angle,d0
-        sub.w   #64,d0
+        moveq   #64,d0
+        sub.w   af_orbit_angle,d0
         and.w   #255,d0
+        muls.w  #360,d0
+        asr.l   #8,d0
         move.w  d0,af_roll            ; kadlub skierowany do srodka okregu (Gyruss!)
         muls.w  d3,d5
         asr.l   #8,d5
-        asr.w   #1,d5               ; korekta proporcji Y
+        muls.w  #190,d5
+        asr.l   #8,d5               ; pelny okrag na calym ekranie!
         move.w  d5,af_ship_dy
         move.w  d5,af_pitch
         ; Przesuwanie kamery wzdluz kanionu 3D
