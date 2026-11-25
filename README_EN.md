@@ -23,7 +23,13 @@
 
 ---
 
-## Gallery (v0.0.9 — Amiga 1200 AGA / THEA1200)
+## 3D Voxel Terrain Gallery (v0.0.9 — Amiga 1200 AGA / THEA1200)
+
+| ![1. Voxel Ocean & Islands (Mission 01)](docs/screenshots/v009_01_voxel_archipelago.png) | ![2. 360° Flight & 3D Lock-On](docs/screenshots/v009_02_voxel_canyon.png) | ![3. Voxel Mountains, Land & 3D Meshes](docs/screenshots/v009_03_voxel_citadel.png) |
+|:---:|:---:|:---:|
+| **1. Voxel Ocean & Islands** | **2. 360° Flight & 3D Lock-On** | **3. Voxel Mountains, Land & 3D Meshes** |
+
+## Gallery (v0.0.7 — 360° Mechanics & Game Over)
 
 | ![1. Intro: 256-col Airbase & Pilot](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Intro: Cockpit Boarding](docs/screenshots/v007_02_formations_360.png) | ![3. Briefing & Tactical Notepad](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. 3D 360° Circular Orbit](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|

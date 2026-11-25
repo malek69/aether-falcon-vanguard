@@ -8,6 +8,10 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ## [v0.0.9] - 2026-11-25
 
+| <img src="docs/screenshots/v009_01_voxel_archipelago.png" width="280"> | <img src="docs/screenshots/v009_02_voxel_canyon.png" width="280"> | <img src="docs/screenshots/v009_03_voxel_citadel.png" width="280"> |
+|:---:|:---:|:---:|
+| **1. Voxel Ocean & Islands** | **2. 360° Flight & 3D Lock-On** | **3. Voxel Mountains, Land & 3D Meshes** |
+
 - **3D Voxel Space Terrain Engine (`src/af_voxel_world.i`):** column-based Voxel Space raycaster (160 double columns = 320 px AGA with horizon Y-buffer) rendering animated ocean waves, sandy islands, and mountains in Mission 01, deep canyon cliffs & storm river in Mission 02, and volcanic terrain with citadel towers in Mission 03.
 - **3D Lock-On Reticle & Near-Plane Guard (`src/af_gameplay_3d.i`):** snapped Lock-On reticle to projected 3D enemy nose coordinates and added near-plane mesh clipping (`Z >= 180`).
 

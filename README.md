@@ -23,7 +23,13 @@
 
 ---
 
-## Galeria (v0.0.9 — Amiga 1200 AGA / THEA1200)
+## Galeria Terenu Wokselowego 3D (v0.0.9 — Amiga 1200 AGA / THEA1200)
+
+| ![1. Wokselowy Ocean i Wyspy (Misja 01)](docs/screenshots/v009_01_voxel_archipelago.png) | ![2. Przelot 360° i Celownik 3D](docs/screenshots/v009_02_voxel_canyon.png) | ![3. Góry, Ląd i Modele 3D](docs/screenshots/v009_03_voxel_citadel.png) |
+|:---:|:---:|:---:|
+| **1. Wokselowy Ocean i Wyspy** | **2. Przelot 360° i Celownik 3D** | **3. Góry, Ląd i Modele 3D** |
+
+## Galeria (v0.0.7 — Mechanika 360° & Game Over)
 
 | ![1. Orientacja 3D 360° XF-14](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Formacje Wrogów 360°](docs/screenshots/v007_02_formations_360.png) | ![3. Boss Lewiatan 360° (Misja 03)](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. Game Over / Debriefing](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|

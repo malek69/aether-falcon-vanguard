@@ -8,6 +8,10 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ## [v0.0.9] - 2026-11-25
 
+| <img src="docs/screenshots/v009_01_voxel_archipelago.png" width="280"> | <img src="docs/screenshots/v009_02_voxel_canyon.png" width="280"> | <img src="docs/screenshots/v009_03_voxel_citadel.png" width="280"> |
+|:---:|:---:|:---:|
+| **1. Wokselowy Ocean i Wyspy** | **2. Przelot 360° i Celownik 3D** | **3. Góry, Ląd i Modele 3D** |
+
 - **Silnik Wokselowy 3D dla 3 Misji (`src/af_voxel_world.i`):** proceduralny raycaster Voxel Space 3D (160 podwojnych kolumn = 320 px AGA, Y-buffer horyzontu) generujacy ocean, wyspy i gory w Misji 01, gleboki kanion gorski z rzeka w Misji 02 oraz wulkaniczny lad z wiezami cytadeli w Misji 03.
 - **Celownik 3D Lock-On i poprawka bliskiego planu (`src/af_gameplay_3d.i`):** przyklejenie ramki Lock-On do rzutowanej pozycji 3D dziobu wroga oraz klip bliskiego planu bryl 3D (`Z >= 180`).
 
