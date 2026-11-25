@@ -936,8 +936,6 @@ af_update_and_draw_boss:
         bne.w   .boss_ret
         tst.b   af_boss_active
         bne.s   .boss_is_on
-        tst.w   af_boss_reactors_left
-        beq.w   .boss_ret
         bsr.w   af_init_boss_leviathan
 .boss_is_on:
         move.w  #3200,af_boss_best_d
