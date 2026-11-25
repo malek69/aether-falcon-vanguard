@@ -455,39 +455,18 @@ af_update_and_draw_missiles:
 ; ============================================================================
         cnop    0,4
 af_draw_reticle_and_hud:
-        ; Aktualizuj pozycje celownika zgodnie z przechyłem i pochyleniem mysliwca
-        move.w  af_roll,d0
-        add.w   #160,d0
-        cmp.w   #16,d0
-        bge.s   .rx1
-        moveq   #16,d0
-.rx1:   cmp.w   #304,d0
-        ble.s   .rx2
-        move.w  #304,d0
-.rx2:   move.w  d0,af_reticle_x
-
-        move.w  af_pitch,d1
+        ; Celownik Auto-Lock zostaje na najblizszym wrogu (nie rusza sie z klawiszami!)
+        cmp.w   #3200,af_auto_min_z(pc)
+        bne.s   .ret_ok
+        move.w  #160,af_reticle_x
         ifd FULL_RES
-        asr.w   #1,d1
-        add.w   #124,d1
-        cmp.w   #48,d1
-        bge.s   .ry1
-        moveq   #48,d1
-.ry1:   cmp.w   #210,d1
-        ble.s   .ry2
-        move.w  #210,d1
+        move.w  #104,af_reticle_y
         else
-        asr.w   #1,d1
-        add.w   #58,d1
-        cmp.w   #14,d1
-        bge.s   .ry1
-        moveq   #14,d1
-.ry1:   cmp.w   #114,d1
-        ble.s   .ry2
-        move.w  #114,d1
+        move.w  #52,af_reticle_y
         endif
-.ry2:   move.w  d1,af_reticle_y
-
+.ret_ok:
+        move.w  af_reticle_x,d0
+        move.w  af_reticle_y,d1
         ; Rysuj zewnetrzny celownik Lock-On (promien 9 px)
         moveq   #9,d3
         move.b  #$FC,d6
