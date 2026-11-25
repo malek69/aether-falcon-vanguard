@@ -673,54 +673,16 @@ af_intro_cut1:
         bsr.w   af_emit_dyn_poly
         bra.w   af_intro_done
 .draw_wheel:
-        lea     af_dyn_poly(pc),a0
-        move.w  #6,(a0)+
-        move.w  d0,d1
-        sub.w #12,d1
-        move.w d1,(a0)+
-        move.w #174,(a0)+
-        move.w  d0,d1
-        add.w #12,d1
-        move.w d1,(a0)+
-        move.w #174,(a0)+
-        move.w  d0,d1
-        add.w #22,d1
-        move.w d1,(a0)+
-        move.w #194,(a0)+
-        move.w  d0,d1
-        add.w #12,d1
-        move.w d1,(a0)+
-        move.w #214,(a0)+
-        move.w  d0,d1
-        sub.w #12,d1
-        move.w d1,(a0)+
-        move.w #214,(a0)+
-        move.w  d0,d1
-        sub.w #22,d1
-        move.w d1,(a0)+
-        move.w #194,(a0)+
+        move.w  #194,d1
+        moveq   #22,d2
         move.b  #$01,d6
-        bsr.w   af_emit_dyn_poly
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d0,d1
-        subq.w #8,d1
-        move.w d1,(a0)+
-        move.w #186,(a0)+
-        move.w  d0,d1
-        addq.w #8,d1
-        move.w d1,(a0)+
-        move.w #186,(a0)+
-        move.w  d0,d1
-        addq.w #8,d1
-        move.w d1,(a0)+
-        move.w #202,(a0)+
-        move.w  d0,d1
-        subq.w #8,d1
-        move.w d1,(a0)+
-        move.w #202,(a0)+
+        bsr.w   af_skel_draw_circle
+        moveq   #11,d2
         move.b  #$16,d6
-        bra.w   af_emit_dyn_poly
+        bsr.w   af_skel_draw_circle
+        moveq   #5,d2
+        move.b  #$FF,d6
+        bra.w   af_skel_draw_circle
 
 
 af_intro_cut2:
@@ -820,8 +782,8 @@ af_intro_cut2:
         move.w  d0,d4
         moveq   #1,d2
         bra.s   .sk_call
-.sk_m2: move.w  #242,d4
-        move.w  #116,d5
+.sk_m2: move.w  #246,d4
+        move.w  #122,d5
         moveq   #2,d2
 .sk_call:
         bsr.w   af_skel_render_pilot
