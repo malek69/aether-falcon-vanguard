@@ -72,24 +72,16 @@ af_render_gameplay_3d:
         asr.w   #1,d2                   ; Naturalny przechyl skrzydel +/-60 st.
         jsr     build_rot_matrix_3d
 
-        ; Pelny swobodny lot mysliwca XF-14 po calym ekranie (Roll -> X, Pitch -> Y)
-        move.w  af_roll,d4
-        asr.w   #1,d4                   ; X: -64..+64 (pelna szerokosc ekranu!)
-        move.w  af_pitch,d5
-        asr.w   #2,d5                   ; Y: -27..+27 (wznoszenie i nurkowanie!)
-        move.l  vbl_tick(pc),d0
-        lsr.l   #2,d0
-        and.w   #3,d0
-        subq.w  #1,d0
-        add.w   d0,d5
+        ; Pozycja XF-14 na okregu unikow (Lewo/Prawo = kat, Gora/Dol = promien)
+        move.w  af_ship_dx,d4
+        move.w  af_ship_dy,d5
         ifd FULL_RES
-        add.w   #48,d5
+        add.w   #12,d5
         moveq   #22,d6
         else
-        add.w   #24,d5
+        addq.w  #6,d5
         moveq   #24,d6
         endif
-
         lea     xf14_verts,a0
         lea     v2_proj_buf,a1
         move.w  #xf14_vert_count,d7
@@ -106,16 +98,14 @@ af_render_gameplay_3d:
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
 
-        ; Podwojna smuga spalin z dysz mysliwca XF-14 (zsynchronizowana 1:1 z pozycja kadluba!)
-        move.w  af_roll,d4
-        asr.w   #1,d4
-        move.w  af_pitch,d5
-        asr.w   #2,d5
+        ; Podwojna smuga spalin zsynchronizowana z pozycja na okregu
+        move.w  af_ship_dx,d4
+        move.w  af_ship_dy,d5
         ifd FULL_RES
-        add.w   #48,d5
+        add.w   #12,d5
         moveq   #22,d6
         else
-        add.w   #24,d5
+        addq.w  #6,d5
         moveq   #24,d6
         endif
         jsr     ptrail_emit_twin_nozzles
@@ -260,51 +250,72 @@ af_draw_world_entities:
         rts
 
 af_auto_min_z:  dc.w 3200
-af_ebolt_z:     dc.w 0
-af_ebolt_x:     dc.w 160
-af_ebolt_y:     dc.w 100
+af_ebolt_pool:  ds.w 24                 ; 6 pociskow x 4 slowa (z, sx, sy, phase)
 
 af_update_enemy_bolts:
-        tst.w   af_ebolt_z(pc)
-        bgt.s   .eb_move
+        movem.l d0-d7/a2,-(sp)
+        move.w  af_mission,d7
+        cmp.w   #2,d7
+        ble.s   .m_cap
+        moveq   #2,d7
+.m_cap: addq.w  #1,d7
+        add.w   d7,d7
+        subq.w  #1,d7                   ; D7 = liczba aktywnych pociskow - 1 (1, 3 lub 5)
+        lea     af_ebolt_pool(pc),a2
+.eb_lp: tst.w   (a2)
+        bgt.s   .eb_adv
         cmp.w   #3200,af_auto_min_z(pc)
-        beq.s   .eb_rts
-        move.w  #240,af_ebolt_z
-        move.w  af_reticle_x,af_ebolt_x
-        move.w  af_reticle_y,af_ebolt_y
-.eb_rts:rts
-.eb_move:
-        sub.w   #6,af_ebolt_z
-        bgt.s   .eb_draw
-        ; Sprawdz czy gracz zrobil unik na boki (af_roll)
-        move.w  af_roll,d0
-        asr.w   #1,d0
-        move.w  d0,d1
-        asr.w   #1,d1
-        add.w   d1,d0
+        beq.w   .eb_nxt
+        ; Odpal nowy pocisk z opoznieniem fazowym dla kazdego slotu
+        move.w  d7,d0
+        mulu.w  #42,d0
         add.w   #160,d0
-        sub.w   af_ebolt_x(pc),d0
-        bpl.s   .eb_dx
+        move.w  d0,(a2)
+        move.w  af_reticle_x,2(a2)
+        move.w  af_reticle_y,4(a2)
+        move.w  d7,d1
+        lsl.w   #5,d1
+        move.w  d1,6(a2)
+        bra.w   .eb_nxt
+.eb_adv:move.w  af_mission,d0
+        addq.w  #5,d0
+        sub.w   d0,(a2)
+        bgt.s   .eb_drw
+        ; Sprawdz trafienie w aktualna pozycje mysliwca na okregu (160+dx, 136+dy)
+        move.w  af_ship_dx,d0
+        add.w   #160,d0
+        sub.w   2(a2),d0
+        bpl.s   .adx
         neg.w   d0
-.eb_dx: cmp.w   #26,d0
-        bgt.s   .eb_rts
+.adx:   cmp.w   #22,d0
+        bgt.w   .eb_nxt
         moveq   #SFX_EXPLODE,d0
         bsr.w   af_trigger_sfx
-        rts
-.eb_draw:
-        ; Interpoluj lot wrogiego pocisku od wroga do dolnej strefy gracza
-        move.w  #240,d2
-        sub.w   af_ebolt_z(pc),d2
-        move.w  af_ebolt_x(pc),d0
-        move.w  af_ebolt_y(pc),d1
+        bra.w   .eb_nxt
+.eb_drw:move.w  #260,d2
+        sub.w   (a2),d2
+        bpl.s   .z_pos
+        moveq   #4,d2
+.z_pos: move.w  2(a2),d0
+        move.w  4(a2),d1
+        ; Rozrzut pociskow po okregu
+        move.w  6(a2),d4
+        and.w   #255,d4
+        lea     sin_tab,a0
+        add.w   d4,d4
+        move.w  (a0,d4.w),d5
+        muls.w  d2,d5
+        asr.l   #8,d5
+        asr.w   #2,d5
+        add.w   d5,d0
         ifd FULL_RES
-        move.w  #210,d3
+        move.w  #136,d3
         else
-        moveq   #105,d3
+        moveq   #68,d3
         endif
         sub.w   d1,d3
         muls.w  d2,d3
-        divs.w  #240,d3
+        divs.w  #260,d3
         add.w   d3,d1
         lsr.w   #5,d2
         addq.w  #2,d2
@@ -314,9 +325,10 @@ af_update_enemy_bolts:
         subq.w  #1,d3
         move.b  #$FF,d6
         bsr.w   af_fill_chunky_diamond
+.eb_nxt:addq.l  #8,a2
+        dbf     d7,.eb_lp
+        movem.l (sp)+,d0-d7/a2
         rts
-
-
 ; ============================================================================
 ; Salwa samonaprowadzajacych rakiet (Panzer Dragoon Multi-Lock Barrage)
 ; ============================================================================
@@ -876,12 +888,11 @@ af_draw_cannon_beams:
         move.w  af_roll,d4
         asr.w   #1,d4
         add.w   #160,d4
-        move.w  af_pitch,d5
-        asr.w   #2,d5
+        move.w  af_ship_dy,d5
         ifd FULL_RES
-        add.w   #192,d5
+        add.w   #136,d5
         else
-        add.w   #96,d5
+        add.w   #68,d5
         endif
         moveq   #7,d7
 .cb_lp:

@@ -108,7 +108,7 @@ mainloop:
         addq.w  #1,d0
         cmp.w   #STATE_DEBRIEF,d0
         ble.s   .store_st
-        clr.w   d0
+        moveq   #STATE_BRIEFING,d0
         addq.w  #1,af_mission
 .store_st:
         move.w  d0,af_state
@@ -196,6 +196,10 @@ af_init_mission:
         jsr     copper_set_sky_theme
         clr.w   af_roll
         clr.w   af_pitch
+        move.w  #64,af_orbit_angle
+        move.w  #62,af_orbit_radius
+        clr.w   af_ship_dx
+        move.w  #36,af_ship_dy
         move.w  #200,af_energy
         clr.w   af_locks
         clr.b   af_boss_active
@@ -235,96 +239,83 @@ af_update_flight:
         move.w  d0,d1
         lsr.w   #1,d1
         eor.w   d0,d1
-
         move.b  kbd_held_raw,d4
-        move.w  af_roll,d2
+        move.w  af_orbit_angle,d2
+        ; Lewo / Prawo: obrot po okregu (0..255)
         btst    #9,d0
-        bne.s   .do_left
-        cmp.b   #$4F,d4                 ; Kursor Lewo
+        bne.s   .orb_left
+        cmp.b   #$4F,d4
         bne.s   .chk_rt
-.do_left:
-        sub.w   #20,d2
-        cmp.w   #-128,d2
-        bge.s   .roll_ok
-        move.w  #-128,d2
-        bra.s   .roll_ok
+.orb_left:
+        addq.w  #5,d2
+        bra.s   .ang_ok
 .chk_rt:
         btst    #1,d0
-        bne.s   .do_right
-        cmp.b   #$4E,d4                 ; Kursor Prawo
-        bne.s   .damp_roll
-.do_right:
-        add.w   #20,d2
-        cmp.w   #128,d2
-        ble.s   .roll_ok
-        move.w  #128,d2
-        bra.s   .roll_ok
-.damp_roll:
-        move.w  d2,d3
-        asr.w   #3,d3
-        sub.w   d3,d2
-.roll_ok:
-        move.w  d2,af_roll
-        ext.l   d2
-        asl.l   #8,d2
-        add.l   d2,af_pos_x
-
-        move.w  af_roll,d0
-        asr.w   #2,d0
-        move.w  d0,user_yaw
-
-        move.w  af_pitch,d2
+        bne.s   .orb_right
+        cmp.b   #$4E,d4
+        bne.s   .ang_ok
+.orb_right:
+        subq.w  #5,d2
+.ang_ok:
+        and.w   #255,d2
+        move.w  d2,af_orbit_angle
+        ; Gora / Dol: do srodka okregu (Gora) lub na zewnatrz okregu (Dol)
+        move.w  af_orbit_radius,d3
         btst    #8,d1
-        bne.s   .do_up
-        cmp.b   #$4C,d4                 ; Kursor Gora
+        bne.s   .rad_in
+        cmp.b   #$4C,d4
         bne.s   .chk_dn
-.do_up:
-        sub.w   #14,d2
-        cmp.w   #-110,d2
-        bge.s   .pitch_ok
-        move.w  #-110,d2
-        bra.s   .pitch_ok
+.rad_in:
+        subq.w  #3,d3
+        cmp.w   #20,d3
+        bge.s   .rad_ok
+        moveq   #20,d3
+        bra.s   .rad_ok
 .chk_dn:
         btst    #0,d1
-        bne.s   .do_down
-        cmp.b   #$4D,d4                 ; Kursor Dol
-        bne.s   .damp_pitch
-.do_down:
-        add.w   #14,d2
-        cmp.w   #110,d2
-        ble.s   .pitch_ok
-        move.w  #110,d2
-        bra.s   .pitch_ok
-.damp_pitch:
-        move.w  d2,d3
-        asr.w   #3,d3
-        sub.w   d3,d2
-.pitch_ok:
-        move.w  d2,af_pitch
-        move.w  d2,user_pitch
-
+        bne.s   .rad_out
+        cmp.b   #$4D,d4
+        bne.s   .rad_ok
+.rad_out:
+        addq.w  #3,d3
+        cmp.w   #92,d3
+        ble.s   .rad_ok
+        moveq   #92,d3
+.rad_ok:
+        move.w  d3,af_orbit_radius
+        ; Oblicz dx = cos(angle)*radius, dy = sin(angle)*radius z sin_tab
+        lea     sin_tab,a0
+        move.w  d2,d0
+        add.w   d0,d0
+        move.w  (a0,d0.w),d5          ; sin(angle) (-256..256)
+        add.w   #64,d2
+        and.w   #255,d2
+        add.w   d2,d2
+        move.w  (a0,d2.w),d4          ; cos(angle) (-256..256)
+        muls.w  d3,d4
+        asr.l   #8,d4
+        move.w  d4,af_ship_dx
+        move.w  d4,af_roll            ; przechyl skrzydel styczny do okregu!
+        muls.w  d3,d5
+        asr.l   #8,d5
+        asr.w   #1,d5               ; korekta proporcji Y
+        move.w  d5,af_ship_dy
+        move.w  d5,af_pitch
+        ; Przesuwanie kamery wzdluz kanionu 3D
         move.l  af_vel_z,d0
         btst    #7,CIAAPRA
-        beq.s   .do_boost
-        cmp.b   #$40,kbd_held_raw
-        bne.s   .no_boost
-.do_boost:
-        tst.w   af_energy
+        beq.s   .boost
+        tst.b   fire_held
         beq.s   .no_boost
-        add.l   #8<<16,d0
-        subq.w  #1,af_energy
+.boost: add.l   d0,d0
 .no_boost:
-        ifnd FULL_RES
         add.l   d0,af_pos_z
-        endif
-        add.l   d0,af_pos_z
-        move.l  af_pos_z,d1
-        move.w  d1,ter_sub_z
-        swap    d1
-        move.w  d1,ter_scroll_z
         rts
 
-        cnop    0,4
+af_orbit_angle: dc.w 64
+af_orbit_radius:dc.w 62
+af_ship_dx:     dc.w 0
+af_ship_dy:     dc.w 31
 af_update_entities:
         lea     af_entities,a0
         move.l  af_pos_z,d4
