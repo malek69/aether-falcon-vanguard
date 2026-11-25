@@ -22,6 +22,18 @@
 
 ---
 
+## Galeria (v0.0.2 — Amiga 1200 AGA / THEA1200)
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/shot_v002_1.png" width="260" /><br/><sub><b>1. Ekran Tytulowy / Intro</b></sub></td>
+    <td align="center"><img src="docs/shot_v002_2.png" width="260" /><br/><sub><b>2. Odprawa Misji (Briefing)</b></sub></td>
+    <td align="center"><img src="docs/shot_v002_3.png" width="260" /><br/><sub><b>3. Lot 3D XF-14 &amp; Lock-On</b></sub></td>
+  </tr>
+</table>
+
+---
+
 ## Wykorzystane Silniki i Powiązane Repozytoria
 
 | Silnik | Repozytorium GitHub | Rola w projekcie |

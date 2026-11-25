@@ -22,6 +22,18 @@
 
 ---
 
+## Gallery (v0.0.2 — Amiga 1200 AGA / THEA1200)
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/shot_v002_1.png" width="260" /><br/><sub><b>1. Title Screen / Intro</b></sub></td>
+    <td align="center"><img src="docs/shot_v002_2.png" width="260" /><br/><sub><b>2. Mission Briefing</b></sub></td>
+    <td align="center"><img src="docs/shot_v002_3.png" width="260" /><br/><sub><b>3. 3D Flight XF-14 &amp; Lock-On</b></sub></td>
+  </tr>
+</table>
+
+---
+
 ## Engines Used & Related Repositories
 
 | Engine | GitHub Repository | Role in Project |
