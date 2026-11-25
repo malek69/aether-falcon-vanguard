@@ -261,16 +261,6 @@ af_render_vector_screen:
         bne.s   .deb_gameover
 
         ; --- EKRAN 2A: DEBRIEFING (Misja Zaliczona / Awans Pilota) ---
-        move.w  #160,d0
-        ifd FULL_RES
-        move.w  #108,d1
-        else
-        move.w  #52,d1
-        endif
-        moveq   #20,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
-
         lea     str_deb_1(pc),a0
         cmp.w   #2,af_mission
         blo.s   .deb_hdr_ok
@@ -288,19 +278,6 @@ af_render_vector_screen:
 
 .deb_gameover:
         ; --- EKRAN 2B: GAME OVER / DEBRIEFING PO UTRACIE TARCZY ---
-        move.w  #160,d0
-        ifd FULL_RES
-        move.w  #108,d1
-        else
-        move.w  #52,d1
-        endif
-        moveq   #24,d3
-        move.b  #$FC,d6
-        jsr     af_fill_chunky_diamond
-        moveq   #28,d3
-        move.b  #$FC,d6
-        jsr     af_draw_chunky_rect
-
         lea     str_go_title(pc),a0
         moveq   #76,d0
         ifd FULL_RES
