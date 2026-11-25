@@ -195,6 +195,20 @@ af_draw_world_entities:
         cmp.w   #116,d1
         endif
         bgt.w   .next_ent
+        ; Na bazowej 68EC020 rysuj pelna bryle 3D dla bliskich celow (d2 <= 1100), dalsze jako sygnatury
+        ifnd FULL_RES
+        cmp.w   #1100,d2
+        ble.s   .do_3d_020
+        moveq   #4,d3
+        move.b  #252,d6
+        cmp.b   #2,1(a4)
+        bne.s   .far_020
+        move.b  #253,d6
+.far_020:
+        bsr.w   af_fill_chunky_diamond
+        bra.s   .after_3d_ent
+.do_3d_020:
+        endif
         ; Prawdziwy model 3D Gouraud/EnvMap dla wrogich mysliwcow Vespera i Rdzeni Eteru
         movem.l d0-d7/a0-a4,-(sp)
         move.w  d2,d6                   ; Z w przestrzeni swiata (48..3200)
@@ -275,6 +289,7 @@ af_draw_world_entities:
 
 .ent_3d_done:
         movem.l (sp)+,d0-d7/a0-a4
+.after_3d_ent:
         moveq   #10,d3
         cmp.b   #2,1(a4)
         beq.w   .next_ent

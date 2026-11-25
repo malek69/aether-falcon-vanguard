@@ -144,10 +144,17 @@ render_3d_terrain_flyover:
         clr.w   d0
         move.w  d7,d1
         ext.l   d1
+        ifd FULL_RES
         lsl.l   #7,d1
         move.l  d1,vox_dx_step
         move.l  d1,d2
         muls.l  #80,d2
+        else
+        lsl.l   #8,d1
+        move.l  d1,vox_dx_step
+        move.l  d1,d2
+        muls.l  #40,d2
+        endif
         sub.l   d2,d0
         lea     vox_ybuf(pc),a1
         lea     chunky_buf,a2
@@ -198,6 +205,7 @@ render_3d_terrain_flyover:
         move.b  d1,d4
         lsl.w   #8,d4
         move.b  d1,d4
+        ifd FULL_RES
 .vcf:   move.w  d4,(a6)
         lea     320(a6),a6
         dbf     d3,.vcf
@@ -208,11 +216,30 @@ render_3d_terrain_flyover:
         cmp.w   #160,d5
         blo.w   .vx_lp
         addq.w  #6,d7
+        else
+        move.w  d4,d1
+        swap    d4
+        move.w  d1,d4
+.vcf:   move.l  d4,(a6)
+        lea     320(a6),a6
+        dbf     d3,.vcf
+.vx_nx: addq.l  #2,a1
+        addq.l  #4,a2
+        add.l   vox_dx_step(pc),d0
+        addq.w  #1,d5
+        cmp.w   #80,d5
+        blo.w   .vx_lp
+        add.w   #12,d7
+        endif
         cmp.w   #224,d7
         blo.w   .vz_lp
         movem.l (sp)+,d0-d7/a0-a6
         rts
-.vpc:   cmp.b   #1,d1
+.vpc:   move.l  d4,-(sp)
+        bsr.s   .vpc_in
+        move.l  (sp)+,d4
+        rts
+.vpc_in:cmp.b   #1,d1
         bne.s   .vp2
         move.l  vbl_tick(pc),d1
         lsr.l   #2,d1
