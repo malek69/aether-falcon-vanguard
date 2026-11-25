@@ -98,6 +98,7 @@ See [CHANGELOG_EN.md](CHANGELOG_EN.md) for the complete version history.
 - **Native 256-Color AGA & C2P:** fast *Chunky-to-Planar* pipeline (`320×128` for stock Amiga 1200 and full PAL `320×256` **16:9 Widescreen** for THEA1200/FS-UAE) paired with a dynamic **Copper** sky gradient.
 - **3D Terrain & Particle FX:** procedural 3D canyon corridor, twin engine exhaust trails, 3D lens flare, planar shadows, and multi-particle 3D explosions.
 - **Hybrid Vector-Polygon Pipeline:** fast `16.16` fixed-point N-gon polygon rasterizer for story screens (**Intro**, **Briefing**, **Debriefing / Game Over**) sharing the 256-color AGA framebuffer and 4-channel **Paula** audio (`.MOD` + `SFX`).
+- **Disk Asset Streaming & Persistent Save (`dos.library` / `src/af_disk_loader.i`):** dynamically loads external assets from `data/` (`missions.dat`, 256-color backdrops `bg_airbase.bin`, `title.chk`/`title.pal`, transparent sprites `spr_moto.bin`, soundtrack `vanguard_anthem.mod`, and `intro.pcm` samples) into Fast/Chip RAM before hardware takeover, and writes persistent high scores (`data/hiscore.dat`) upon exit.
 
 ## Converting 3D Models from Wavefront `.OBJ` Files
 

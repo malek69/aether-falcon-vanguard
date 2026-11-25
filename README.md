@@ -98,6 +98,7 @@ Szczegółowy rejestr zmian znajduje się w pliku [CHANGELOG.md](CHANGELOG.md).
 - **Natywny tryb 256 kolorów AGA & C2P:** konwersja *Chunky-to-Planar* (`320×128` dla bazowej Amigi 1200 oraz pełny PAL `320×256` **16:9 Widescreen** dla THEA1200/FS-UAE) z dynamicznym gradientem nieba **Copper**.
 - **Teren 3D i efekty cząsteczkowe:** generowany proceduralnie korytarz kanionu 3D, podwójne smugi silników, flary soczewkowe (*Lens Flare*), płaskie cienie (*Planar Shadows*) oraz wielopunktowe eksplozje 3D.
 - **Hybrydowy potok wektorowo-poligonowy:** szybki rasteryzer wielokątów N-gon (`16.16` fixed-point) dla ekranów fabularnych (**Intro**, **Briefing**, **Debriefing / Game Over**) współdzielący bufor 256 kolorów AGA oraz 4-kanałowe audio **Paula** (`.MOD` + efekty `SFX`).
+- **Strumieniowe wczytywanie i zapis danych z dysku (`dos.library` / `src/af_disk_loader.i`):** dynamiczne ładowanie zasobów z katalogu `data/` (`missions.dat`, tła 256-kolorowe `bg_airbase.bin`, `title.chk`/`title.pal`, sprite’y `spr_moto.bin`, moduł muzyczny `vanguard_anthem.mod`, sample `intro.pcm`) bezpośrednio do Fast/Chip RAM przed przejęciem sprzętu AGA, oraz trwały zapis rekordu punktowego (`data/hiscore.dat`) po zakończeniu gry.
 
 ## Konwersja Modeli 3D z Plików Wavefront `.OBJ`
 
