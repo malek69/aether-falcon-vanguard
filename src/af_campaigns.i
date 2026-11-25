@@ -81,11 +81,11 @@ af_render_vector_screen:
         ; Ramka mapy taktycznej
         move.w  #160,d0
         ifd FULL_RES
-        move.w  #112,d1
-        moveq   #50,d3
+        move.w  #96,d1
+        moveq   #42,d3
         else
-        move.w  #54,d1
-        moveq   #28,d3
+        move.w  #46,d1
+        moveq   #20,d3
         endif
         move.b  #$FD,d6
         jsr     af_draw_chunky_rect
@@ -93,9 +93,9 @@ af_render_vector_screen:
         ; 2 punkty celow misji na mapie
         move.w  #146,d0
         ifd FULL_RES
-        move.w  #98,d1
+        move.w  #86,d1
         else
-        move.w  #48,d1
+        move.w  #42,d1
         endif
         moveq   #5,d3
         move.b  #$FC,d6
@@ -103,9 +103,9 @@ af_render_vector_screen:
 
         move.w  #176,d0
         ifd FULL_RES
-        move.w  #124,d1
+        move.w  #108,d1
         else
-        move.w  #60,d1
+        move.w  #52,d1
         endif
         moveq   #5,d3
         move.b  #$FE,d6
@@ -113,69 +113,71 @@ af_render_vector_screen:
 
         move.w  af_mission,d2
         cmp.w   #1,d2
-        beq.s   .b_m2
+        beq.w   .b_m2
         cmp.w   #2,d2
-        beq.s   .b_m3
+        beq.w   .b_m3
 
         lea     str_m1_title(pc),a0
-        moveq   #68,d0
-        ifd FULL_RES
-        moveq   #24,d1
-        else
-        moveq   #12,d1
-        endif
-        move.b  #$FF,d6
-        bsr.w   af_print_chunky_str
-        lea     str_m1_obj(pc),a0
-        moveq   #36,d0
-        ifd FULL_RES
-        move.w  #208,d1
-        else
-        moveq   #96,d1
-        endif
-        move.b  #$FE,d6
-        bsr.w   af_print_chunky_str
-        bra.w   .b_keys_hint
+        lea     str_m1_obj(pc),a1
+        lea     str_m1_desc2(pc),a2
+        lea     str_m1_desc3(pc),a3
+        bra.s   .b_print_all
 
 .b_m2:
         lea     str_m2_title(pc),a0
-        moveq   #68,d0
-        ifd FULL_RES
-        moveq   #24,d1
-        else
-        moveq   #12,d1
-        endif
-        move.b  #$FF,d6
-        bsr.w   af_print_chunky_str
-        lea     str_m2_obj(pc),a0
-        moveq   #36,d0
-        ifd FULL_RES
-        move.w  #208,d1
-        else
-        moveq   #96,d1
-        endif
-        move.b  #$FE,d6
-        bsr.w   af_print_chunky_str
-        bra.w   .b_keys_hint
+        lea     str_m2_obj(pc),a1
+        lea     str_m2_desc2(pc),a2
+        lea     str_m2_desc3(pc),a3
+        bra.s   .b_print_all
 
 .b_m3:
         lea     str_m3_title(pc),a0
+        lea     str_m3_obj(pc),a1
+        lea     str_m3_desc2(pc),a2
+        lea     str_m3_desc3(pc),a3
+
+.b_print_all:
+        movem.l a1-a3,-(sp)
         moveq   #68,d0
         ifd FULL_RES
-        moveq   #24,d1
+        moveq   #18,d1
         else
-        moveq   #12,d1
+        moveq   #8,d1
         endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
-        lea     str_m3_obj(pc),a0
-        moveq   #44,d0
+        movem.l (sp)+,a1-a3
+
+        movem.l a2-a3,-(sp)
+        move.l  a1,a0
+        moveq   #36,d0
         ifd FULL_RES
-        move.w  #208,d1
+        move.w  #174,d1
         else
-        moveq   #96,d1
+        moveq   #76,d1
         endif
         move.b  #$FE,d6
+        bsr.w   af_print_chunky_str
+        movem.l (sp)+,a2-a3
+
+        move.l  a3,-(sp)
+        move.l  a2,a0
+        moveq   #36,d0
+        ifd FULL_RES
+        move.w  #188,d1
+        else
+        moveq   #85,d1
+        endif
+        move.b  #$FD,d6
+        bsr.w   af_print_chunky_str
+        move.l  (sp)+,a0
+        moveq   #36,d0
+        ifd FULL_RES
+        move.w  #202,d1
+        else
+        moveq   #94,d1
+        endif
+        move.b  #$FF,d6
         bsr.w   af_print_chunky_str
 .b_keys_hint:
         lea     str_brief_keys1(pc),a0
@@ -371,7 +373,13 @@ str_m1_obj:     dc.b    "COLLECT ETHER CORES & LOCK VESPERA SCOUTS",0
 str_m2_title:   dc.b    "MISSION 02: KRELL STORM CANYON",0
 str_m2_obj:     dc.b    "HIGH SPEED INTERCEPT - MULTI-LOCK BARRAGE",0
 str_m3_title:   dc.b    "MISSION 03: LEVIATHAN CITADEL",0
-str_m3_obj:     dc.b    "ASSAULT CORE REACTORS - FINAL STRIKE",0
+str_m1_desc2:   dc.b    "PATROL OVER VOXEL OCEAN & ISLAND PEAKS",0
+str_m1_desc3:   dc.b    "GATHER ETHER CORES (+40 SHIELD ENERGY)",0
+str_m2_desc2:   dc.b    "DOUBLE-HELIX 360 VESPERA INTERCEPTORS",0
+str_m2_desc3:   dc.b    "USE MULTI-LOCK MISSILES IN STORM CANYON",0
+str_m3_obj:     dc.b    "LEVIATHAN 3D FORTRESS IN TUNNEL CENTER",0
+str_m3_desc2:   dc.b    "ASSAULT OVER VOLCANIC CITADEL TOWERS",0
+str_m3_desc3:   dc.b    "DESTROY ALL 4 ORBITING REACTOR CORES!",0
 str_brief_keys1:dc.b    "ARROWS / JOY2 : FLY & AIM LOCK-ON",0
 str_brief_keys2:dc.b    "SPACE / FIRE / ALT : CANNON & MISSILES",0
 str_deb_1:      dc.b    "MISSION ACCOMPLISHED - SORTIE REPORT",0

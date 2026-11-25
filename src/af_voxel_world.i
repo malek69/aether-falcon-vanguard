@@ -270,9 +270,9 @@ render_3d_terrain_flyover:
 .vpr:   rts
 .vp7:   cmp.b   #7,d1
         bne.s   .vp5
-        move.b  #252,d1
+        move.b  #254,d1
         rts
-.vp5:   move.w  #108,d1
+.vp5:   move.w  #23,d1                  ; ciemny bazalt / skala wulkaniczna (czysta skala szarosci)
 .vps:   move.w  d2,d4
         addq.w  #1,d4
         and.w   #4095,d4
@@ -283,10 +283,10 @@ render_3d_terrain_flyover:
         add.w   d4,d1
         cmp.w   #140,d7
         ble.s   .vpc_c
-        subq.w  #3,d1
-.vpc_c: cmp.w   #16,d1
+        subq.w  #2,d1
+.vpc_c: cmp.w   #18,d1
         bge.s   .vpc_d
-        moveq   #16,d1
+        moveq   #18,d1
 .vpc_d: rts
         even
 vox_inited:     dc.b 0,0
@@ -295,6 +295,177 @@ vox_cam_z:      dc.w 0
 vox_row_off:    dc.w 0
 vox_dx_step:    dc.l 0
 vox_ybuf:       ds.w 160
+
+; ============================================================================
+; af_draw_3d_clouds - Wielowarstwowe Chmury 3D na Niebie (M68020+ / AGA)
+; ============================================================================
+        cnop    0,4
+af_draw_3d_clouds:
+        movem.l d0-d7/a0-a4,-(sp)
+        lea     af_cloud_table(pc),a3
+        lea     recip_table_32(pc),a4
+        move.l  vbl_tick(pc),d0
+        lsl.l   #2,d0
+        move.w  d0,cld_scroll_z
+        move.w  af_ship_dx,d0
+        asr.w   #1,d0
+        move.w  d0,cld_cam_x
+        moveq   #15,d7                  ; 16 formacji chmur 3D
+.cld_lp:
+        ; Wylicz Z chmury w petli 120..1140
+        move.w  4(a3),d2                ; bazowe Z
+        sub.w   cld_scroll_z(pc),d2
+        and.w   #1023,d2
+        add.w   #120,d2                 ; d2 = Z (120..1143)
+        move.l  (a4,d2.w*4),d6          ; d6 = inv_z (16.16)
+        ; Rzutuj X chmury
+        move.w  (a3),d0                 ; world_x (-420..+420)
+        sub.w   cld_cam_x(pc),d0
+        ext.l   d0
+        muls.l  d6,d0
+        asr.l   #8,d0
+        add.w   #160,d0                 ; ekranowe X
+        ; Rzutuj Y chmury (wysoko na niebie ponad gorami)
+        move.w  2(a3),d1                ; world_y (-130..-45)
+        ext.l   d1
+        muls.l  d6,d1
+        asr.l   #8,d1
+        ifd FULL_RES
+        add.w   #126,d1
+        cmp.w   #128,d1
+        bgt.w   .cld_nx
+        else
+        asr.w   #1,d1
+        add.w   #63,d1
+        cmp.w   #64,d1
+        bgt.w   .cld_nx
+        endif
+        cmp.w   #-40,d0
+        blt.w   .cld_nx
+        cmp.w   #360,d0
+        bgt.w   .cld_nx
+        ; Promien poziomy chmury w zaleznosci od 1/Z: rx = (size * inv_z) >> 9
+        move.w  6(a3),d3                ; promien bazowy chmury
+        ext.l   d3
+        muls.l  d6,d3
+        asr.l   #8,d3
+        asr.l   #1,d3
+        cmp.w   #6,d3
+        bge.s   .rx_ok
+        moveq   #6,d3
+.rx_ok: cmp.w   #56,d3
+        ble.s   .rx_max
+        moveq   #56,d3
+.rx_max:
+        ; Dobierz palete chmury zaleznie od misji (0=Cumulus, 1=Burza, 2=Cytadela)
+        move.b  #216,d4                 ; podstawa chmury (blekit atmosferyczny)
+        move.b  #30,d5                  ; srodek chmury (jasny szary)
+        move.b  #255,cld_top_col        ; szczyt chmury (czysta biel)
+        cmp.w   #1,af_mission
+        bne.s   .chk_m3_cld
+        move.b  #20,d4                  ; ciemna podstawa burzowa
+        move.b  #24,d5                  ; chmura burzowa
+        move.b  #218,cld_top_col        ; blysk burzowy
+        bra.s   .draw_puffs
+.chk_m3_cld:
+        cmp.w   #2,af_mission
+        bne.s   .draw_puffs
+        move.b  #20,d4                  ; ciemny oblok cytadeli
+        move.b  #24,d5                  ; stalowy korpus chmury
+        move.b  #29,cld_top_col         ; srebrzysty grzbiet chmury
+.draw_puffs:
+        ; Rysuj 3 warstwy wolumetryczne chmury (dolna podstawa, korpus i szczyt)
+        movem.l d0-d3,-(sp)
+        addq.w  #3,d1
+        move.b  d4,d6
+        bsr.s   .draw_cloud_puff
+        movem.l (sp),d0-d3
+        sub.w   d3,d0
+        asr.w   #1,d3
+        addq.w  #3,d3
+        move.b  d5,d6
+        bsr.s   .draw_cloud_puff
+        movem.l (sp)+,d0-d3
+        subq.w  #2,d1
+        move.w  d3,d4
+        asr.w   #2,d4
+        sub.w   d4,d3
+        move.b  cld_top_col(pc),d6
+        bsr.s   .draw_cloud_puff
+.cld_nx: addq.l  #8,a3
+        dbf     d7,.cld_lp
+        movem.l (sp)+,d0-d7/a0-a4
+        rts
+
+; Rysuje pojedyncza bryle chmury (srodek d0.w, d1.w, promien X d3.w, kolor d6.b)
+.draw_cloud_puff:
+        movem.l d0-d7/a0-a2,-(sp)
+        move.w  d3,d5
+        asr.w   #2,d5                   ; ry = rx / 4 (splaszczony oblok)
+        cmp.w   #2,d5
+        bge.s   .ry_ok
+        moveq   #2,d5
+.ry_ok: move.w  d1,d4
+        sub.w   d5,d4                   ; y_start
+        move.w  d5,d7
+        add.w   d7,d7                   ; liczba wierszy = 2*ry
+.cp_row:
+        cmp.w   #4,d4
+        blt.w   .cp_next
+        ifd FULL_RES
+        cmp.w   #130,d4
+        else
+        cmp.w   #65,d4
+        endif
+        bgt.w   .cp_next
+        ; Wylicz szerokosc wiersza obloku (zaokraglony profil)
+        move.w  d4,d2
+        sub.w   d1,d2
+        bpl.s   .dy_p
+        neg.w   d2
+.dy_p:  lsl.w   #1,d2
+        move.w  d3,a2
+        sub.w   d2,a2
+        move.w  a2,d2                   ; polowa szerokosci w tym wierszu
+        ble.s   .cp_next
+        move.w  d0,a0
+        sub.w   d2,a0                   ; x0
+        move.w  d0,a1
+        add.w   d2,a1                   ; x1
+        cmp.w   #0,a0
+        bge.s   .x0_ok
+        lea     0.w,a0
+.x0_ok: cmp.w   #319,a1
+        ble.s   .x1_ok
+        lea     319.w,a1
+.x1_ok: move.w  a1,d2
+        sub.w   a0,d2
+        ble.s   .cp_next
+        move.w  d4,a2
+        mulu.w  #320,d4
+        add.l   a0,d4
+        lea     chunky_buf,a0
+        add.l   d4,a0
+        move.w  a2,d4
+.cp_px: move.b  d6,(a0)+
+        dbf     d2,.cp_px
+.cp_next:
+        addq.w  #1,d4
+        dbf     d7,.cp_row
+        movem.l (sp)+,d0-d7/a0-a2
+        rts
+
+        even
+cld_scroll_z:   dc.w 0
+cld_cam_x:      dc.w 0
+cld_top_col:    dc.b 255,0
+; 16 formacji chmur: [world_x.w, world_y.w, base_z.w, radius.w]
+af_cloud_table:
+        dc.w -320,-115,  40, 95,   140,-105, 110, 88,  -110,-125, 180,105,   290, -95, 240, 82
+        dc.w -240, -90, 310, 84,    60,-120, 370,110,   350,-110, 430, 92,  -380,-100, 490, 98
+        dc.w  190,-122, 560,104,  -150, -92, 620, 80,   310,-118, 690, 96,   -40,-108, 750, 90
+        dc.w -290,-124, 820,108,   230, -96, 880, 85,   -90,-116, 940, 94,   370,-104,1000, 88
+
         section fastram_bss,bss_p
 af_vox_hmap:    ds.b 64*64
 af_vox_cmap:    ds.b 64*64

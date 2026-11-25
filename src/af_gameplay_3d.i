@@ -22,9 +22,12 @@ af_render_gameplay_3d:
         clr.w   v2_uv_anim_v
         jsr     clear_chunky
         bsr.w   af_clear_fighter_zbuffer
+        move.b  #1,phong_enabled
+        move.b  #1,zfog_enabled
         ifd FULL_RES
         jsr     draw_256_starfield
         endif
+        jsr     af_draw_3d_clouds
 
         move.l  af_pos_x,d0
         swap    d0
@@ -88,6 +91,25 @@ af_render_gameplay_3d:
         move.w  #xf14_vert_count,d7
         jsr     transform_normals_envmap
 
+        ; Rzuc dynamiczny cien 3D pod mysliwcem XF-14 Albatros
+        move.w  af_ship_sx(pc),d0
+        move.w  af_ship_sy(pc),d1
+        ifd FULL_RES
+        add.w   #26,d1
+        cmp.w   #248,d1
+        ble.s   .sh_y_ok
+        move.w  #248,d1
+.sh_y_ok:
+        else
+        add.w   #13,d1
+        cmp.w   #124,d1
+        ble.s   .sh_y_ok
+        move.w  #124,d1
+.sh_y_ok:
+        endif
+        moveq   #14,d3
+        move.b  #16,d6
+        bsr.w   af_fill_chunky_diamond
         lea     xf14_env_mesh,a0
         lea     v2_proj_buf,a1
         lea     v2_tex_bank,a2
@@ -115,6 +137,20 @@ af_render_gameplay_3d:
         bsr.w   af_draw_reticle_and_hud
         bsr.w   af_draw_cannon_beams
 
+        ; Wyswietl baner potwierdzenia zebrania Rdzenia Eteru
+        tst.w   af_core_msg_timer
+        beq.s   .no_core_msg
+        subq.w  #1,af_core_msg_timer
+        lea     str_core_pickup(pc),a0
+        moveq   #84,d0
+        ifd FULL_RES
+        moveq   #22,d1
+        else
+        moveq   #12,d1
+        endif
+        move.b  #$FD,d6
+        jsr     af_print_chunky_str
+.no_core_msg:
         ; 7. Konwersja Chunky (160x128) -> 8 bitplanow AGA + obramowanie
         jsr     c2p_160x128_to_aga
         jsr     ground_fill_screen_margins
@@ -138,15 +174,25 @@ af_draw_world_entities:
 .ent_lp:
         tst.b   (a4)
         beq.w   .next_ent
-        ; Wrogowie aktywnie zblizaja sie do gracza!
+        ; Wrogowie i krysztaly aktywnie zblizaja sie do gracza!
         cmp.b   #2,1(a4)
-        beq.s   .z_chk
+        beq.s   .z_core_mv
         sub.l   #26<<16,12(a4)
+        bra.s   .z_chk
+.z_core_mv:
+        sub.l   #20<<16,12(a4)
 .z_chk: move.l  12(a4),d2
         swap    d2
         sub.w   d5,d2
+        cmp.b   #2,1(a4)
+        beq.s   .z_core_near
         cmp.w   #180,d2
         bge.s   .z_far
+        bra.s   .z_respawn
+.z_core_near:
+        cmp.w   #95,d2
+        bge.s   .z_far
+.z_respawn:
         ; Gdy wrog minal gracza, odrodz go na horyzoncie w nowej formacji 360 st.
         move.l  af_pos_z,d0
         add.l   #2800<<16,d0
@@ -294,20 +340,20 @@ af_draw_world_entities:
         cmp.b   #2,1(a4)
         bne.s   .not_ether_core
         ; Sprawdz czy gracz wlecial w Rdzen Eteru (d2 <= 420 i blisko af_ship_sx/sy)
-        cmp.w   #420,d2
+        cmp.w   #480,d2
         bgt.w   .next_ent
         move.w  af_ship_sx(pc),d4
         sub.w   d0,d4
         bpl.s   .cdx
         neg.w   d4
-.cdx:   cmp.w   #48,d4
+.cdx:   cmp.w   #58,d4
         bgt.w   .next_ent
         move.w  af_ship_sy(pc),d4
         sub.w   d1,d4
         bpl.s   .cdy
         neg.w   d4
 .cdy:   ifd FULL_RES
-        cmp.w   #40,d4
+        cmp.w   #48,d4
         else
         cmp.w   #22,d4
         endif
@@ -317,6 +363,7 @@ af_draw_world_entities:
         bsr.w   af_trigger_sfx
         add.l   #250,af_score
         addq.w  #1,af_cores_collected
+        move.w  #65,af_core_msg_timer
         add.w   #40,af_energy
         cmp.w   #200,af_energy
         ble.s   .ce_cap
@@ -1387,3 +1434,8 @@ vox_tmp_sy:     dc.w 128
 
         even
 af_cores_collected: dc.w 0
+
+        even
+af_core_msg_timer: dc.w 0
+str_core_pickup:   dc.b "ETHER CORE +40 SHIELD!",0
+        even
