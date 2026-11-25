@@ -308,7 +308,7 @@ af_aw_fill_tri:
         moveq   #2,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
-        bra.w   .intro_done
+        bra.w   af_intro_done
 .act3_takeoff:
         move.w  #101,d0
         ifd FULL_RES
@@ -386,7 +386,7 @@ af_aw_fill_tri:
         moveq   #2,d3
         move.b  #$FE,d6
         jsr     af_fill_chunky_diamond
-.intro_done:
+af_intro_done:
         movem.l (sp)+,d0-d7/a0-a1
         rts
 
@@ -479,10 +479,10 @@ af_draw_aw_intro:
         movem.l d0-d7/a0-a5,-(sp)
         move.l  af_state_timer,d7
         cmp.w   #115,d7
-        blo.w   .cut1_bike
+        blo.w   af_intro_cut1
         cmp.w   #230,d7
-        blo.w   .cut2_pilot
-        bra.w   .cut34_3d_jet
+        blo.w   af_intro_cut2
+        bra.w   af_intro_cut34
 
 af_emit_dyn_poly:
         movem.l d0-d1/a0,-(sp)
@@ -501,7 +501,7 @@ af_emit_dyn_poly:
         movem.l (sp)+,d0-d1/a0
         rts
 
-.cut1_bike:
+af_intro_cut1:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
         bsr.w   af_aw_fill_ngon
@@ -590,7 +590,7 @@ af_emit_dyn_poly:
         move.w  d4,d0 ; add.w #2,d0  ; move.w d0,(a0)+ ; move.w #136,(a0)+
         move.b  #$FF,d6
         bsr.w   af_emit_dyn_poly
-        bra.w   .intro_done
+        bra.w   af_intro_done
 .draw_wheel:
         lea     af_dyn_poly(pc),a0
         move.w  #6,(a0)+
@@ -611,7 +611,7 @@ af_emit_dyn_poly:
         move.b  #$16,d6
         bra.w   af_emit_dyn_poly
 
-.cut34_3d_jet:
+af_intro_cut34:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
         bsr.w   af_aw_fill_ngon
@@ -630,7 +630,7 @@ af_emit_dyn_poly:
         move.l  af_state_timer,d3
         sub.l   #230,d3
         cmp.l   #1600,d3
-        bge.w   .intro_done
+        bge.w   af_intro_done
         moveq   #0,d0
         moveq   #-16,d1
         move.w  d3,d2
@@ -682,10 +682,10 @@ af_emit_dyn_poly:
         jsr     draw_gouraud_env_mesh_v2
         movem.w (sp)+,d4-d6
         cmp.w   #260,d6
-        bgt.s   .intro_done
+        bgt.s   af_intro_done
         jsr     ptrail_emit_twin_nozzles
         jsr     ptrail_update_and_draw
-.intro_done:
+af_intro_done:
         movem.l (sp)+,d0-d7/a0-a5
         rts
 
