@@ -6,6 +6,12 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.1.2] - 2026-11-25
+
+- **Pelne 5-Aktowe Filmy Rotoskopowe w Stylu *Eon* (TBL) (`src/af_vector_scenes.i`):** rozbudowane, wieloscenowe przerywniki filmowe na poczatek gry (**Intro** — 5 aktow: *Salute to the Sky*, alarm w bazie Solis, zblizenie na kokpit XF-14 z dopalaczami, start 3D w niebo oraz tytul), start kazdej misji (**Briefing** z animowanym portretem Dowodcy i hologramem) oraz zakonczenie misji (**Debriefing / Game Over** z animowanym portretem Pilota 3/4).
+
+---
+
 ## [v0.1.1] - 2026-11-25
 
 - **Wielotonowe Sceny Rotoskopowe w Stylu *Eon* (The Black Lotus) (`src/af_vector_scenes.i`, `src/af_campaigns.i`):** bezkonturowy odtwarzacz wielokatow `af_play_eon_scene` dla 3 scen fabularnych:

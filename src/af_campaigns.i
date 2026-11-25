@@ -40,7 +40,7 @@ af_render_vector_screen:
 
         ; --- EKRAN 0: INTRO (Zywa scena wektorowa Another World + Tytul) ---
         jsr     af_draw_aw_intro
-        cmp.l   #340,af_state_timer
+        cmp.l   #560,af_state_timer
         blo.w   .vec_blit
         jsr     af_draw_vanguard_crest
         ; Napisy tytulowe

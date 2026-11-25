@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.1.1</h1>
+  <h1>AETHER FALCON: VANGUARD v0.1.2</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Pobierz .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Pobieranie (v0.1.1 — 2 Profile Sprzętowe)
+## Pobieranie (v0.1.2 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -23,13 +23,13 @@
 
 ---
 
-## Galeria v0.1.1 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
+## Galeria v0.1.2 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
 
 | ![1. Tablica Odpraw Taktycznych (Briefing)](docs/screenshots/v010_01_briefing_board.png) | ![2. Lot 3D: Chmury 3D, Woksele i SCORE w HUD](docs/screenshots/v010_02_hud_score_clouds.png) |
 |:---:|:---:|
 | **1. Tablica Odpraw Taktycznych (Briefing)** | **2. Chmury 3D, Teren Wokselowy i SCORE: 002350** |
 
-## Galeria Terenu Wokselowego 3D (v0.1.1 — Amiga 1200 AGA / THEA1200)
+## Galeria Terenu Wokselowego 3D (v0.1.2 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Wokselowy Ocean i Wyspy (Misja 01)](docs/screenshots/v009_01_voxel_archipelago.png) | ![2. Przelot 360° i Celownik 3D](docs/screenshots/v009_02_voxel_canyon.png) | ![3. Góry, Ląd i Modele 3D](docs/screenshots/v009_03_voxel_citadel.png) |
 |:---:|:---:|:---:|

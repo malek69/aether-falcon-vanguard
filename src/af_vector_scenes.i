@@ -230,45 +230,96 @@ af_play_eon_scene:
         rts
 
 ; ----------------------------------------------------------------------------
-; af_draw_aw_briefing: Wielotonowy portret Dowodcy (styl Eon / The Black Lotus)
+; af_draw_aw_briefing: Animowany portret Dowodcy + skaner taktyczny (Eon TBL)
 ; ----------------------------------------------------------------------------
         cnop    0,4
 af_draw_aw_briefing:
-        movem.l d4-d5/a2,-(sp)
-        ; Subtelna animacja oddechu / pochylenia dowodcy (-2..+2 px)
-        move.l  vbl_tick(pc),d5
-        lsr.l   #4,d5
-        and.w   #3,d5
-        cmp.w   #3,d5
-        bne.s   .br_dy
-        moveq   #1,d5
-.br_dy: moveq   #0,d4
+        movem.l d0-d7/a0-a2,-(sp)
+        ; Plynny ruch oddechu i gestu Dowodcy w rytm vbl_tick
+        move.l  vbl_tick(pc),d0
+        lsr.l   #3,d0
+        and.w   #7,d0
+        move.w  d0,d5
+        cmp.w   #4,d5
+        ble.s   .br_dy1
+        neg.w   d5
+        addq.w  #8,d5
+.br_dy1:subq.w  #2,d5                   ; d5 = -2..+2 px
+        moveq   #0,d4
         lea     eon_commander_scene(pc),a2
-        bsr.s   af_play_eon_scene
-        movem.l (sp)+,d4-d5/a2
+        bsr.w   af_play_eon_scene
+        ; Animowana fala energetyczna / hologram na dloni Dowodcy
+        move.l  vbl_tick(pc),d3
+        lsr.l   #2,d3
+        and.w   #7,d3
+        addq.w  #3,d3
+        move.w  #202,d0
+        ifd FULL_RES
+        move.w  #122,d1
+        else
+        moveq   #61,d1
+        endif
+        add.w   d5,d1
+        move.b  #253,d6
+        jsr     af_fill_chunky_diamond
+        movem.l (sp)+,d0-d7/a0-a2
         rts
 
 ; ----------------------------------------------------------------------------
-; af_draw_aw_debrief: Portret Pilota 3/4 z bocznym swiatlem (styl Eon / TBL)
+; af_draw_aw_debrief: Animowany portret Pilota 3/4 + przelot zwyciestwa (Eon)
 ; ----------------------------------------------------------------------------
         cnop    0,4
 af_draw_aw_debrief:
-        movem.l d4-d5/a2,-(sp)
+        movem.l d0-d7/a0-a2,-(sp)
+        move.l  vbl_tick(pc),d0
+        lsr.l   #4,d0
+        and.w   #3,d0
+        move.w  d0,d5
+        subq.w  #1,d5
         moveq   #0,d4
-        moveq   #0,d5
         lea     eon_pilot_portrait_scene(pc),a2
-        bsr.s   af_play_eon_scene
-        movem.l (sp)+,d4-d5/a2
+        bsr.w   af_play_eon_scene
+        ; Dynamiczne smugi swiatla w tle (zlote przy zwyciestwie, czerwone przy Game Over)
+        move.l  vbl_tick(pc),d0
+        lsl.w   #2,d0
+        and.w   #255,d0
+        add.w   #32,d0
+        ifd FULL_RES
+        move.w  #44,d1
+        else
+        moveq   #22,d1
+        endif
+        moveq   #5,d3
+        move.b  #254,d6
+        tst.b   af_game_over
+        beq.s   .deb_col_ok
+        move.b  #252,d6
+.deb_col_ok:
+        jsr     af_fill_chunky_diamond
+        movem.l (sp)+,d0-d7/a0-a2
         rts
 
+; ----------------------------------------------------------------------------
+; af_draw_aw_intro: 5-aktowy film otwierajacy w stylu Eon (TBL) + AURA-3D
+; ----------------------------------------------------------------------------
+        cnop    0,4
 af_draw_aw_intro:
         movem.l d0-d7/a0-a5,-(sp)
         move.l  af_state_timer,d7
-        cmp.w   #140,d7
-        blo.w   af_intro_cut1
-        cmp.w   #245,d7
-        blo.w   af_intro_cut2
-        bra.w   af_intro_cut34
+        cmp.l   #130,d7
+        blo.w   af_intro_cut1           ; Akt 1: Salute to the Sky (Eon kadr 1)
+        cmp.l   #255,d7
+        blo.w   af_intro_cut2           ; Akt 2: Alarm w bazie Solis + dojazd na motorze
+        cmp.l   #380,d7
+        blo.w   af_intro_cut2b          ; Akt 3: Zblizenie na kabine XF-14 i dopalacze
+        cmp.l   #560,d7
+        blo.w   af_intro_cut34          ; Akt 4: Start 3D XF-14 Albatros w niebo!
+        ; Akt 5 (560+): Gwiezdne niebo + wielotonowy portret Pilota pod tytulem
+        moveq   #0,d4
+        moveq   #0,d5
+        lea     eon_pilot_portrait_scene(pc),a2
+        bsr.w   af_play_eon_scene
+        bra.w   af_intro_done
 
 af_emit_dyn_poly:
         movem.l d0-d1/a0,-(sp)
@@ -287,211 +338,94 @@ af_emit_dyn_poly:
         movem.l (sp)+,d0-d1/a0
         rts
 
-; Akt 1 Intro: Sylwetka Pilota unoszacego piesc na tle srebrnego nieba (Eon kadr 1)
+; Akt 1 (0..129): Sylwetka Pilota unoszacego piesc na tle srebrnego nieba (Eon kadr 1)
 af_intro_cut1:
         move.w  d7,d4
-        lsr.w   #3,d4
+        lsr.w   #2,d4
         neg.w   d4
-        add.w   #16,d4                  ; powolny najazd kamery w lewo
+        add.w   #22,d4                  ; dynamiczny najazd kamery
         move.w  d7,d5
-        lsr.w   #4,d5
+        lsr.w   #3,d5
         neg.w   d5
-        addq.w  #8,d5                   ; uniesienie piesci ku gorze
+        add.w   #12,d5                  ; uniesienie piesci w niebo
         lea     eon_salute_scene(pc),a2
         bsr.w   af_play_eon_scene
+        ; Pulsujaca aura Eteru wokol piesci
+        move.w  #214,d0
+        add.w   d4,d0
+        ifd FULL_RES
+        move.w  #44,d1
+        else
+        moveq   #22,d1
+        endif
+        add.w   d5,d1
+        move.w  d7,d3
+        lsr.w   #2,d3
+        and.w   #7,d3
+        addq.w  #3,d3
+        move.b  #253,d6
+        jsr     af_fill_chunky_diamond
         bra.w   af_intro_done
 
-        even
-; --- KADR 1 EON (TBL): Sylwetka pilota z uniesiona piescia na srebrnym niebie ---
-eon_salute_scene:
-        dc.w    30, 4,  -20,-20, 340,-20, 340,275, -20,275   ; srebrzyste niebo Eon
-        ; Stalowo-blekitne podswietlenie krawedzi (rim light #215/#217) wzdluz ramienia i plecow
-        dc.w    215, 5,  46,174, 88,128, 124,116, 118,136, 62,196
-        dc.w    217, 4, 124,116, 174,80, 184,92, 132,126
-        dc.w    215, 4, 174,80, 198,42, 214,48, 186,92
-        dc.w    24,  4,  68,118, 92,98, 114,104, 96,124
-        ; Gleboka czarna sylwetka (#16): korpus, glowa, ramie i zacisnieta piesc
-        dc.w    16, 6,  -16,255, 22,190, 74,138, 118,134, 108,214, 72,255
-        dc.w    16, 6,   78,128, 72,94, 88,72, 116,74, 126,96, 114,126
-        dc.w    16, 4,  112,134, 178,86, 192,102, 124,154
-        dc.w    16, 5,  176,88, 196,46, 228,38, 246,66, 212,104
-        dc.w    16, 4,   18,192, 54,186, 48,255, -16,255
-        dc.w    -1
-
-; --- KADR 2 EON (TBL): Portret Dowodcy eskadry opartego na dloni (Briefing) ---
-eon_commander_scene:
-        dc.w    16, 4,  -10,-10, 330,-10, 330,265, -10,265   ; gleboka czern tla (#16)
-        ; Ramiona i kolnierz munduru w turkusie (#215) i blekicie Eteru (#253)
-        dc.w    215, 5,  156,154, 216,136, 319,144, 319,255, 168,255
-        dc.w    253, 4,  268,142, 319,138, 319,192, 286,184
-        dc.w    215, 4,  148,186, 174,164, 194,255, 152,255
-        ; Chlodny cien szyi i zuchwy (#22 / #24)
-        dc.w    22,  5,  196,112, 246,108, 258,158, 218,166, 192,142
-        dc.w    24,  5,  182,54, 216,42, 254,56, 260,112, 206,124
-        ; Jasne kremowo-piaskowe plaszczyzny twarzy (#123, #125, #30)
-        dc.w    123, 6,  186,62, 218,48, 242,64, 238,114, 206,122, 184,96
-        dc.w    125, 5,  192,66, 214,56, 226,84, 212,114, 188,94
-        dc.w    30,  4,  194,72, 206,68, 208,94, 192,90
-        ; Cien brwi, oka i wlosow (#16)
-        dc.w    16,  5,  188,42, 232,36, 264,58, 256,96, 238,68
-        dc.w    16,  4,  190,74, 208,72, 206,79, 190,79
-        ; Dlon i palce podpierajace podbrodek (#125, #123, #30)
-        dc.w    123, 5,  188,122, 224,116, 236,154, 204,196, 184,162
-        dc.w    125, 4,  192,122, 204,120, 202,172, 188,168
-        dc.w    30,  4,  206,120, 216,120, 214,166, 204,166
-        dc.w    125, 4,  218,122, 228,124, 224,158, 215,158
-        dc.w    -1
-
-; --- KADR 3 EON (TBL): Portret Pilota 3/4 z bocznym swiatlem (Debriefing) ---
-eon_pilot_portrait_scene:
-        dc.w    16, 4,  -10,-10, 330,-10, 330,265, -10,265   ; gleboka czern tla (#16)
-        ; Turkusowe ramiona i kolnierz skafandra (#215 / #253)
-        dc.w    215, 5,   64,196, 118,176, 146,192, 138,255,  46,255
-        dc.w    215, 5,  208,184, 266,174, 308,208, 316,255, 218,255
-        dc.w    253, 4,  248,182, 294,198, 286,246, 242,232
-        ; Stalowo-fioletowe fasety wlosow i cienia policzka (#23, #25)
-        dc.w    23,  6,  104,48, 152,24, 204,42, 214,108, 174,148, 114,116
-        dc.w    25,  5,  112,56, 156,34, 182,66, 154,112, 114,96
-        dc.w    25,  4,   74,108, 102,96, 108,118, 82,126
-        ; Oswietlony profil twarzy 3/4 (#123, #125, #30)
-        dc.w    123, 6,  136,74, 176,56, 204,88, 214,158, 188,188, 148,144
-        dc.w    125, 5,  154,68, 184,64, 202,106, 198,174, 168,154
-        dc.w    30,  4,  174,72, 192,82, 204,142, 186,164
-        ; Cien brwi, oka, nosa i ust (#16, #252)
-        dc.w    16,  4,  128,78, 158,68, 162,76, 132,86
-        dc.w    16,  4,  134,88, 156,84, 152,96, 136,94
-        dc.w    24,  4,  156,102, 172,118, 162,132, 148,124
-        dc.w    252, 4,  156,144, 182,142, 178,154, 158,152
-        dc.w    -1
-
+; Akt 2 (130..254): Alarm bojowy na lotnisku Solis + dojazd pilota do XF-14
 af_intro_cut2:
         jsr     af_blit_airbase_bg
-        ; Wielowarstwowo cieniowany kadlub i wlot powietrza XF-14 (3 odcienie: gorny refleks, bok, cien pod kadlubem)
-        lea     af_dyn_poly(pc),a0
-        move.w  #5,(a0)+
-        move.w  #156,(a0)+
-        move.w  #146,(a0)+
-        move.w  #226,(a0)+
-        move.w  #116,(a0)+
-        move.w  #319,(a0)+
-        move.w  #116,(a0)+
-        move.w  #319,(a0)+
-        move.w  #154,(a0)+
-        move.w  #172,(a0)+
-        move.w  #154,(a0)+
-        move.b  #$FF,d6
-        bsr.w   af_emit_dyn_poly
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #172,(a0)+
-        move.w  #154,(a0)+
-        move.w  #319,(a0)+
-        move.w  #154,(a0)+
-        move.w  #319,(a0)+
-        move.w  #178,(a0)+
-        move.w  #196,(a0)+
-        move.w  #178,(a0)+
-        move.b  #$16,d6
-        bsr.w   af_emit_dyn_poly
-        ; Ciemny wlot powietrza pod skrzydlem XF-14
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #268,(a0)+
-        move.w  #154,(a0)+
-        move.w  #319,(a0)+
-        move.w  #154,(a0)+
-        move.w  #319,(a0)+
-        move.w  #176,(a0)+
-        move.w  #276,(a0)+
-        move.w  #176,(a0)+
-        move.b  #$13,d6
-        bsr.w   af_emit_dyn_poly
-        ; Wneka otwartego kokpitu + fotel wyrzucany
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #212,(a0)+
-        move.w  #116,(a0)+
-        move.w  #224,(a0)+
-        move.w  #102,(a0)+
-        move.w  #272,(a0)+
-        move.w  #102,(a0)+
-        move.w  #282,(a0)+
-        move.w  #116,(a0)+
-        move.b  #$01,d6
-        bsr.w   af_emit_dyn_poly
-        ; Zlota drabinka wejsciowa ze szczeblami
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #208,(a0)+
-        move.w  #116,(a0)+
-        move.w  #218,(a0)+
-        move.w  #116,(a0)+
-        move.w  #194,(a0)+
-        move.w  #214,(a0)+
-        move.w  #184,(a0)+
-        move.w  #214,(a0)+
-        move.b  #$FE,d6
-        bsr.w   af_emit_dyn_poly
-        ; Wybor fazy szkieletu pilota (d2: 0=marsz, 1=wspinaczka, 2=w kabinie; d3=faza cyklu)
-        move.w  d7,d3
-        lsr.w   #1,d3
-        move.w  d7,d4
-        sub.w   #115,d4
-        cmp.w   #50,d4
-        bge.s   .sk_m1
-        move.w  d4,d0
+        move.w  d7,d0
+        sub.w   #130,d0
         lsl.w   #1,d0
-        add.w   #80,d0
-        move.w  d0,d4
-        move.w  #158,d5
-        moveq   #0,d2
-        bra.s   .sk_call
-.sk_m1: cmp.w   #90,d4
-        bge.s   .sk_m2
-        sub.w   #50,d4
-        move.w  #180,d0
-        add.w   d4,d0
-        move.w  #158,d5
-        sub.w   d4,d5
-        move.w  d0,d4
-        moveq   #1,d2
-        bra.s   .sk_call
-.sk_m2: move.w  #246,d4
-        move.w  #122,d5
-        moveq   #2,d2
-.sk_call:
-        bsr.w   af_skel_render_pilot
-        ; Otwarta / zamykajaca sie owiewka kabiny XF-14
-        cmp.w   #205,d7
-        bge.s   .canopy_shut
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #212,(a0)+
-        move.w  #116,(a0)+
-        move.w  #248,(a0)+
-        move.w  #54,(a0)+
-        move.w  #272,(a0)+
-        move.w  #60,(a0)+
-        move.w  #224,(a0)+
-        move.w  #116,(a0)+
-        move.b  #$FD,d6
-        bsr.w   af_emit_dyn_poly
-        bra.w   af_intro_done
-.canopy_shut:
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #212,(a0)+
-        move.w  #116,(a0)+
-        move.w  #226,(a0)+
-        move.w  #82,(a0)+
-        move.w  #268,(a0)+
-        move.w  #82,(a0)+
-        move.w  #282,(a0)+
-        move.w  #116,(a0)+
-        move.b  #$FD,d6
-        bsr.w   af_emit_dyn_poly
+        cmp.w   #185,d0
+        ble.s   .mx_ok
+        move.w  #185,d0
+.mx_ok: addq.w  #8,d0
+        ifd FULL_RES
+        move.w  #188,d1
+        else
+        moveq   #94,d1
+        endif
+        jsr     af_blit_moto_sprite
+        ; Pulsujaca syrena alarmowa na wiezy kontroli lotow
+        move.w  #52,d0
+        ifd FULL_RES
+        move.w  #64,d1
+        else
+        moveq   #32,d1
+        endif
+        move.w  d7,d3
+        and.w   #15,d3
+        addq.w  #2,d3
+        move.b  #252,d6
+        jsr     af_fill_chunky_diamond
         bra.w   af_intro_done
 
+; Akt 3 (255..379): Wielotonowe zblizenie Eon na kabine XF-14 i odpalenie dopalaczy
+af_intro_cut2b:
+        jsr     af_blit_airbase_bg
+        move.w  d7,d4
+        sub.w   #255,d4
+        asr.w   #2,d4
+        neg.w   d4
+        moveq   #0,d5
+        btst    #1,d7
+        beq.s   .shk_ok
+        moveq   #-2,d5                  ; wibracja kadluba od dopalaczy!
+.shk_ok:lea     eon_cockpit_ignition_scene(pc),a2
+        bsr.w   af_play_eon_scene
+        ; Pulsujacy plomien z dysz XF-14
+        move.w  #308,d0
+        add.w   d4,d0
+        ifd FULL_RES
+        move.w  #138,d1
+        else
+        moveq   #69,d1
+        endif
+        move.w  d7,d3
+        and.w   #15,d3
+        addq.w  #6,d3
+        move.b  #254,d6
+        jsr     af_fill_chunky_diamond
+        bra.w   af_intro_done
+
+; Akt 4 (380..559): Start 3D XF-14 Albatros w niebo z pelnymi smugami i flara!
 af_intro_cut34:
         jsr     af_blit_airbase_bg
         jsr     af_clear_fighter_zbuffer
@@ -501,25 +435,22 @@ af_intro_cut34:
         clr.w   cam_sin
         move.w  #256,cam_cos
         move.l  af_state_timer,d3
-        sub.l   #230,d3
-        cmp.l   #1600,d3
-        bge.w   af_intro_done
+        sub.l   #380,d3
         moveq   #0,d0
         moveq   #-16,d1
         move.w  d3,d2
-        asr.w   #2,d2
-        cmp.w   #38,d2
+        asr.w   #1,d2
+        cmp.w   #42,d2
         ble.s   .rl_ok
-        moveq   #38,d2
+        moveq   #42,d2
 .rl_ok: jsr     build_rot_matrix_3d
-        ; Pozycja 3D XF-14: wznosi sie w niebo i leci ciagle w glab az do wielkosci kropki!
         move.w  d3,d4
-        asr.w   #2,d4
+        asr.w   #1,d4
         cmp.w   #110,d4
         ble.s   .jx_ok
         move.w  #110,d4
 .jx_ok: move.w  d3,d5
-        asr.w   #2,d5
+        asr.w   #1,d5
         ifd FULL_RES
         move.w  #28,d1
         sub.w   d5,d1
@@ -535,9 +466,8 @@ af_intro_cut34:
         move.w  #-32,d1
         endif
 .jy_ok: move.w  d1,d5
-        ; Glebokosc Z (d6): rosnie nieprzerwanie 12 -> 1800, az samolot stanie sie kropka!
         move.w  d3,d6
-        lsl.w   #1,d6
+        lsl.w   #2,d6
         add.w   #12,d6
         movem.w d4-d6,-(sp)
         lea     xf14_verts,a0
@@ -554,13 +484,76 @@ af_intro_cut34:
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
         movem.w (sp)+,d4-d6
-        cmp.w   #260,d6
+        cmp.w   #320,d6
         bgt.s   af_intro_done
         jsr     ptrail_emit_twin_nozzles
         jsr     ptrail_update_and_draw
 af_intro_done:
         movem.l (sp)+,d0-d7/a0-a5
         rts
+
+        even
+; --- KADR 1 EON (TBL): Sylwetka pilota z uniesiona piescia na srebrnym niebie ---
+eon_salute_scene:
+        dc.w    30, 4,  -40,-40, 360,-40, 360,295, -40,295   ; srebrzyste niebo Eon
+        dc.w    215, 5,  46,174, 88,128, 124,116, 118,136, 62,196
+        dc.w    217, 4, 124,116, 174,80, 184,92, 132,126
+        dc.w    215, 4, 174,80, 198,42, 214,48, 186,92
+        dc.w    24,  4,  68,118, 92,98, 114,104, 96,124
+        dc.w    16, 6,  -16,255, 22,190, 74,138, 118,134, 108,214, 72,255
+        dc.w    16, 6,   78,128, 72,94, 88,72, 116,74, 126,96, 114,126
+        dc.w    16, 4,  112,134, 178,86, 192,102, 124,154
+        dc.w    16, 5,  176,88, 196,46, 228,38, 246,66, 212,104
+        dc.w    16, 4,   18,192, 54,186, 48,255, -16,255
+        dc.w    -1
+
+; --- KADR 2 EON (TBL): Portret Dowodcy eskadry opartego na dloni (Briefing) ---
+eon_commander_scene:
+        dc.w    16, 4,  -10,-10, 330,-10, 330,265, -10,265
+        dc.w    215, 5,  156,154, 216,136, 319,144, 319,255, 168,255
+        dc.w    253, 4,  268,142, 319,138, 319,192, 286,184
+        dc.w    215, 4,  148,186, 174,164, 194,255, 152,255
+        dc.w    22,  5,  196,112, 246,108, 258,158, 218,166, 192,142
+        dc.w    24,  5,  182,54, 216,42, 254,56, 260,112, 206,124
+        dc.w    123, 6,  186,62, 218,48, 242,64, 238,114, 206,122, 184,96
+        dc.w    125, 5,  192,66, 214,56, 226,84, 212,114, 188,94
+        dc.w    30,  4,  194,72, 206,68, 208,94, 192,90
+        dc.w    16,  5,  188,42, 232,36, 264,58, 256,96, 238,68
+        dc.w    16,  4,  190,74, 208,72, 206,79, 190,79
+        dc.w    123, 5,  188,122, 224,116, 236,154, 204,196, 184,162
+        dc.w    125, 4,  192,122, 204,120, 202,172, 188,168
+        dc.w    30,  4,  206,120, 216,120, 214,166, 204,166
+        dc.w    125, 4,  218,122, 228,124, 224,158, 215,158
+        dc.w    -1
+
+; --- KADR 3 EON (TBL): Portret Pilota 3/4 z bocznym swiatlem (Debriefing) ---
+eon_pilot_portrait_scene:
+        dc.w    16, 4,  -10,-10, 330,-10, 330,265, -10,265
+        dc.w    215, 5,   64,196, 118,176, 146,192, 138,255,  46,255
+        dc.w    215, 5,  208,184, 266,174, 308,208, 316,255, 218,255
+        dc.w    253, 4,  248,182, 294,198, 286,246, 242,232
+        dc.w    23,  6,  104,48, 152,24, 204,42, 214,108, 174,148, 114,116
+        dc.w    25,  5,  112,56, 156,34, 182,66, 154,112, 114,96
+        dc.w    25,  4,   74,108, 102,96, 108,118, 82,126
+        dc.w    123, 6,  136,74, 176,56, 204,88, 214,158, 188,188, 148,144
+        dc.w    125, 5,  154,68, 184,64, 202,106, 198,174, 168,154
+        dc.w    30,  4,  174,72, 192,82, 204,142, 186,164
+        dc.w    16,  4,  128,78, 158,68, 162,76, 132,86
+        dc.w    16,  4,  134,88, 156,84, 152,96, 136,94
+        dc.w    24,  4,  156,102, 172,118, 162,132, 148,124
+        dc.w    252, 4,  156,144, 182,142, 178,154, 158,152
+        dc.w    -1
+
+; --- KADR 4 EON (TBL): Wielotonowe zblizenie na kabine XF-14 i dysze ---
+eon_cockpit_ignition_scene:
+        dc.w    30,  5,  120,148, 214,114, 340,114, 340,152, 152,158
+        dc.w    24,  4,  152,158, 340,152, 340,178, 186,174
+        dc.w    16,  4,  186,174, 340,178, 340,196, 216,188
+        dc.w    215, 4,  214,114, 244,82, 296,82, 314,114
+        dc.w    253, 4,  248,86, 288,86, 300,110, 232,110
+        dc.w    16,  4,  254,94, 274,88, 282,108, 252,108   ; sylwetka pilota w kokpicie
+        dc.w    254, 4,  164,132, 224,124, 226,130, 166,136   ; zloty pas eskadry Vanguard
+        dc.w    -1
 
 af_dyn_poly:
         ds.w    18

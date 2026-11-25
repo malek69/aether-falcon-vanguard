@@ -6,6 +6,12 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.1.2] - 2026-11-25
+
+- **Full 5-Act Rotoscoped *Eon* (TBL) Style Cinematics (`src/af_vector_scenes.i`):** expanded multi-scene animated movies for the game opening (**Intro** — 5 acts: *Salute to the Sky*, Solis airbase alert, XF-14 cockpit afterburner ignition, 3D launch into space, and title), mission start (**Briefing** with animated Commander portrait & hologram), and mission end (**Debriefing / Game Over** with animated 3/4 Pilot portrait).
+
+---
+
 ## [v0.1.1] - 2026-11-25
 
 - **Multi-Tone Rotoscoped *Eon* (The Black Lotus) Style Story Scenes (`src/af_vector_scenes.i`, `src/af_campaigns.i`):** borderless multi-faceted polygon scene player `af_play_eon_scene` across all 3 narrative screens:

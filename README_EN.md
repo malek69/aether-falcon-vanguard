@@ -3,7 +3,7 @@
 <p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.1.1</h1>
+  <h1>AETHER FALCON: VANGUARD v0.1.2</h1>
   <p><strong>Bare-metal 3D combat flight simulator for Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Download .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Downloads (v0.1.1 — 2 Hardware Profiles)
+## Downloads (v0.1.2 — 2 Hardware Profiles)
 
 | Profile (`--profile`) | Target Platform | Download Packages |
 | :--- | :--- | :--- |
@@ -23,13 +23,13 @@
 
 ---
 
-## Gallery v0.1.1 — Tactical Briefing Board, 3D Clouds & Live SCORE HUD
+## Gallery v0.1.2 — Tactical Briefing Board, 3D Clouds & Live SCORE HUD
 
 | ![1. Tactical Mission Briefing Board](docs/screenshots/v010_01_briefing_board.png) | ![2. 3D Flight: Volumetric Clouds, Voxels & Live SCORE](docs/screenshots/v010_02_hud_score_clouds.png) |
 |:---:|:---:|
 | **1. Tactical Mission Briefing Board** | **2. Volumetric 3D Clouds, Voxels & SCORE: 002350** |
 
-## 3D Voxel Terrain Gallery (v0.1.1 — Amiga 1200 AGA / THEA1200)
+## 3D Voxel Terrain Gallery (v0.1.2 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Voxel Ocean & Islands (Mission 01)](docs/screenshots/v009_01_voxel_archipelago.png) | ![2. 360° Flight & 3D Lock-On](docs/screenshots/v009_02_voxel_canyon.png) | ![3. Voxel Mountains, Land & 3D Meshes](docs/screenshots/v009_03_voxel_citadel.png) |
 |:---:|:---:|:---:|
