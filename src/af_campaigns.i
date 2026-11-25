@@ -79,19 +79,19 @@ af_render_vector_screen:
         ; --- EKRAN 1: BRIEFING (Tablica Odpraw Taktycznych z Fabula Kampanii) ---
         jsr     af_draw_aw_briefing
 
-        ; Rysuj ciemna tablice odpraw na srodku ekranu (x=14..305)
+        ; Rysuj lewy panel tekstowy odprawy (x=10..185), po prawej portret Dowodcy Eon!
         lea     chunky_buf,a0
         ifd FULL_RES
-        adda.l  #14*320+14,a0
-        move.w  #202,d7                 ; wysokosc tablicy 203 wiersze
+        adda.l  #14*320+10,a0
+        move.w  #202,d7
         else
-        adda.l  #6*320+14,a0
-        move.w  #96,d7                  ; wysokosc tablicy 97 wierszy
+        adda.l  #6*320+10,a0
+        move.w  #96,d7
         endif
-        move.l  #269488144,d1           ; 4 piksele ciemnego tla tablicy ($10101010)
+        move.l  #269488144,d1
 .brd_row:
         move.l  a0,a1
-        moveq   #72,d6                  ; 73 * 4 = 292 px szerokosci (14..305)
+        moveq   #43,d6                  ; 44 * 4 = 176 px szerokosci (x=10..185)
 .brd_col:
         move.l  d1,(a1)+
         dbf     d6,.brd_col
@@ -146,7 +146,7 @@ af_render_vector_screen:
 
         ; Naglowek tablicy odpraw
         lea     str_brd_hdr(pc),a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         moveq   #22,d1
         else
@@ -170,7 +170,7 @@ af_render_vector_screen:
 .b_draw_lines:
         ; 1. Tytul misji (bialy $FF)
         move.l  (a4)+,a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         moveq   #38,d1
         else
@@ -181,7 +181,7 @@ af_render_vector_screen:
 
         ; 2. Linia fabuly 1 (turkus $FD)
         move.l  (a4)+,a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         moveq   #62,d1
         else
@@ -192,7 +192,7 @@ af_render_vector_screen:
 
         ; 3. Linia fabuly 2 (bialy $FF)
         move.l  (a4)+,a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         moveq   #84,d1
         else
@@ -203,7 +203,7 @@ af_render_vector_screen:
 
         ; 4. Linia fabuly 3 (zloto $FE)
         move.l  (a4)+,a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         moveq   #112,d1
         else
@@ -214,7 +214,7 @@ af_render_vector_screen:
 
         ; 5. Linia fabuly 4 (turkus $FD)
         move.l  (a4)+,a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         move.w  #136,d1
         else
@@ -225,7 +225,7 @@ af_render_vector_screen:
 
         ; 6. Linia fabuly 5 (czerwony/zloto celu)
         move.l  (a4)+,a0
-        moveq   #26,d0
+        moveq   #14,d0
         ifd FULL_RES
         move.w  #160,d1
         else

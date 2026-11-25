@@ -391,320 +391,74 @@ af_intro_done_alt:
         rts
 
 ; ----------------------------------------------------------------------------
-; af_draw_aw_briefing:
-        movem.l d0-d7/a0-a1,-(sp)
-        ; Tlo sali odpraw lotniskowca Solis
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #10,(a0)+
-        move.w  #16,(a0)+
-        move.w  #310,(a0)+
-        move.w  #16,(a0)+
-        move.w  #310,(a0)+
-        move.w  #244,(a0)+
-        move.w  #10,(a0)+
-        move.w  #244,(a0)+
-        move.b  #$12,d6
-        bsr.w   af_skel_emit_poly
-        ; Animowany ruch glowy i ramienia oficera odprawy (d7 = wychylenie -4..+4)
-        move.l  vbl_tick(pc),d0
-        lsr.l   #3,d0
-        and.w   #15,d0
-        lea     af_skel_sin16(pc),a1
-        move.b  (a1,d0.w),d7
-        ext.w   d7
-        asr.w   #2,d7
-        ; Ramiona i mundur oficera po lewej stronie (X=16..98, Y=118..244)
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #16,(a0)+
-        move.w  #122,(a0)+
-        move.w  #94,(a0)+
-        move.w  #122,(a0)+
-        move.w  #102,(a0)+
-        move.w  #244,(a0)+
-        move.w  #16,(a0)+
-        move.w  #244,(a0)+
-        move.b  #$16,d6
-        bsr.w   af_skel_emit_poly
-        ; Zlote pagony na mundurze
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #20,(a0)+
-        move.w  #120,(a0)+
-        move.w  #44,(a0)+
-        move.w  #120,(a0)+
-        move.w  #44,(a0)+
-        move.w  #128,(a0)+
-        move.w  #20,(a0)+
-        move.w  #128,(a0)+
-        move.b  #$FE,d6
-        bsr.w   af_skel_emit_poly
-        ; Glowa oficera z animowanym przytakiwaniem (Y = 86 + d7)
-        move.w  #54,d0
-        move.w  #88,d1
-        add.w   d7,d1
-        moveq   #22,d2
-        move.b  #$FF,d6
-        bsr.w   af_skel_draw_circle
-        ; Wizjer / okulary taktyczne oficera
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #46,(a0)+
-        move.w  #82,d1
-        add.w   d7,d1
+; ============================================================================
+; af_play_eon_scene - Rotoskopowy odtwarzacz wielotonowych wielokatow Eon (TBL)
+; Wejscie: a2 -> lista [color.w, count.w, x0.w, y0.w, ...], d4.w = dx, d5.w = dy
+; ============================================================================
+        cnop    0,4
+af_play_eon_scene:
+        movem.l d0-d7/a0-a2,-(sp)
+.eon_lp:move.w  (a2)+,d6                ; kolor wielokata (-1 = koniec sceny)
+        bmi.s   .eon_done
+        move.w  (a2)+,d7                ; liczba wierzcholkow N
+        lea     af_dyn_poly(pc),a0
+        move.w  d7,(a0)+
+        subq.w  #1,d7
+.eon_v: move.w  (a2)+,d0
+        add.w   d4,d0
+        move.w  d0,(a0)+
+        move.w  (a2)+,d1
+        add.w   d5,d1
+        ifnd FULL_RES
+        asr.w   #1,d1
+        endif
         move.w  d1,(a0)+
-        move.w  #74,(a0)+
-        move.w  d1,(a0)+
-        addq.w  #8,d1
-        move.w  #74,(a0)+
-        move.w  d1,(a0)+
-        move.w  #46,(a0)+
-        move.w  d1,(a0)+
-        move.b  #$FD,d6
-        bsr.w   af_skel_emit_poly
-        ; Duzy taktyczny notatnik / clipboard w dloni (X=102..302, Y=36..238)
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #102,(a0)+
-        move.w  #36,(a0)+
-        move.w  #302,(a0)+
-        move.w  #36,(a0)+
-        move.w  #302,(a0)+
-        move.w  #238,(a0)+
-        move.w  #102,(a0)+
-        move.w  #238,(a0)+
-        move.b  #$FE,d6
-        bsr.w   af_skel_emit_poly
-        ; Wewnetrzna ciemna kartka notatnika (X=108..296, Y=44..232)
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #108,(a0)+
-        move.w  #44,(a0)+
-        move.w  #296,(a0)+
-        move.w  #44,(a0)+
-        move.w  #296,(a0)+
-        move.w  #232,(a0)+
-        move.w  #108,(a0)+
-        move.w  #232,(a0)+
-        move.b  #$01,d6
-        bsr.w   af_skel_emit_poly
-        ; Zloty klips na gorze notatnika
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #172,(a0)+
-        move.w  #30,(a0)+
-        move.w  #232,(a0)+
-        move.w  #30,(a0)+
-        move.w  #232,(a0)+
-        move.w  #44,(a0)+
-        move.w  #172,(a0)+
-        move.w  #44,(a0)+
-        move.b  #$FC,d6
-        bsr.w   af_skel_emit_poly
-        ; Animowana reka wskazujaca na zadania w notatniku (porusza sie gora-dol!)
-        move.w  #84,d0
-        move.w  #176,d1
-        move.w  #124,d2
-        move.w  #146,d3
-        add.w   d7,d3
-        add.w   d7,d3
-        moveq   #6,d4
-        move.b  #$FD,d6
-        bsr.w   af_skel_draw_bone
-        movem.l (sp)+,d0-d7/a0-a1
+        dbf     d7,.eon_v
+        lea     af_dyn_poly(pc),a0
+        bsr.w   af_aw_fill_ngon
+        bra.s   .eon_lp
+.eon_done:
+        movem.l (sp)+,d0-d7/a0-a2
         rts
 
 ; ----------------------------------------------------------------------------
+; af_draw_aw_briefing: Wielotonowy portret Dowodcy (styl Eon / The Black Lotus)
+; ----------------------------------------------------------------------------
+        cnop    0,4
 af_draw_aw_briefing:
-        movem.l d0-d7/a0-a1,-(sp)
-        ; Tlo sali odpraw lotniskowca Solis
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #10,(a0)+
-        move.w  #16,(a0)+
-        move.w  #310,(a0)+
-        move.w  #16,(a0)+
-        move.w  #310,(a0)+
-        move.w  #244,(a0)+
-        move.w  #10,(a0)+
-        move.w  #244,(a0)+
-        move.b  #$12,d6
-        bsr.w   af_skel_emit_poly
-        ; Animowany ruch glowy i ramienia oficera odprawy (d7 = wychylenie -4..+4)
-        move.l  vbl_tick(pc),d0
-        lsr.l   #3,d0
-        and.w   #15,d0
-        lea     af_skel_sin16(pc),a1
-        move.b  (a1,d0.w),d7
-        ext.w   d7
-        asr.w   #2,d7
-        ; Ramiona i mundur oficera po lewej stronie (X=16..98, Y=118..244)
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #16,(a0)+
-        move.w  #122,(a0)+
-        move.w  #94,(a0)+
-        move.w  #122,(a0)+
-        move.w  #102,(a0)+
-        move.w  #244,(a0)+
-        move.w  #16,(a0)+
-        move.w  #244,(a0)+
-        move.b  #$16,d6
-        bsr.w   af_skel_emit_poly
-        ; Zlote pagony na mundurze
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #20,(a0)+
-        move.w  #120,(a0)+
-        move.w  #44,(a0)+
-        move.w  #120,(a0)+
-        move.w  #44,(a0)+
-        move.w  #128,(a0)+
-        move.w  #20,(a0)+
-        move.w  #128,(a0)+
-        move.b  #$FE,d6
-        bsr.w   af_skel_emit_poly
-        ; Glowa oficera z animowanym przytakiwaniem (Y = 86 + d7)
-        move.w  #54,d0
-        move.w  #88,d1
-        add.w   d7,d1
-        moveq   #22,d2
-        move.b  #$FF,d6
-        bsr.w   af_skel_draw_circle
-        ; Wizjer / okulary taktyczne oficera
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #46,(a0)+
-        move.w  #82,d1
-        add.w   d7,d1
-        move.w  d1,(a0)+
-        move.w  #74,(a0)+
-        move.w  d1,(a0)+
-        addq.w  #8,d1
-        move.w  #74,(a0)+
-        move.w  d1,(a0)+
-        move.w  #46,(a0)+
-        move.w  d1,(a0)+
-        move.b  #$FD,d6
-        bsr.w   af_skel_emit_poly
-        ; Duzy taktyczny notatnik / clipboard w dloni (X=102..302, Y=36..238)
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #102,(a0)+
-        move.w  #36,(a0)+
-        move.w  #302,(a0)+
-        move.w  #36,(a0)+
-        move.w  #302,(a0)+
-        move.w  #238,(a0)+
-        move.w  #102,(a0)+
-        move.w  #238,(a0)+
-        move.b  #$FE,d6
-        bsr.w   af_skel_emit_poly
-        ; Wewnetrzna ciemna kartka notatnika (X=108..296, Y=44..232)
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #108,(a0)+
-        move.w  #44,(a0)+
-        move.w  #296,(a0)+
-        move.w  #44,(a0)+
-        move.w  #296,(a0)+
-        move.w  #232,(a0)+
-        move.w  #108,(a0)+
-        move.w  #232,(a0)+
-        move.b  #$01,d6
-        bsr.w   af_skel_emit_poly
-        ; Zloty klips na gorze notatnika
-        lea     af_skel_pbuf(pc),a0
-        move.w  #4,(a0)+
-        move.w  #172,(a0)+
-        move.w  #30,(a0)+
-        move.w  #232,(a0)+
-        move.w  #30,(a0)+
-        move.w  #232,(a0)+
-        move.w  #44,(a0)+
-        move.w  #172,(a0)+
-        move.w  #44,(a0)+
-        move.b  #$FC,d6
-        bsr.w   af_skel_emit_poly
-        ; Animowana reka wskazujaca na zadania w notatniku (porusza sie gora-dol!)
-        move.w  #84,d0
-        move.w  #176,d1
-        move.w  #124,d2
-        move.w  #146,d3
-        add.w   d7,d3
-        add.w   d7,d3
-        moveq   #6,d4
-        move.b  #$FD,d6
-        bsr.w   af_skel_draw_bone
-        movem.l (sp)+,d0-d7/a0-a1
+        movem.l d4-d5/a2,-(sp)
+        ; Subtelna animacja oddechu / pochylenia dowodcy (-2..+2 px)
+        move.l  vbl_tick(pc),d5
+        lsr.l   #4,d5
+        and.w   #3,d5
+        cmp.w   #3,d5
+        bne.s   .br_dy
+        moveq   #1,d5
+.br_dy: moveq   #0,d4
+        lea     eon_commander_scene(pc),a2
+        bsr.s   af_play_eon_scene
+        movem.l (sp)+,d4-d5/a2
         rts
 
-; af_draw_aw_debrief: Reakcyjna scena po misji (zalezna od af_energy)
+; ----------------------------------------------------------------------------
+; af_draw_aw_debrief: Portret Pilota 3/4 z bocznym swiatlem (styl Eon / TBL)
 ; ----------------------------------------------------------------------------
         cnop    0,4
 af_draw_aw_debrief:
-        movem.l d0-d7/a0,-(sp)
-        lea     poly_intro_deck(pc),a0
-        move.b  #$13,d6
-        bsr.w   af_aw_fill_ngon
-
-        lea     poly_debrief_ship(pc),a0
-        move.b  #$FF,d6
-        cmp.w   #60,af_energy
-        bge.s   .ship_ok
-        move.b  #$FC,d6
-.ship_ok:
-        bsr.w   af_aw_fill_ngon
-        movem.l (sp)+,d0-d7/a0
+        movem.l d4-d5/a2,-(sp)
+        moveq   #0,d4
+        moveq   #0,d5
+        lea     eon_pilot_portrait_scene(pc),a2
+        bsr.s   af_play_eon_scene
+        movem.l (sp)+,d4-d5/a2
         rts
 
-        even
-        ifd FULL_RES
-poly_intro_mountains:
-        dc.w    5, 0,160, 65,124, 155,140, 245,118, 319,160
-poly_intro_deck:
-        dc.w    4, 0,160, 319,160, 319,255, 0,255
-poly_intro_bridge:
-        dc.w    5, 18,160, 26,76, 58,76, 68,116, 74,160
-poly_intro_stripe:
-        dc.w    4, 156,160, 164,160, 186,255, 134,255
-poly_brief_panel:
-        dc.w    4, 40,48, 280,48, 280,176, 40,176
-poly_brief_m1:
-        dc.w    5, 160,64, 214,108, 190,156, 130,156, 106,108
-poly_brief_m2:
-        dc.w    4, 92,78, 228,78, 202,152, 118,152
-poly_brief_m3:
-        dc.w    6, 160,58, 236,92, 222,144, 160,164, 98,144, 84,92
-poly_debrief_ship:
-        dc.w    5, 160,68, 218,132, 178,152, 142,152, 102,132
-        else
-poly_intro_mountains:
-        dc.w    5, 0,92, 65,74, 155,82, 245,70, 319,92
-poly_intro_deck:
-        dc.w    4, 0,92, 319,92, 319,127, 0,127
-poly_intro_bridge:
-        dc.w    5, 18,92, 26,44, 58,44, 68,66, 74,92
-poly_intro_stripe:
-        dc.w    4, 156,92, 164,92, 178,127, 142,127
-poly_brief_panel:
-        dc.w    4, 48,26, 272,26, 272,88, 48,88
-poly_brief_m1:
-        dc.w    5, 160,34, 210,56, 188,80, 132,80, 110,56
-poly_brief_m2:
-        dc.w    4, 96,42, 224,42, 200,78, 120,78
-poly_brief_m3:
-        dc.w    6, 160,30, 232,48, 220,74, 160,84, 100,74, 88,48
-poly_debrief_ship:
-        dc.w    5, 160,36, 212,68, 176,76, 144,76, 108,68
-        endif
 af_draw_aw_intro:
         movem.l d0-d7/a0-a5,-(sp)
         move.l  af_state_timer,d7
-        cmp.w   #115,d7
+        cmp.w   #140,d7
         blo.w   af_intro_cut1
-        cmp.w   #230,d7
+        cmp.w   #245,d7
         blo.w   af_intro_cut2
         bra.w   af_intro_cut34
 
@@ -725,21 +479,83 @@ af_emit_dyn_poly:
         movem.l (sp)+,d0-d1/a0
         rts
 
+; Akt 1 Intro: Sylwetka Pilota unoszacego piesc na tle srebrnego nieba (Eon kadr 1)
 af_intro_cut1:
-        jsr     af_blit_airbase_bg
-        move.w  d7,d0
-        lsl.w   #1,d0
-        cmp.w   #185,d0
-        ble.s   .mx_ok
-        move.w  #185,d0
-.mx_ok: addq.w  #8,d0
-        ifd FULL_RES
-        move.w  #188,d1
-        else
-        moveq   #94,d1
-        endif
-        jsr     af_blit_moto_sprite
+        move.w  d7,d4
+        lsr.w   #3,d4
+        neg.w   d4
+        add.w   #16,d4                  ; powolny najazd kamery w lewo
+        move.w  d7,d5
+        lsr.w   #4,d5
+        neg.w   d5
+        addq.w  #8,d5                   ; uniesienie piesci ku gorze
+        lea     eon_salute_scene(pc),a2
+        bsr.w   af_play_eon_scene
         bra.w   af_intro_done
+
+        even
+; --- KADR 1 EON (TBL): Sylwetka pilota z uniesiona piescia na srebrnym niebie ---
+eon_salute_scene:
+        dc.w    30, 4,  -20,-20, 340,-20, 340,275, -20,275   ; srebrzyste niebo Eon
+        ; Stalowo-blekitne podswietlenie krawedzi (rim light #215/#217) wzdluz ramienia i plecow
+        dc.w    215, 5,  46,174, 88,128, 124,116, 118,136, 62,196
+        dc.w    217, 4, 124,116, 174,80, 184,92, 132,126
+        dc.w    215, 4, 174,80, 198,42, 214,48, 186,92
+        dc.w    24,  4,  68,118, 92,98, 114,104, 96,124
+        ; Gleboka czarna sylwetka (#16): korpus, glowa, ramie i zacisnieta piesc
+        dc.w    16, 6,  -16,255, 22,190, 74,138, 118,134, 108,214, 72,255
+        dc.w    16, 6,   78,128, 72,94, 88,72, 116,74, 126,96, 114,126
+        dc.w    16, 4,  112,134, 178,86, 192,102, 124,154
+        dc.w    16, 5,  176,88, 196,46, 228,38, 246,66, 212,104
+        dc.w    16, 4,   18,192, 54,186, 48,255, -16,255
+        dc.w    -1
+
+; --- KADR 2 EON (TBL): Portret Dowodcy eskadry opartego na dloni (Briefing) ---
+eon_commander_scene:
+        dc.w    16, 4,  -10,-10, 330,-10, 330,265, -10,265   ; gleboka czern tla (#16)
+        ; Ramiona i kolnierz munduru w turkusie (#215) i blekicie Eteru (#253)
+        dc.w    215, 5,  156,154, 216,136, 319,144, 319,255, 168,255
+        dc.w    253, 4,  268,142, 319,138, 319,192, 286,184
+        dc.w    215, 4,  148,186, 174,164, 194,255, 152,255
+        ; Chlodny cien szyi i zuchwy (#22 / #24)
+        dc.w    22,  5,  196,112, 246,108, 258,158, 218,166, 192,142
+        dc.w    24,  5,  182,54, 216,42, 254,56, 260,112, 206,124
+        ; Jasne kremowo-piaskowe plaszczyzny twarzy (#123, #125, #30)
+        dc.w    123, 6,  186,62, 218,48, 242,64, 238,114, 206,122, 184,96
+        dc.w    125, 5,  192,66, 214,56, 226,84, 212,114, 188,94
+        dc.w    30,  4,  194,72, 206,68, 208,94, 192,90
+        ; Cien brwi, oka i wlosow (#16)
+        dc.w    16,  5,  188,42, 232,36, 264,58, 256,96, 238,68
+        dc.w    16,  4,  190,74, 208,72, 206,79, 190,79
+        ; Dlon i palce podpierajace podbrodek (#125, #123, #30)
+        dc.w    123, 5,  188,122, 224,116, 236,154, 204,196, 184,162
+        dc.w    125, 4,  192,122, 204,120, 202,172, 188,168
+        dc.w    30,  4,  206,120, 216,120, 214,166, 204,166
+        dc.w    125, 4,  218,122, 228,124, 224,158, 215,158
+        dc.w    -1
+
+; --- KADR 3 EON (TBL): Portret Pilota 3/4 z bocznym swiatlem (Debriefing) ---
+eon_pilot_portrait_scene:
+        dc.w    16, 4,  -10,-10, 330,-10, 330,265, -10,265   ; gleboka czern tla (#16)
+        ; Turkusowe ramiona i kolnierz skafandra (#215 / #253)
+        dc.w    215, 5,   64,196, 118,176, 146,192, 138,255,  46,255
+        dc.w    215, 5,  208,184, 266,174, 308,208, 316,255, 218,255
+        dc.w    253, 4,  248,182, 294,198, 286,246, 242,232
+        ; Stalowo-fioletowe fasety wlosow i cienia policzka (#23, #25)
+        dc.w    23,  6,  104,48, 152,24, 204,42, 214,108, 174,148, 114,116
+        dc.w    25,  5,  112,56, 156,34, 182,66, 154,112, 114,96
+        dc.w    25,  4,   74,108, 102,96, 108,118, 82,126
+        ; Oswietlony profil twarzy 3/4 (#123, #125, #30)
+        dc.w    123, 6,  136,74, 176,56, 204,88, 214,158, 188,188, 148,144
+        dc.w    125, 5,  154,68, 184,64, 202,106, 198,174, 168,154
+        dc.w    30,  4,  174,72, 192,82, 204,142, 186,164
+        ; Cien brwi, oka, nosa i ust (#16, #252)
+        dc.w    16,  4,  128,78, 158,68, 162,76, 132,86
+        dc.w    16,  4,  134,88, 156,84, 152,96, 136,94
+        dc.w    24,  4,  156,102, 172,118, 162,132, 148,124
+        dc.w    252, 4,  156,144, 182,142, 178,154, 158,152
+        dc.w    -1
+
 af_intro_cut2:
         jsr     af_blit_airbase_bg
         ; Wielowarstwowo cieniowany kadlub i wlot powietrza XF-14 (3 odcienie: gorny refleks, bok, cien pod kadlubem)
