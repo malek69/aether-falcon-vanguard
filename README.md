@@ -23,6 +23,15 @@
 
 ---
 
+## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3)
+
+| ![1. Akt I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Akt II: Baza Solis (Styl Eon)](docs/screenshots/v013_eon_02.png) | ![3. Akt III: Kokpit XF-14](docs/screenshots/v013_eon_03.png) |
+|:---:|:---:|:---:|
+| **1. Akt I: Salute to the Sky** | **2. Akt II: Baza Solis (Styl Eon)** | **3. Akt III: Kokpit XF-14** |
+| ![4. Akt IV: Start 3D XF-14](docs/screenshots/v013_eon_04.png) | ![5. Briefing: Dowódca Eskadry](docs/screenshots/v013_eon_05.png) | ![6. Debriefing: Portret Pilota 3/4](docs/screenshots/v013_eon_06.png) |
+|:---:|:---:|:---:|
+| **4. Akt IV: Start 3D XF-14** | **5. Briefing: Dowódca Eskadry** | **6. Debriefing: Portret Pilota 3/4** |
+
 ## Galeria v0.1.3 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
 
 | ![1. Tablica Odpraw Taktycznych (Briefing)](docs/screenshots/v010_01_briefing_board.png) | ![2. Lot 3D: Chmury 3D, Woksele i SCORE w HUD](docs/screenshots/v010_02_hud_score_clouds.png) |

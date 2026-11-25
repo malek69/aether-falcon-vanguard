@@ -23,6 +23,15 @@
 
 ---
 
+## Rotoscoped *Eon* (TBL) Vector Engine Cinematics Gallery (v0.1.3)
+
+| ![1. Act I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Act II: Solis Airbase (Eon Style)](docs/screenshots/v013_eon_02.png) | ![3. Act III: XF-14 Cockpit](docs/screenshots/v013_eon_03.png) |
+|:---:|:---:|:---:|
+| **1. Act I: Salute to the Sky** | **2. Act II: Solis Airbase (Eon Style)** | **3. Act III: XF-14 Cockpit** |
+| ![4. Act IV: 3D XF-14 Launch](docs/screenshots/v013_eon_04.png) | ![5. Briefing: Squadron Commander](docs/screenshots/v013_eon_05.png) | ![6. Debriefing: 3/4 Pilot Portrait](docs/screenshots/v013_eon_06.png) |
+|:---:|:---:|:---:|
+| **4. Act IV: 3D XF-14 Launch** | **5. Briefing: Squadron Commander** | **6. Debriefing: 3/4 Pilot Portrait** |
+
 ## Gallery v0.1.3 — Tactical Briefing Board, 3D Clouds & Live SCORE HUD
 
 | ![1. Tactical Mission Briefing Board](docs/screenshots/v010_01_briefing_board.png) | ![2. 3D Flight: Volumetric Clouds, Voxels & Live SCORE](docs/screenshots/v010_02_hud_score_clouds.png) |

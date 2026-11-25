@@ -8,6 +8,13 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ## [v0.1.3] - 2026-11-25
 
+| <img src="docs/screenshots/v013_eon_01.png" width="220"> | <img src="docs/screenshots/v013_eon_02.png" width="220"> | <img src="docs/screenshots/v013_eon_03.png" width="220"> |
+|:---:|:---:|:---:|
+| **1. Akt I: Salute to the Sky** | **2. Akt II: Baza Solis** | **3. Akt III: Kokpit XF-14** |
+| <img src="docs/screenshots/v013_eon_04.png" width="220"> | <img src="docs/screenshots/v013_eon_05.png" width="220"> | <img src="docs/screenshots/v013_eon_06.png" width="220"> |
+|:---:|:---:|:---:|
+| **4. Akt IV: Start 3D XF-14** | **5. Briefing: Dowódca** | **6. Debriefing: Portret Pilota** |
+
 - **Boss Lewiatan i 4 Wirujace Reaktory w Misji 03 (`src/af_gameplay_3d.i`):** automatyczna aktywacja Latajacej Fortecy Lewiatan 3D oraz 4 niezaleznych reaktorow orbitalnych z celownikami po rozpoczeciu Misji 03 (*Leviathan Citadel*).
 - **Pelna Spojnosc Stylistyczna Filmu *Eon* (TBL) (`src/af_vector_scenes.i`):** zastapienie bitmapowej scenerii lotniska w Aktach 2–4 jednolita, bezkonturowa architektura wielotonowych wielokatow w palecie *Eon* (`#16`, `#22..#24`, `#215`, `#253`, `#254`).
 
