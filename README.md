@@ -1,7 +1,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.5</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.6</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="https://github.com">Pobierz .LHA</a> &bull;
@@ -12,7 +12,7 @@
 
 ---
 
-## Pobieranie (v0.0.5 — 2 Profile Sprzętowe)
+## Pobieranie (v0.0.6 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -21,17 +21,11 @@
 
 ---
 
-## Galeria (v0.0.5 — Amiga 1200 AGA / THEA1200)
+## Galeria (v0.0.6 — Amiga 1200 AGA / THEA1200)
 
-<table>
-  <tr>
-| <img src="docs/screenshots/01_intro_topgun.png" width="210"> | <img src="docs/screenshots/02_intro_takeoff_logo.png" width="210"> | <img src="docs/screenshots/03_briefing_controls.png" width="210"> | <img src="docs/screenshots/04_gameplay_plasma_cannons.png" width="210"> |
+| ![1. Intro: Lotnisko & Motocykl](https://github.com) | ![2. Briefing & Notatnik](https://github.com) | ![3. Lot 3D po Okręgu 360°](https://github.com) | ![4. Walka 3D & Lasery](https://github.com) |
 |:---:|:---:|:---:|:---:|
-| **1. Intro: Motocykl & Pilot** | **2. Briefing & Klawisze** | **3. Lot 3D & Działka** | **4. Raport Końcowy (Debriefing)** |
-  </tr>
-</table>
-
----
+| **1. Intro: Lotnisko 256 kol. & Pilot** | **2. Briefing z Notatnikiem** | **3. Lot 3D po Okręgu 360°** | **4. Walka 3D & Auto-Lock** |
 
 ## Wykorzystane Silniki i Powiązane Repozytoria
 

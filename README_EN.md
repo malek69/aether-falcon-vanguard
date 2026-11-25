@@ -1,7 +1,7 @@
 <p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.5</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.6</h1>
   <p><strong>Bare-metal 3D combat flight simulator for Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="https://github.com">Download .LHA</a> &bull;
@@ -12,7 +12,7 @@
 
 ---
 
-## Downloads (v0.0.5 — 2 Hardware Profiles)
+## Downloads (v0.0.6 — 2 Hardware Profiles)
 
 | Profile (`--profile`) | Target Platform | Download Packages |
 | :--- | :--- | :--- |
@@ -21,17 +21,11 @@
 
 ---
 
-## Gallery (v0.0.5 — Amiga 1200 AGA / THEA1200)
+## Gallery (v0.0.6 — Amiga 1200 AGA / THEA1200)
 
-<table>
-  <tr>
-| <img src="docs/screenshots/01_intro_topgun.png" width="210"> | <img src="docs/screenshots/02_intro_takeoff_logo.png" width="210"> | <img src="docs/screenshots/03_briefing_controls.png" width="210"> | <img src="docs/screenshots/04_gameplay_plasma_cannons.png" width="210"> |
+| ![1. Intro: 256-col Airbase & Pilot](https://github.com) | ![2. Briefing & Tactical Notepad](https://github.com) | ![3. 3D 360° Circular Orbit](https://github.com) | ![4. 3D Combat & Auto-Lock Lasers](https://github.com) |
 |:---:|:---:|:---:|:---:|
-| **1. Intro: Bike & Pilot** | **2. Briefing & Controls** | **3. 3D Flight & Cannons** | **4. Sortie Report (Debriefing)** |
-  </tr>
-</table>
-
----
+| **1. Intro: 256-col Airbase & Pilot** | **2. Briefing & Tactical Notepad** | **3. 3D 360° Circular Orbit** | **4. 3D Combat & Auto-Lock Lasers** |
 
 ## Engines Used & Related Repositories
 
