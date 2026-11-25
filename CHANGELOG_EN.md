@@ -6,6 +6,17 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.1.0] - 2026-11-25
+
+| <img src="docs/screenshots/v010_01_briefing_board.png" width="340"> | <img src="docs/screenshots/v010_02_hud_score_clouds.png" width="340"> |
+|:---:|:---:|
+| **1. Tactical Mission Briefing Board** | **2. Volumetric 3D Clouds, Voxels & Live SCORE** |
+
+- **Volumetric 3D Sky Clouds (`af_draw_3d_clouds` in `src/af_voxel_world.i`):** 16 layered 3D cloud formations with perspective scrolling, flight parallax, and mission-adaptive atmosphere (sunlit cumulus in Mission 01, storm clouds in Mission 02, volcanic ash clouds in Mission 03).
+- **Activated `AURA-3D` Shader & Shadow Effects:** enabled `zfog_enabled` depth fog, `phong_enabled` + Fresnel rim lighting, and real-time ground shadow beneath the XF-14 Albatros fighter.
+
+---
+
 ## [v0.0.9] - 2026-11-25
 
 | <img src="docs/screenshots/v009_01_voxel_archipelago.png" width="280"> | <img src="docs/screenshots/v009_02_voxel_canyon.png" width="280"> | <img src="docs/screenshots/v009_03_voxel_citadel.png" width="280"> |

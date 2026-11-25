@@ -6,6 +6,17 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.1.0] - 2026-11-25
+
+| <img src="docs/screenshots/v010_01_briefing_board.png" width="340"> | <img src="docs/screenshots/v010_02_hud_score_clouds.png" width="340"> |
+|:---:|:---:|
+| **1. Tablica Odpraw Taktycznych (Briefing)** | **2. Chmury 3D, Woksele i Licznik SCORE** |
+
+- **Wielowarstwowe Chmury 3D na Niebie (`af_draw_3d_clouds` w `src/af_voxel_world.i`):** 16 przestrzennych formacji chmur 3D z cieniowaniem wolumetrycznym i paralaksa, zmieniajacych klimat w zaleznosci od misji (cumulusy w Misji 01, chmury burzowe w Misji 02, obloki wulkaniczne w Misji 03).
+- **Aktywacja efektow `AURA-3D` (`Z-Fog`, `Phong + Fresnel Rim Glow`, cien XF-14):** wlaczenie sprzetowej mgly glebi `zfog_enabled`, oswietlenia `phong_enabled` oraz dynamicznego cienia rzucanego pod mysliwcem XF-14 Albatros.
+
+---
+
 ## [v0.0.9] - 2026-11-25
 
 | <img src="docs/screenshots/v009_01_voxel_archipelago.png" width="280"> | <img src="docs/screenshots/v009_02_voxel_canyon.png" width="280"> | <img src="docs/screenshots/v009_03_voxel_citadel.png" width="280"> |
