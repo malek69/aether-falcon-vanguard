@@ -290,6 +290,10 @@ af_update_enemy_bolts:
         bgt.w   .eb_nxt
         moveq   #SFX_EXPLODE,d0
         bsr.w   af_trigger_sfx
+        sub.w   #25,af_energy
+        bgt.s   .sh_ok
+        move.w  #200,af_energy
+.sh_ok:
         bra.w   .eb_nxt
 .eb_drw:move.w  #260,d2
         sub.w   (a2),d2
@@ -870,56 +874,80 @@ af_update_and_draw_particles:
         rts
 
 af_draw_cannon_beams:
+        cmp.w   #3200,af_auto_min_z(pc)
+        bne.s   .cb_fire
         btst    #7,CIAAPRA
         beq.s   .cb_fire
-        move.b  kbd_held_raw,d0
-        cmp.b   #$40,d0
-        beq.s   .cb_fire
-        cmp.b   #$64,d0
-        beq.s   .cb_fire
-        cmp.b   #$65,d0
-        beq.s   .cb_fire
-        cmp.b   #$44,d0
-        beq.s   .cb_fire
+        tst.b   fire_held
+        bne.s   .cb_fire
         rts
 .cb_fire:
         movem.l d0-d7/a0-a1,-(sp)
-        move.w  af_roll,d4
-        asr.w   #1,d4
+        ; Oblicz wektor skrzydla (wx, wy) z kata obrotu po okregu (af_orbit_angle)
+        lea     sin_tab,a0
+        move.w  af_orbit_angle,d0
+        and.w   #255,d0
+        add.w   d0,d0
+        move.w  (a0,d0.w),d2          ; sin(angle) -> wektor skrzydla X
+        muls.w  #24,d2
+        asr.l   #8,d2               ; wx = 24 * sin(angle)
+        move.w  af_orbit_angle,d0
+        add.w   #64,d0
+        and.w   #255,d0
+        add.w   d0,d0
+        move.w  (a0,d0.w),d3          ; cos(angle) -> wektor skrzydla Y
+        muls.w  #14,d3
+        asr.l   #8,d3               ; wy = 14 * cos(angle)
+        ; Srodek mysliwca na ekranie: sx = 160 + af_ship_dx, sy = 120 + af_ship_dy (60 dla lowres)
+        move.w  af_ship_dx,d4
         add.w   #160,d4
         move.w  af_ship_dy,d5
         ifd FULL_RES
         add.w   #120,d5
         else
-        add.w   #60,d5
+        addq.w  #60,d5
         endif
         moveq   #7,d7
-.cb_lp:
-        move.w  af_reticle_x,d0
-        sub.w   d4,d0
-        add.w   #22,d0
-        muls.w  d7,d0
-        asr.w   #3,d0
-        add.w   d4,d0
-        sub.w   #22,d0
-        move.w  af_reticle_y,d1
-        sub.w   d5,d1
-        muls.w  d7,d1
-        asr.w   #3,d1
-        add.w   d5,d1
+.cb_lp: ; Lewa koncowka skrzydla -> celownik
+        move.w  d4,d0
+        sub.w   d2,d0
+        move.w  af_reticle_x,d6
+        sub.w   d0,d6
+        muls.w  d7,d6
+        asr.l   #3,d6
+        add.w   d6,d0
+        move.w  d5,d1
+        add.w   d3,d1
+        move.w  af_reticle_y,d6
+        sub.w   d1,d6
+        muls.w  d7,d6
+        asr.l   #3,d6
+        add.w   d6,d1
+        movem.w d2-d5,-(sp)
         moveq   #2,d3
         move.b  #$FD,d6
         bsr.w   af_fill_chunky_diamond
-        move.w  af_reticle_x,d0
-        sub.w   d4,d0
-        sub.w   #22,d0
-        muls.w  d7,d0
-        asr.w   #3,d0
-        add.w   d4,d0
-        add.w   #22,d0
+        movem.w (sp)+,d2-d5
+        ; Prawa koncowka skrzydla -> celownik
+        move.w  d4,d0
+        add.w   d2,d0
+        move.w  af_reticle_x,d6
+        sub.w   d0,d6
+        muls.w  d7,d6
+        asr.l   #3,d6
+        add.w   d6,d0
+        move.w  d5,d1
+        sub.w   d3,d1
+        move.w  af_reticle_y,d6
+        sub.w   d1,d6
+        muls.w  d7,d6
+        asr.l   #3,d6
+        add.w   d6,d1
+        movem.w d2-d5,-(sp)
         moveq   #2,d3
         move.b  #$FF,d6
         bsr.w   af_fill_chunky_diamond
+        movem.w (sp)+,d2-d5
         dbf     d7,.cb_lp
         movem.l (sp)+,d0-d7/a0-a1
         rts
