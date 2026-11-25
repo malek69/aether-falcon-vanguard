@@ -36,11 +36,10 @@
 
 ## Engines Used & Related Repositories
 
-| Engine | GitHub Repository | Role in Project |
-| :--- | :--- | :--- |
-| **AURA-3D AGA Engine** | [github.com](https://github.com) | Core 3D gameplay pipeline (`STATE_GAMEPLAY`), terrain (`terrain_3d.i`), **XF-14 Albatros** fighter (`aura3d_v2.i`), 256-color C2P (`c2p_chunky.i`), Copper sky (`copper_sky.i`), trails (`particle_trail.i`), lens flare (`lens_flare.i`), controls (`input_ctrl.i`), 5×7 font (`hud_fps.i`), and `.MOD` player (`pt_player.i`). |
-| **Amiga 1200 Vector Engine** | [github.com](https://github.com) | Tactical vector screen architecture (**Intro**, **Briefing** sector map, and **Debriefing** pilot rank evaluation in `src/af_campaigns.i`), unified into the 256-color AGA framebuffer. |
-
+| Logo | Engine & Repository | Role in Project |
+| :---: | :--- | :--- |
+| <a href="https://github.commalek69/aura3d-aga-engine"><img src="docs/logo_aura3d.png" alt="AURA-3D AGA Engine" width="180" /></a> | **[AURA-3D AGA Engine](https://github.commalek69/aura3d-aga-engine)** | Core 3D gameplay pipeline (`STATE_GAMEPLAY`), heightmap terrain (`terrain_3d.i`), **XF-14 Albatros** fighter (`aura3d_v2.i`), 256-color C2P (`c2p_chunky.i`), Copper sky (`copper_sky.i`), trails (`particle_trail.i`), lens flare (`lens_flare.i`), controls (`input_ctrl.i`), 5x7 font (`hud_fps.i`), and `.MOD` player (`pt_player.i`). |
+| <a href="https://github.commalek69/amiga1200-vector-engine"><img src="docs/logo_vector.png" alt="Amiga 1200 Vector Engine" width="180" /></a> | **[Amiga 1200 Vector Engine](https://github.commalek69/amiga1200-vector-engine)** | Tactical vector screen architecture (**Intro**, **Briefing** sector map, and **Debriefing** pilot rank evaluation in `src/af_campaigns.i`), unified into the 256-color AGA framebuffer. |
 ---
 
 ## Controls
