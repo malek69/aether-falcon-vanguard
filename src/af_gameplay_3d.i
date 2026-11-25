@@ -292,7 +292,46 @@ af_draw_world_entities:
 .after_3d_ent:
         moveq   #10,d3
         cmp.b   #2,1(a4)
-        beq.w   .next_ent
+        bne.s   .not_ether_core
+        ; Sprawdz czy gracz wlecial w Rdzen Eteru (d2 <= 420 i blisko af_ship_sx/sy)
+        cmp.w   #420,d2
+        bgt.w   .next_ent
+        move.w  af_ship_sx(pc),d4
+        sub.w   d0,d4
+        bpl.s   .cdx
+        neg.w   d4
+.cdx:   cmp.w   #48,d4
+        bgt.w   .next_ent
+        move.w  af_ship_sy(pc),d4
+        sub.w   d1,d4
+        bpl.s   .cdy
+        neg.w   d4
+.cdy:   ifd FULL_RES
+        cmp.w   #40,d4
+        else
+        cmp.w   #22,d4
+        endif
+        bgt.w   .next_ent
+        ; Zebrano Rdzen Eteru! +250 pkt, +40 tarczy, dzwiek i rozblysk
+        moveq   #SFX_LOCK,d0
+        bsr.w   af_trigger_sfx
+        add.l   #250,af_score
+        addq.w  #1,af_cores_collected
+        add.w   #40,af_energy
+        cmp.w   #200,af_energy
+        ble.s   .ce_cap
+        move.w  #200,af_energy
+.ce_cap:move.l  af_pos_z,d0
+        add.l   #2800<<16,d0
+        move.l  d0,12(a4)
+        move.l  a0,-(sp)
+        move.l  a4,a0
+        move.w  d7,d0
+        add.w   vbl_tick+2,d0
+        jsr     af_set_entity_360_slot
+        move.l  (sp)+,a0
+        bra.w   .next_ent
+.not_ether_core:
         ; AUTOMATYCZNE NAMIERZANIE (Auto-Lock na najblizszym wrogu w kadrze!)
         cmp.w   af_auto_min_z(pc),d2
         bge.s   .chk_lk_box
