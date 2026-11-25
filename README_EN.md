@@ -26,7 +26,7 @@
 
 ## Gameplay & 3D Engine Video (v0.1.3.1)
 
-https://github.com
+https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4
 
 ## Rotoscoped *Eon* (TBL) Vector Engine Cinematics Gallery (v0.1.3.1)
 

@@ -26,7 +26,7 @@
 
 ## Wideo z Rozgrywki (v0.1.3.1 — Gameplay & Silnik 3D)
 
-https://github.com
+https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4
 
 ## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3.1)
 
