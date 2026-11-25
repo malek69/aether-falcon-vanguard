@@ -22,7 +22,9 @@ af_render_gameplay_3d:
         clr.w   v2_uv_anim_v
         jsr     clear_chunky
         bsr.w   af_clear_fighter_zbuffer
+        ifd FULL_RES
         jsr     draw_256_starfield
+        endif
 
         move.l  af_pos_x,d0
         swap    d0

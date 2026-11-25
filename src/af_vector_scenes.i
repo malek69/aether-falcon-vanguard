@@ -376,6 +376,26 @@ af_draw_aw_debrief:
         rts
 
         even
+        ifd FULL_RES
+poly_intro_mountains:
+        dc.w    5, 0,160, 65,124, 155,140, 245,118, 319,160
+poly_intro_deck:
+        dc.w    4, 0,160, 319,160, 319,255, 0,255
+poly_intro_bridge:
+        dc.w    5, 18,160, 26,76, 58,76, 68,116, 74,160
+poly_intro_stripe:
+        dc.w    4, 156,160, 164,160, 186,255, 134,255
+poly_brief_panel:
+        dc.w    4, 40,48, 280,48, 280,176, 40,176
+poly_brief_m1:
+        dc.w    5, 160,64, 214,108, 190,156, 130,156, 106,108
+poly_brief_m2:
+        dc.w    4, 92,78, 228,78, 202,152, 118,152
+poly_brief_m3:
+        dc.w    6, 160,58, 236,92, 222,144, 160,164, 98,144, 84,92
+poly_debrief_ship:
+        dc.w    5, 160,68, 218,132, 178,152, 142,152, 102,132
+        else
 poly_intro_mountains:
         dc.w    5, 0,92, 65,74, 155,82, 245,70, 319,92
 poly_intro_deck:
@@ -394,3 +414,4 @@ poly_brief_m3:
         dc.w    6, 160,30, 232,48, 220,74, 160,84, 100,74, 88,48
 poly_debrief_ship:
         dc.w    5, 160,36, 212,68, 176,76, 144,76, 108,68
+        endif

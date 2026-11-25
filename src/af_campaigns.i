@@ -230,7 +230,11 @@ af_print_chunky_str:
         rts
 
 poly_bg_full:
+        ifd FULL_RES
+        dc.w    4, 0,0, 319,0, 319,255, 0,255
+        else
         dc.w    4, 0,0, 319,0, 319,127, 0,127
+        endif
 poly_bg_horiz:
         dc.w    4, 0,56, 319,56, 319,96, 0,96
 
