@@ -373,16 +373,87 @@ af_draw_aw_intro:
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
 
-        move.w  #155,d0
+        ; Trojwarstwowy ognisty dopalacz startujacego XF-14
+        move.w  #153,d0
         move.w  d5,d1
-        move.w  #165,d2
+        move.w  #167,d2
         move.w  d5,d3
         move.w  #160,d4
-        add.w   #9,d5
+        add.w   #14,d5
         btst    #1,d7
-        beq.s   .fl_ok
-        addq.w  #6,d5
-.fl_ok: move.b  #$FC,d6
+        beq.s   .fl1
+        addq.w  #8,d5
+.fl1:   move.b  #$FC,d6
+        bsr.w   af_aw_fill_tri
+
+        move.w  #156,d0
+        move.w  d3,d1
+        move.w  #164,d2
+        move.w  #160,d4
+        move.w  d3,d5
+        add.w   #9,d5
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_tri
+
+        ; Migajace swiatla naprowadzajace pasa startowego lotniskowca Solis
+        move.w  d7,d0
+        and.w   #15,d0
+        cmp.w   #8,d0
+        bge.s   .no_deck_lights
+        move.w  #128,d0
+        ifd FULL_RES
+        move.w  #184,d1
+        else
+        moveq   #104,d1
+        endif
+        moveq   #3,d3
+        move.b  #$FC,d6
+        jsr     af_fill_chunky_diamond
+        move.w  #192,d0
+        jsr     af_fill_chunky_diamond
+.no_deck_lights:
+
+        ; Obrotowy sygnal radaru na wiezy lotniskowca Solis
+        move.w  #38,d0
+        ifd FULL_RES
+        move.w  #70,d1
+        else
+        moveq   #40,d1
+        endif
+        move.w  d7,d3
+        lsr.w   #2,d3
+        and.w   #7,d3
+        addq.w  #2,d3
+        move.b  #$FD,d6
+        jsr     af_fill_chunky_diamond
+
+        ; Przelot klucza 2 skrzydlowych Vanguard po przekatnej nieba!
+        move.l  vbl_tick(pc),d4
+        and.w   #255,d4
+        move.w  #300,d0
+        sub.w   d4,d0                   ; przelot z prawej do lewej (300 -> 45)
+        move.w  d4,d1
+        lsr.w   #2,d1
+        add.w   #24,d1
+        move.w  d0,d2
+        add.w   #16,d2
+        move.w  d1,d3
+        subq.w  #4,d3
+        move.w  d0,d4
+        add.w   #14,d4
+        move.w  d1,d5
+        addq.w  #5,d5
+        move.b  #$FD,d6
+        bsr.w   af_aw_fill_tri
+
+        ; Drugi skrzydlowy w szyku
+        add.w   #24,d0
+        add.w   #12,d1
+        add.w   #24,d2
+        add.w   #12,d3
+        add.w   #24,d4
+        add.w   #12,d5
+        move.b  #$FF,d6
         bsr.w   af_aw_fill_tri
 
         movem.l (sp)+,d0-d7/a0-a1

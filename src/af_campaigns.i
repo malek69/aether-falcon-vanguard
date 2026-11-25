@@ -145,7 +145,7 @@ af_render_vector_screen:
         endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
-        bra.w   .vec_blit
+        bra.w   .b_keys_hint
 
 .b_m2:
         lea     str_m2_title(pc),a0
@@ -166,7 +166,7 @@ af_render_vector_screen:
         endif
         move.b  #$FE,d6
         bsr.w   af_print_chunky_str
-        bra.w   .vec_blit
+        bra.w   .b_keys_hint
 
 .b_m3:
         lea     str_m3_title(pc),a0
@@ -186,6 +186,25 @@ af_render_vector_screen:
         moveq   #96,d1
         endif
         move.b  #$FE,d6
+        bsr.w   af_print_chunky_str
+.b_keys_hint:
+        lea     str_brief_keys1(pc),a0
+        moveq   #46,d0
+        ifd FULL_RES
+        move.w  #226,d1
+        else
+        moveq   #106,d1
+        endif
+        move.b  #$FF,d6
+        bsr.w   af_print_chunky_str
+        lea     str_brief_keys2(pc),a0
+        moveq   #36,d0
+        ifd FULL_RES
+        move.w  #238,d1
+        else
+        moveq   #116,d1
+        endif
+        move.b  #$FD,d6
         bsr.w   af_print_chunky_str
         bra.w   .vec_blit
 
@@ -312,6 +331,8 @@ str_m2_title:   dc.b    "MISSION 02: KRELL STORM CANYON",0
 str_m2_obj:     dc.b    "HIGH SPEED INTERCEPT - MULTI-LOCK BARRAGE",0
 str_m3_title:   dc.b    "MISSION 03: LEVIATHAN CITADEL",0
 str_m3_obj:     dc.b    "ASSAULT CORE REACTORS - FINAL STRIKE",0
+str_brief_keys1:dc.b    "ARROWS / JOY2 : FLY & AIM LOCK-ON",0
+str_brief_keys2:dc.b    "SPACE / FIRE / ALT : CANNON & MISSILES",0
 str_deb_1:      dc.b    "MISSION ACCOMPLISHED - SORTIE REPORT",0
 str_deb_win:    dc.b    "CAMPAIGN VICTORY - LEVIATHAN DESTROYED",0
 str_rank_1:     dc.b    "PILOT RANK: SOLAR CADET",0

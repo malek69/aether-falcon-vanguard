@@ -263,14 +263,54 @@ af_draw_world_entities:
 ; ============================================================================
         cnop    0,4
 af_update_and_draw_missiles:
-        ; Sprawdz czy gracz wcisnal FIRE (Joy2 bit 7 w CIAAPRA lub Spacja) i ma namierzone cele
+        ; Sprawdz czy gracz wcisnal FIRE (Joy2 bit 7, Spacja $40 lub Lewy Alt $64)
+        btst    #7,CIAAPRA
+        beq.s   .do_fire_weapons
+        move.b  kbd_held_raw,d0
+        cmp.b   #$40,d0                 ; Spacja
+        beq.s   .do_fire_weapons
+        cmp.b   #$64,d0                 ; Lewy Alt
+        bne.w   .move_missiles
+
+.do_fire_weapons:
+        ; 1. Natychmiastowy strzal podwojnymi dzialkami plazmowymi w celownik!
+        move.w  af_reticle_x,d0
+        move.w  af_reticle_y,d1
+        moveq   #4,d3
+        move.b  #$FD,d6
+        bsr.w   af_fill_chunky_diamond
+        moveq   #2,d3
+        move.b  #$FF,d6
+        bsr.w   af_fill_chunky_diamond
+        moveq   #SFX_LASER,d0
+        bsr.w   af_trigger_sfx
+
+        ; Sprawdz bezposrednie trafienie dzialkiem w wroga pod celownikiem
+        lea     af_entities,a0
+        moveq   #MAX_ENTITIES-1,d7
+.gun_hit_lp:
+        tst.b   (a0)
+        beq.s   .gh_next
+        cmp.b   #2,1(a0)
+        beq.s   .gh_next
+        tst.b   2(a0)
+        beq.s   .gh_next
+        clr.b   2(a0)
+        subq.w  #1,af_locks
+        bge.s   .lk_ok
+        clr.w   af_locks
+.lk_ok: move.w  af_reticle_x,d0
+        move.w  af_reticle_y,d1
+        bsr.w   af_spawn_explosion
+        add.l   #300,af_score
+        add.l   #6400<<16,12(a0)
+.gh_next:
+        lea     16(a0),a0
+        dbf     d7,.gun_hit_lp
+
+        ; 2. Jesli sa namierzone cele Multi-Lock -> odpal salwe samonaprowadzajacych rakiet!
         tst.w   af_locks
         beq.w   .move_missiles
-
-        btst    #7,CIAAPRA
-        beq.s   .launch_salvo
-        cmp.b   #$40,kbd_held_raw
-        bne.w   .move_missiles
 
 .launch_salvo:
         ; Odpal po jednej rakiecie dla kazdego namierzonego wroga
