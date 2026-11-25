@@ -1384,3 +1384,6 @@ af_set_entity_360_slot:
         even
 vox_tmp_sx:     dc.w 160
 vox_tmp_sy:     dc.w 128
+
+        even
+af_cores_collected: dc.w 0
