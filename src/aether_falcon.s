@@ -283,36 +283,38 @@ af_update_flight:
         move.w  #144,d3
 .rad_ok:
         move.w  d3,af_orbit_radius
-        ; Oblicz dx = cos(angle)*radius, dy = sin(angle)*radius z sin_tab
+        ; Oblicz jednostkowy cos(angle) i sin(angle) z sin_tab (-256..256)
         lea     sin_tab,a0
         move.w  d2,d0
         add.w   d0,d0
-        move.w  (a0,d0.w),d5          ; sin(angle) (-256..256)
+        move.w  (a0,d0.w),d5          ; unit sin(angle)
         add.w   #64,d2
         and.w   #255,d2
         add.w   d2,d2
-        move.w  (a0,d2.w),d4          ; cos(angle) (-256..256)
-        muls.w  d3,d4
-        asr.l   #8,d4
-        move.w  d4,af_ship_dx
+        move.w  (a0,d2.w),d4          ; unit cos(angle)
+        ; 1. Kąty 3D (Yaw, Pitch, Roll) zalezne WYLACZNIE od kata po okregu (nie od promienia!)
         move.w  d4,d0
         neg.w   d0
-        asr.w   #2,d0
-        move.w  d0,af_yaw_center      ; dziob skierowany w poziomie do srodka okregu
+        asr.w   #3,d0
+        move.w  d0,af_yaw_center
         move.w  d5,d0
         neg.w   d0
-        asr.w   #2,d0
-        move.w  d0,af_pitch_center    ; dziob skierowany w pionie do srodka okregu
+        asr.w   #3,d0
+        move.w  d0,af_pitch_center
         moveq   #64,d0
         sub.w   af_orbit_angle,d0
         and.w   #255,d0
-        move.w  d0,af_roll            ; 0..255 = pelne 360 st. brzuchem na zewnatrz!            ; kadlub skierowany do srodka okregu (Gyruss!)
+        move.w  d0,af_roll
+        ; 2. Pozycja (dx, dy) skalowana promieniem af_orbit_radius (Gora/Dol = tylko promien!)
+        muls.w  d3,d4
+        asr.l   #8,d4
+        move.w  d4,af_ship_dx
         muls.w  d3,d5
         asr.l   #8,d5
         muls.w  #190,d5
-        asr.l   #8,d5               ; pelny okrag na calym ekranie!
+        asr.l   #8,d5
         move.w  d5,af_ship_dy
-        move.w  d5,af_pitch
+        clr.w   af_pitch
         ; Przesuwanie kamery wzdluz kanionu 3D
         move.l  af_vel_z,d0
         btst    #7,CIAAPRA
