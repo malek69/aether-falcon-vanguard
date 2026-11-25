@@ -9,7 +9,7 @@ AURA_DEMO = os.path.join(ROOT, "refs", "aura3d", "demo_v1")
 
 PROFILES = {
     "standard": ("-m68020", list(), ["-kick1hunks"], "_020"),
-    "thea1200": ("-m68020", ["-DFULL_RES"], list(), "_THEA1200"),
+    "thea1200": ("-m68020", ["-DFULL_RES", "-DWIDESCREEN_16_9"], list(), "_THEA1200"),
 }
 
 def write_whdload_info(path, slave_name):

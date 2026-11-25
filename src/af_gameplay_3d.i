@@ -148,7 +148,7 @@ af_draw_world_entities:
         ext.l   d0
         asl.l   #7,d0                   ; x * 128
         divs.w  d2,d0
-        ifd FULL_RES
+        ifd WIDESCREEN_16_9
         muls.w  #3,d0
         asr.w   #2,d0
         endif
