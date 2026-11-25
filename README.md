@@ -23,7 +23,7 @@
 
 ## Galeria (v0.0.6 — Amiga 1200 AGA / THEA1200)
 
-| ![1. Intro: Lotnisko 256 kol. & Pilot](https://github.com/01_intro_topgun.png) | ![2. Intro: Wsiadanie do Kokpitu](https://github.com/02_intro_takeoff_logo.png) | ![3. Briefing z Notatnikiem](https://github.com/03_briefing_controls.png) | ![4. Lot 3D po Okręgu 360°](https://github.com/04_gameplay_plasma_cannons.png) |
+| ![1. Intro: Lotnisko 256 kol. & Pilot](docs/screenshots/01_intro_topgun.png) | ![2. Intro: Wsiadanie do Kokpitu](docs/screenshots/02_intro_takeoff_logo.png) | ![3. Briefing z Notatnikiem](docs/screenshots/03_briefing_controls.png) | ![4. Lot 3D po Okręgu 360°](docs/screenshots/04_gameplay_plasma_cannons.png) |
 |:---:|:---:|:---:|:---:|
 | **1. Intro: Lotnisko 256 kol. & Pilot** | **2. Intro: Wsiadanie do Kokpitu** | **3. Briefing z Notatnikiem** | **4. Lot 3D po Okręgu 360°** |
 
@@ -52,3 +52,11 @@ python3 tools/build_game.py --profile all
 ```
 
 Szczegółowy rejestr zmian znajduje się w pliku [CHANGELOG.md](CHANGELOG.md).
+
+## Narzędzia Budowania i Generatory Zasobów (`tools/`)
+
+| Skrypt | Rola w projekcie |
+|:---|:---|
+| `tools/build_game.py` | Główny skrypt kompilacji (`vasmm68k_mot`) i pakowania archiwów `.LHA` oraz paczek FS-UAE/WinUAE `.ZIP` dla profili `standard` i `thea1200`. |
+| `tools/gen_aga_airbase_scenes.py` | Generator pełnoekranowych teł bazy lotniczej 256 kolorów AGA (`data/bg_airbase.bin`, `320×256`) oraz spriteów (`data/spr_moto.bin`) kwantyzowanych do palety `pal256.bin`. |
+| `tools/gen_vanguard_mod.py` | Generator autorskiej 4-kanałowej ścieżki dźwiękowej ProTracker `.MOD` (`data/vanguard_anthem.mod`) wolnej od praw autorskich. |

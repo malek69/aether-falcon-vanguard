@@ -23,7 +23,7 @@
 
 ## Gallery (v0.0.6 — Amiga 1200 AGA / THEA1200)
 
-| ![1. Intro: 256-col Airbase & Pilot](https://github.com/01_intro_topgun.png) | ![2. Intro: Cockpit Boarding](https://github.com/02_intro_takeoff_logo.png) | ![3. Briefing & Tactical Notepad](https://github.com/03_briefing_controls.png) | ![4. 3D 360° Circular Orbit](https://github.com/04_gameplay_plasma_cannons.png) |
+| ![1. Intro: 256-col Airbase & Pilot](docs/screenshots/01_intro_topgun.png) | ![2. Intro: Cockpit Boarding](docs/screenshots/02_intro_takeoff_logo.png) | ![3. Briefing & Tactical Notepad](docs/screenshots/03_briefing_controls.png) | ![4. 3D 360° Circular Orbit](docs/screenshots/04_gameplay_plasma_cannons.png) |
 |:---:|:---:|:---:|:---:|
 | **1. Intro: 256-col Airbase & Pilot** | **2. Intro: Cockpit Boarding** | **3. Briefing & Tactical Notepad** | **4. 3D 360° Circular Orbit** |
 
@@ -52,3 +52,11 @@ python3 tools/build_game.py --profile all
 ```
 
 See [CHANGELOG_EN.md](CHANGELOG_EN.md) for the complete version history.
+
+## Build Tools & Asset Generators (`tools/`)
+
+| Script | Role in the Project |
+|:---|:---|
+| `tools/build_game.py` | Master build pipeline (`vasmm68k_mot`) packaging `.LHA` and FS-UAE/WinUAE `.ZIP` archives for `standard` and `thea1200` profiles. |
+| `tools/gen_aga_airbase_scenes.py` | Generator of full-screen 256-color AGA sunset airbase backdrops (`data/bg_airbase.bin`, `320×256`) and transparent sprites (`data/spr_moto.bin`) quantized to `pal256.bin`. |
+| `tools/gen_vanguard_mod.py` | Procedural 4-channel ProTracker `.MOD` soundtrack generator (`data/vanguard_anthem.mod`) with royalty-free synth & drum samples. |
