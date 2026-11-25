@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.7</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.8</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Pobierz .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Pobieranie (v0.0.7 — 2 Profile Sprzętowe)
+## Pobieranie (v0.0.8 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@
 
 ---
 
-## Galeria (v0.0.7 — Amiga 1200 AGA / THEA1200)
+## Galeria (v0.0.8 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Orientacja 3D 360° XF-14](docs/screenshots/v007_01_gyruss_360_flight.png) | ![2. Formacje Wrogów 360°](docs/screenshots/v007_02_formations_360.png) | ![3. Boss Lewiatan 360° (Misja 03)](docs/screenshots/v007_03_leviathan_boss_360.png) | ![4. Game Over / Debriefing](docs/screenshots/v007_04_gameover_debrief.png) |
 |:---:|:---:|:---:|:---:|
@@ -37,13 +37,34 @@
 | <a href="docs//malek69//amiga1200-vector-engine"><img src="docs/logo_vector.png" alt="Amiga 1200 Vector Engine" width="180" /></a> | **[Amiga 1200 Vector Engine](docs//malek69//amiga1200-vector-engine)** | Architektura ekranów taktyczno-wektorowych (**Intro**, **Briefing** z mapą sektora i **Debriefing** z oceną pilota w `src/af_campaigns.i`), zintegrowana ze wspólnym buforem 256 kolorów AGA. |
 ---
 
-## Sterowanie
+## Fabuła i Kampania (3 Misje)
 
-- **Strzałki Lewo / Prawo** lub **Joystick Port 2:** przechył (`Roll`) i skręt (`Yaw`) myśliwca **XF-14 Albatros**
-- **Strzałki Góra / Dół** lub **Joystick Port 2:** wysokość lotu i ruch celownika **Lock-On** (`Pitch`)
-- **Spacja / Enter / Fire / RMB:** start misji, odpalenie salwy rakiet **Lock-On** (do 8 celów) oraz dopalacz
-- **H / L:** panel pomocy (`HELP`) oraz przełącznik języka HUD (`PL` / `EN`)
-- **ESC / LMB:** wyjście do AmigaOS / WHDLoad
+Jako pilot elitarnej eskadry **Vanguard** startujesz myśliwcem przechwytującym **XF-14 Albatros** z pokładu lotniskowca **Solis**, aby powstrzymać inwazję **Dominium Vespera** na Konfederację Solis:
+
+1. **Misja 01 — Sargas Archipelago:** Lot patrolowy nad archipelagiem, zbieranie rozproszonych **Rdzeni Eteru** i przechwytywanie eskadr zwiadowczych Vespera lecących w formacji spiralnej 360°.
+2. **Misja 02 — Krell Storm Canyon:** Szybki przelot przez burzowy kanion Krell, gdzie przeciwnicy atakują w podwójnej helisie 360° i wymagają salw rakiet *Multi-Lock*.
+3. **Misja 03 — Leviathan Citadel:** Ostateczny szturm na flagową **Latającą Fortecę Lewiatan** 3D unoszącą się w centrum tunelu, zasilaną przez **4 wirujące reaktory**.
+
+---
+
+## Obiekty w Przestrzeni 3D — Do Czego Strzelać, a Co Zbierać?
+
+| Obiekt 3D | Wygląd i zachowanie | Zadanie pilota |
+| :--- | :--- | :--- |
+| **Myśliwce Vespera (*Vespera Interceptors*)** | Ciemne myśliwce 3D lecące dziobem w Twoją stronę; celownik automatycznie nakłada na nie ramkę **Lock-On**. | **Zestrzeliwać** — działkami plazmowymi ze skrzydeł i rakietami samonaprowadzającymi (*Multi-Lock*). |
+| **Rdzenie Eteru (*Ether Cores*)** | Wirujące, błękitno-turkusowe kryształy 3D (oktaedry) unoszące się w tunelu. | **Nie strzelać — zbierać!** Przelot blisko kryształu regeneruje **+40 energii tarczy** i dodaje **+250 pkt**. |
+| **Ogniste pociski wroga** | Czerwono-białe kule energii lecące z głębi tunelu przez Twoją pozycję aż za krawędź ekranu. | **Unikać** na okręgu 360° — każde trafienie zabiera **25 pkt tarczy** (`SHIELD HIT!`). |
+| **Boss Lewiatan i 4 Reaktory (Misja 03)** | Wielobryłowa forteca 3D w centrum tunelu otoczona **4 wirującymi kryształami reaktorów**, strzelająca promieniowo. | **Namierzać i niszczyć 4 reaktory** (każdy wymaga 2 trafień), aby odnieść zwycięstwo w kampanii. |
+
+---
+
+## Sterowanie (Lot po Okręgu 360°)
+
+- **Strzałki Lewo / Prawo** lub **Joystick Port 2:** lot po pełnym okręgu **360°** (dziób myśliwca zawsze w środek ekranu, brzuch na zewnątrz, skrzydła stycznie wzdłuż okręgu)
+- **Strzałki Góra / Dół** lub **Joystick Port 2:** przybliżenie do środka tunelu (Góra) lub oddalenie ku krawędzi ekranu (Dół) bez pochylania kadłuba
+- **Spacja / Enter / Fire / RMB:** start misji, ogień z podwójnych działek plazmowych, salwa rakiet **Multi-Lock** oraz dopalacz (*Afterburner*)
+- **H / L:** panel pomocy (`HELP`) w locie oraz przełącznik języka HUD (`PL` / `EN`)
+- **ESC / LMB:** zapis rekordu (`hiscore.dat`) i wyjście do AmigaOS / WHDLoad
 
 ---
 

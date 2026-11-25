@@ -6,6 +6,13 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.0.8] - 2026-11-25
+
+- **True 3D Gouraud / EnvMap Meshes for Enemies, Ether Cores & Leviathan Boss (`src/af_enemy_meshes.i`, `src/af_gameplay_3d.i`):** generated via `refs/aura3d/tools/mesh_conv.py` multi-polygon 3D meshes for *Vespera Interceptors* (14 verts, 24 tris), rotating crystal *Ether Cores* (6 verts, 8 tris), and the Mission 03 *Leviathan Citadel* (16 verts, 28 tris + 4 orbiting 3D core reactors) rendered with full-screen Z-buffering (`320x256` / `320x128`).
+- **Story Overview & 3D Object Guide in Documentation (`README.md`, `README_EN.md`):** added the 3-mission campaign briefing and pilot reference table (enemy fighters, Ether Cores, bolts, and Leviathan Boss).
+
+---
+
 ## [v0.0.7] - 2026-11-25
 
 | <img src="docs/screenshots/v007_01_gyruss_360_flight.png" width="210"> | <img src="docs/screenshots/v007_02_formations_360.png" width="210"> | <img src="docs/screenshots/v007_03_leviathan_boss_360.png" width="210"> | <img src="docs/screenshots/v007_04_gameover_debrief.png" width="210"> |

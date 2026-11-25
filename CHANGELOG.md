@@ -6,6 +6,13 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.0.8] - 2026-11-25
+
+- **Prawdziwe modele 3D Gouraud / EnvMap dla wrogow, Rdzeni Eteru i Bossa Lewiatana (`src/af_enemy_meshes.i`, `src/af_gameplay_3d.i`):** wygenerowano narzedziem silnika `refs/aura3d/tools/mesh_conv.py` wielobrylowe siatki 3D dla mysliwcow *Vespera Interceptor* (14 wierzcholkow, 24 trojkaty), wirujacych krysztalowych *Rdzeni Eteru* (6 wierzcholkow, 8 trojkatow) oraz *Cytadeli Lewiatan* w Misji 03 (16 wierzcholkow, 28 trojkatow + 4 wirujace reaktory 3D) z pelnoekranowym Z-bufferem (`320x256` / `320x128`).
+- **Zarys fabuly i instrukcja obiektow 3D w dokumentacji (`README.md`, `README_EN.md`):** dodano opis kampanii 3 misji oraz tabele obiektow 3D (wrogie mysliwce, Rdzenie Eteru, pociski i Boss Lewiatan).
+
+---
+
 ## [v0.0.7] - 2026-11-25
 
 | <img src="docs/screenshots/v007_01_gyruss_360_flight.png" width="210"> | <img src="docs/screenshots/v007_02_formations_360.png" width="210"> | <img src="docs/screenshots/v007_03_leviathan_boss_360.png" width="210"> | <img src="docs/screenshots/v007_04_gameover_debrief.png" width="210"> |

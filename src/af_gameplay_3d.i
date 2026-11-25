@@ -79,6 +79,9 @@ af_render_gameplay_3d:
         lea     v2_proj_buf,a1
         move.w  #xf14_vert_count,d7
         jsr     transform_and_project_verts
+        ; Zapisz dokladne wspolrzedne ekranowe srodka kadluba XF-14 (wierzcholek 8 = srodek kadluba)
+        move.w  8*6(a1),af_ship_sx
+        move.w  8*6+2(a1),af_ship_sy
 
         lea     xf14_norms,a0
         lea     v2_env_buf,a1
@@ -108,6 +111,7 @@ af_render_gameplay_3d:
         ifd FULL_RES
         jsr     draw_3d_lens_flare
         endif
+        bsr.w   af_update_enemy_bolts
         bsr.w   af_draw_reticle_and_hud
         bsr.w   af_draw_cannon_beams
 
@@ -148,10 +152,12 @@ af_draw_world_entities:
         add.l   #2800<<16,d0
         move.l  d0,12(a4)
         clr.b   2(a4)
+        move.l  a0,-(sp)
         move.l  a4,a0
         move.w  d7,d0
         add.w   vbl_tick+2,d0
         jsr     af_set_entity_360_slot
+        move.l  (sp)+,a0
         bra.w   .next_ent
 .z_far: cmp.w   #3200,d2
         bgt.w   .next_ent
@@ -189,37 +195,86 @@ af_draw_world_entities:
         cmp.w   #116,d1
         endif
         bgt.w   .next_ent
-        ; Rozmiar obiektu rosnie wyraznie w miare zblizania sie (3..12 px)
-        move.w  #1200,d3
-        ext.l   d3
-        divs.w  d2,d3
-        cmp.w   #3,d3
-        bge.s   .r_min
-        moveq   #3,d3
-.r_min: cmp.w   #12,d3
-        ble.s   .r_max
-        moveq   #12,d3
-.r_max: move.b  #$FC,d6
+        ; Prawdziwy model 3D Gouraud/EnvMap dla wrogich mysliwcow Vespera i Rdzeni Eteru
+        movem.l d0-d7/a0-a4,-(sp)
+        move.w  d2,d6                   ; Z w przestrzeni swiata (48..3200)
+        asr.w   #1,d6                   ; Skaluj Z pod kamere aura3d_v2 (cam_oz=-155)
+        ; Wylicz pozycje 3D (tx, ty) w ukladzie kamery aura3d_v2
+        move.l  4(a4),d4
+        swap    d4
+        sub.w   cam_ox(pc),d4
+        asr.w   #1,d4
+        move.l  8(a4),d5
+        swap    d5
+        sub.w   #110,d5
+        asr.w   #1,d5
+        add.w   cam_oy(pc),d5
+        ifd WIDESCREEN_16_9
+        muls.w  #3,d4
+        asr.w   #2,d4
+        endif
+
         cmp.b   #2,1(a4)
-        bne.s   .draw_box
-        move.b  #$FD,d6
-.draw_box:
-        bsr.w   af_fill_chunky_diamond
-        ; Skrzydla mysliwca wroga dla wiekszej czytelnosci sylwetki
+        beq.s   .render_core_3d
+
+        ; Wrogi mysliwiec 3D Vespera Interceptor (obrocony dziobem w strone gracza + przechyl)
+        clr.w   user_yaw
+        clr.w   user_pitch
+        move.w  #128,d0                 ; Yaw = 180 st. (dziobem w strone gracza)
+        moveq   #12,d1                  ; Lekkie pochylenie w dol
+        move.l  vbl_tick,d2
+        add.w   d7,d2
+        and.w   #$ff,d2
+        lea     sin_tab,a0
+        move.w  (a0,d2.w*2),d2
+        asr.w   #3,d2                   ; Dynamiczny przechyl skrzydel (-32..+32)
+        jsr     build_rot_matrix_3d
+
+        lea     vespera_verts,a0
+        lea     v2_proj_buf,a1
+        move.w  #vespera_vert_count,d7
+        jsr     transform_and_project_verts
+        lea     vespera_norms,a0
+        lea     v2_env_buf,a1
+        move.w  #vespera_vert_count,d7
+        jsr     transform_normals_envmap
+        lea     vespera_env_mesh,a0
+        lea     v2_proj_buf,a1
+        lea     v2_tex_bank,a2
+        lea     v2_env_buf,a3
+        jsr     draw_gouraud_env_mesh_v2
+        bra.s   .ent_3d_done
+
+.render_core_3d:
+        ; Rdzen Eteru 3D (wirujacy krysztalowy oktaedr)
+        clr.w   user_yaw
+        clr.w   user_pitch
+        move.l  vbl_tick,d0
+        lsl.w   #2,d0
+        move.w  d0,d1
+        asr.w   #1,d1
+        move.w  d0,d2
+        jsr     build_rot_matrix_3d
+
+        lea     ecore_verts,a0
+        lea     v2_proj_buf,a1
+        move.w  #ecore_vert_count,d7
+        jsr     transform_and_project_verts
+        lea     ecore_norms,a0
+        lea     v2_env_buf,a1
+        move.w  #ecore_vert_count,d7
+        jsr     transform_normals_envmap
+        lea     ecore_env_mesh,a0
+        lea     v2_proj_buf,a1
+        lea     v2_tex_bank,a2
+        lea     v2_env_buf,a3
+        jsr     draw_gouraud_env_mesh_v2
+
+.ent_3d_done:
+        movem.l (sp)+,d0-d7/a0-a4
+        moveq   #10,d3
         cmp.b   #2,1(a4)
-        beq.s   .next_ent
-        sub.w   d3,d0
-        asr.w   #1,d3
-        move.b  #$FE,d6
-        bsr.w   af_fill_chunky_diamond
-        add.w   d3,d0
-        add.w   d3,d0
-        add.w   d3,d0
-        add.w   d3,d0
-        bsr.w   af_fill_chunky_diamond
-        sub.w   d3,d0
-        sub.w   d3,d0
-        lsl.w   #1,d3
+        beq.w   .next_ent
         ; AUTOMATYCZNE NAMIERZANIE (Auto-Lock na najblizszym wrogu w kadrze!)
         cmp.w   af_auto_min_z(pc),d2
         bge.s   .chk_lk_box
@@ -242,15 +297,15 @@ af_draw_world_entities:
 .next_ent:
         lea     16(a4),a4
         dbf     d7,.ent_lp
-        ; Wrogie pociski lecace w strone gracza (do unikania!)
-        bsr.s   af_update_enemy_bolts
         rts
 
 af_auto_min_z:  dc.w 3200
-af_ebolt_pool:  ds.w 24                 ; 6 pociskow x 4 slowa (z, sx, sy, phase)
+af_ship_sx:     dc.w 160
+af_ship_sy:     dc.w 180
+af_ebolt_pool:  ds.w 30                 ; 6 pociskow x 5 slow (t, start_x, start_y, tx, ty)
 
 af_update_enemy_bolts:
-        movem.l d0-d7/a2,-(sp)
+        movem.l d0-d7/a0-a2,-(sp)
         move.w  af_mission,d7
         cmp.w   #2,d7
         ble.s   .m_cap
@@ -261,48 +316,75 @@ af_update_enemy_bolts:
         lea     af_ebolt_pool(pc),a2
 .eb_lp: tst.w   (a2)
         bgt.s   .eb_adv
+        tst.b   af_boss_active
+        bne.s   .eb_boss_spawn
         cmp.w   #3200,af_auto_min_z(pc)
         beq.w   .eb_nxt
-        ; Odpal nowy pocisk z opoznieniem fazowym dla kazdego slotu
-        move.w  d7,d0
-        mulu.w  #42,d0
-        add.w   #160,d0
-        move.w  d0,(a2)
+        ; Odpal nowy pocisk z pozycji wroga przez aktualna pozycje ekranowa XF-14 az za ekran!
         move.w  af_reticle_x,2(a2)
         move.w  af_reticle_y,4(a2)
+        bra.s   .eb_aim_player
+.eb_boss_spawn:
+        move.w  #160,2(a2)
+        ifd FULL_RES
+        move.w  #128,4(a2)
+        else
+        moveq   #64,d0
+        move.w  d0,4(a2)
+        endif
+.eb_aim_player:
+        ; Start t z ujemnym opoznieniem fazowym (-d7*28), po przekroczeniu 0 pocisk leci 1..245
+        move.w  d7,d0
+        mulu.w  #28,d0
+        addq.w  #1,d0
+        move.w  d0,(a2)
+        ; Cel (tx, ty) = pozycja ekranowa mysliwca + maly rozrzut slotu (-18..+18 px)
         move.w  d7,d1
-        lsl.w   #5,d1
-        move.w  d1,6(a2)
+        subq.w  #2,d1
+        muls.w  #7,d1
+        move.w  af_ship_sx,d0
+        add.w   d1,d0
+        move.w  d0,6(a2)
+        move.w  af_ship_sy,d0
+        asr.w   #1,d1
+        add.w   d1,d0
+        move.w  d0,8(a2)
         bra.w   .eb_nxt
-.eb_adv:move.w  af_mission,d0
+
+.eb_adv:
+        move.w  af_mission,d0
         addq.w  #5,d0
-        sub.w   d0,(a2)
-        bgt.s   .eb_drw
-        ; Sprawdz trafienie 2D w aktualna pozycje mysliwca na okregu 360 st.
-        move.w  af_ship_dx,d0
-        add.w   #160,d0
-        sub.w   2(a2),d0
+        move.w  (a2),d2
+        add.w   d0,d2
+        move.w  d2,(a2)
+
+        ; Sprawdz czy pocisk wlasnie przecial plaszczyzne mysliwca (t w przedziale 168..176)
+        cmp.w   #168,d2
+        blt.s   .eb_drw
+        cmp.w   #176,d2
+        bgt.s   .eb_chk_end
+
+        ; Test trafienia 2D wzgledem dokladnej pozycji ekranowej XF-14 (af_ship_sx, af_ship_sy)
+        move.w  af_ship_sx,d0
+        sub.w   6(a2),d0
         bpl.s   .adx
         neg.w   d0
-.adx:   cmp.w   #22,d0
-        bgt.w   .eb_nxt
-        move.w  af_ship_dy,d1
-        ifd FULL_RES
-        add.w   #136,d1
-        else
-        add.w   #68,d1
-        endif
-        sub.w   4(a2),d1
+.adx:   cmp.w   #20,d0
+        bgt.s   .eb_drw
+        move.w  af_ship_sy,d0
+        sub.w   8(a2),d0
         bpl.s   .ady
-        neg.w   d1
-.ady:   cmp.w   #18,d1
-        bgt.w   .eb_nxt
-        ; Trafienie w tarcze XF-14!
+        neg.w   d0
+.ady:   cmp.w   #16,d0
+        bgt.s   .eb_drw
+
+        ; Trafienie w tarcze XF-14! Dezaktywuj pocisk i odejmij energie
+        clr.w   (a2)
         move.b  #14,af_shield_flash
         moveq   #SFX_EXPLODE,d0
         bsr.w   af_trigger_sfx
         sub.w   #25,af_energy
-        bgt.s   .sh_ok
+        bgt.w   .eb_nxt
         clr.w   af_energy
         st      af_game_over
         clr.b   af_boss_active
@@ -310,45 +392,59 @@ af_update_enemy_bolts:
         jsr     copper_set_sky_theme
         clr.l   af_state_timer
         move.w  #STATE_DEBRIEF,af_state
-.sh_ok:
         bra.w   .eb_nxt
-.eb_drw:move.w  #260,d2
-        sub.w   (a2),d2
-        bpl.s   .z_pos
-        moveq   #4,d2
-.z_pos: move.w  2(a2),d0
-        move.w  4(a2),d1
-        ; Rozrzut pociskow po okregu
-        move.w  6(a2),d4
-        and.w   #255,d4
-        lea     sin_tab,a0
-        add.w   d4,d4
-        move.w  (a0,d4.w),d5
-        muls.w  d2,d5
-        asr.l   #8,d5
-        asr.w   #2,d5
-        add.w   d5,d0
+
+.eb_chk_end:
+        ; Pozwol pociskowi leciec dalej az za krawedz ekranu (t = 176..250)!
+        cmp.w   #250,d2
+        blt.s   .eb_drw
+        clr.w   (a2)
+        bra.w   .eb_nxt
+
+.eb_drw:
+        ; Liniowa ekstrapolacja: cur = start + ((target - start) * t) / 172
+        ; Dla t=0 pocisk jest u wroga, dla t=172 przecina plaszczyzne XF-14, dla t>172 leci az za ekran!
+        move.w  6(a2),d0
+        sub.w   2(a2),d0
+        muls.w  d2,d0
+        divs.w  #172,d0
+        add.w   2(a2),d0                ; cur_x
+
+        move.w  8(a2),d1
+        sub.w   4(a2),d1
+        muls.w  d2,d1
+        divs.w  #172,d1
+        add.w   4(a2),d1                ; cur_y
+
+        ; Przytnij do obszaru bufora ekranu (zeby pociski lecialy az do samej krawedzi)
+        cmp.w   #6,d0
+        blt.s   .eb_nxt
+        cmp.w   #313,d0
+        bgt.s   .eb_nxt
+        cmp.w   #6,d1
+        blt.s   .eb_nxt
         ifd FULL_RES
-        move.w  #136,d3
+        cmp.w   #249,d1
         else
-        moveq   #68,d3
+        cmp.w   #121,d1
         endif
-        sub.w   d1,d3
-        muls.w  d2,d3
-        divs.w  #260,d3
-        add.w   d3,d1
-        lsr.w   #5,d2
-        addq.w  #2,d2
+        bgt.s   .eb_nxt
+
+        ; Rozmiar pocisku rosnie w miare zblizania sie do kamery (2..7 px)
         move.w  d2,d3
+        lsr.w   #5,d3
+        addq.w  #2,d3
         move.b  #$FC,d6
         bsr.w   af_fill_chunky_diamond
         subq.w  #1,d3
+        ble.s   .eb_nxt
         move.b  #$FF,d6
         bsr.w   af_fill_chunky_diamond
-.eb_nxt:addq.l  #8,a2
+.eb_nxt:lea     10(a2),a2
         dbf     d7,.eb_lp
-        movem.l (sp)+,d0-d7/a2
+        movem.l (sp)+,d0-d7/a0-a2
         rts
+
 ; ============================================================================
 ; Salwa samonaprowadzajacych rakiet (Panzer Dragoon Multi-Lock Barrage)
 ; ============================================================================
@@ -676,12 +772,11 @@ af_missiles:    dcb.b   8*MAX_MISSILES,0
 af_clear_fighter_zbuffer:
         movem.l d0-d2/a0-a1,-(sp)
         move.l  #$7fff7fff,d0
+        lea     zbuf_3d,a0
         ifd FULL_RES
-        lea     zbuf_3d+(40*640),a0
-        move.w  #215,d2                 ; 216 wierszy x pelne 320 px szerokosci (zero prostokata!)
+        move.w  #255,d2                 ; pelne 256 wierszy x 320 px szerokosci dla bryl 3D
         else
-        lea     zbuf_3d+(20*640),a0
-        moveq   #107,d2                 ; 108 wierszy x pelne 320 px szerokosci
+        moveq   #127,d2                 ; pelne 128 wierszy x 320 px szerokosci dla bryl 3D
         endif
 .zb_row:
         moveq   #39,d1                  ; 40 x 16 bajtow = 640 bajtow (cale 320 px!)
@@ -752,23 +847,44 @@ af_update_and_draw_boss:
         add.w   #64,d5                  ; d5 = centrum okregu 320x128
         endif
 
-        ; Glowny pancerz cytadeli Lewiatan (podwojny romb energetyczny w centrum tunelu)
+        ; Prawdziwy model 3D Cytadeli Lewiatan (Gouraud/EnvMap w centrum tunelu 360 st.)
+        movem.l d4-d7/a0-a3,-(sp)
+        clr.w   user_yaw
+        clr.w   user_pitch
+        move.w  #128,d0                 ; Dziobem w strone gracza
+        move.l  vbl_tick,d1
+        and.w   #$ff,d1
+        lea     sin_tab,a0
+        move.w  (a0,d1.w*2),d1
+        asr.w   #4,d1
+        move.l  vbl_tick,d2             ; Powolny obrot cytadeli 360 st.
+        jsr     build_rot_matrix_3d
+
         move.w  d4,d0
-        move.w  d5,d1
+        sub.w   #160,d0
+        move.w  d0,d4                   ; tx wzgledem centrum
         ifd FULL_RES
-        moveq   #26,d3
+        sub.w   #128,d5
         else
-        moveq   #14,d3
+        sub.w   #64,d5
         endif
-        move.b  #$F4,d6
-        bsr.w   af_fill_chunky_diamond
-        ifd FULL_RES
-        moveq   #14,d3
-        else
-        moveq   #8,d3
-        endif
-        move.b  #$FC,d6
-        bsr.w   af_fill_chunky_diamond
+        add.w   cam_oy(pc),d5           ; ty skorygowane o cam_oy
+        move.w  #130,d6                 ; tz Bossa przed graczem
+
+        lea     leviathan_verts,a0
+        lea     v2_proj_buf,a1
+        move.w  #leviathan_vert_count,d7
+        jsr     transform_and_project_verts
+        lea     leviathan_norms,a0
+        lea     v2_env_buf,a1
+        move.w  #leviathan_vert_count,d7
+        jsr     transform_normals_envmap
+        lea     leviathan_env_mesh,a0
+        lea     v2_proj_buf,a1
+        lea     v2_tex_bank,a2
+        lea     v2_env_buf,a3
+        jsr     draw_gouraud_env_mesh_v2
+        movem.l (sp)+,d4-d7/a0-a3
 
         ; Co 64 klatki Lewiatan odpala salwe promieniowa w strone pozycji gracza na okregu 360 st.
         move.l  vbl_tick,d0
@@ -822,13 +938,39 @@ af_update_and_draw_boss:
         move.w  d0,2(a2)
         move.w  d1,4(a2)
 
-        ; Rysuj rdzen reaktora (pulsacja zloto/czerwien)
-        moveq   #6,d3
-        move.b  #$FC,d6
-        bsr.w   af_fill_chunky_diamond
-        moveq   #3,d3
-        move.b  #$FE,d6
-        bsr.w   af_fill_chunky_diamond
+        ; Renderuj reaktor Lewiatana jako wirujacy rdzen 3D
+        movem.l d0-d7/a0-a3,-(sp)
+        move.w  d0,d4
+        sub.w   #160,d4
+        move.w  d1,d5
+        ifd FULL_RES
+        sub.w   #128,d5
+        else
+        sub.w   #64,d5
+        endif
+        add.w   cam_oy(pc),d5
+        move.w  #115,d6
+        clr.w   user_yaw
+        clr.w   user_pitch
+        move.l  vbl_tick,d0
+        lsl.w   #3,d0
+        move.w  d0,d1
+        move.w  d0,d2
+        jsr     build_rot_matrix_3d
+        lea     ecore_verts,a0
+        lea     v2_proj_buf,a1
+        move.w  #ecore_vert_count,d7
+        jsr     transform_and_project_verts
+        lea     ecore_norms,a0
+        lea     v2_env_buf,a1
+        move.w  #ecore_vert_count,d7
+        jsr     transform_normals_envmap
+        lea     ecore_env_mesh,a0
+        lea     v2_proj_buf,a1
+        lea     v2_tex_bank,a2
+        lea     v2_env_buf,a3
+        jsr     draw_gouraud_env_mesh_v2
+        movem.l (sp)+,d0-d7/a0-a3
 
         ; Sprawdz najazd celownika lub promienia dziobu XF-14 na reaktor
         move.w  af_reticle_x,d2
@@ -1063,6 +1205,7 @@ af_draw_cannon_beams:
 ; - Dziob    (+Z, kolumna 2): w glab i lekko w srodek ekranu (-sa*cos(a), -sa*sin(a), ca)
 ; Klawisze Gora/Dol zmieniaja tylko promien bez obracania kadlubem.
 ;------------------------------------------------------------------------------
+        cnop    0,4
 af_build_xf14_gyruss_matrix:
         movem.l d0-d5/a0-a1,-(sp)
         lea     sin_tab,a0
@@ -1124,6 +1267,7 @@ af_build_xf14_gyruss_matrix:
 ; - Misja 03: Pierścienie Cytadeli 360 st. (4 sektory co 90 st. + rozrzut)
 ; Wejscie: a0 = wskaznik rekordu encji (16B), d0.w = indeks slotu
 ;------------------------------------------------------------------------------
+        cnop    0,4
 af_set_entity_360_slot:
         movem.l d0-d4/a1,-(sp)
         lea     sin_tab,a1

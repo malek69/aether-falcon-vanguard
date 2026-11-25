@@ -408,6 +408,7 @@ af_update_entities:
         include "af_audio_sfx.i"
         include "af_campaigns.i"
         include "af_fighter_mesh.i"
+        include "af_enemy_meshes.i"
         include "af_gameplay_3d.i"
         section code,code
 
