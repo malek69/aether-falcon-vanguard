@@ -3,7 +3,7 @@
 <p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.6</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.7</h1>
   <p><strong>Bare-metal 3D combat flight simulator for Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Download .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Downloads (v0.0.6 — 2 Hardware Profiles)
+## Downloads (v0.0.7 — 2 Hardware Profiles)
 
 | Profile (`--profile`) | Target Platform | Download Packages |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@
 
 ---
 
-## Gallery (v0.0.6 — Amiga 1200 AGA / THEA1200)
+## Gallery (v0.0.7 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Intro: 256-col Airbase & Pilot](docs/screenshots/01_intro_topgun.png) | ![2. Intro: Cockpit Boarding](docs/screenshots/02_intro_takeoff_logo.png) | ![3. Briefing & Tactical Notepad](docs/screenshots/03_briefing_controls.png) | ![4. 3D 360° Circular Orbit](docs/screenshots/04_gameplay_plasma_cannons.png) |
 |:---:|:---:|:---:|:---:|

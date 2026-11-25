@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.0.6</h1>
+  <h1>AETHER FALCON: VANGUARD v0.0.7</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Pobierz .LHA</a> &bull;
@@ -14,7 +14,7 @@
 
 ---
 
-## Pobieranie (v0.0.6 — 2 Profile Sprzętowe)
+## Pobieranie (v0.0.7 — 2 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -23,7 +23,7 @@
 
 ---
 
-## Galeria (v0.0.6 — Amiga 1200 AGA / THEA1200)
+## Galeria (v0.0.7 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Intro: Lotnisko 256 kol. & Pilot](docs/screenshots/01_intro_topgun.png) | ![2. Intro: Wsiadanie do Kokpitu](docs/screenshots/02_intro_takeoff_logo.png) | ![3. Briefing z Notatnikiem](docs/screenshots/03_briefing_controls.png) | ![4. Lot 3D po Okręgu 360°](docs/screenshots/04_gameplay_plasma_cannons.png) |
 |:---:|:---:|:---:|:---:|

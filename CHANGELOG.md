@@ -6,6 +6,14 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.0.7] - 2026-11-25
+
+- **Sztywna orientacja 3D mysliwca XF-14 Albatros na pelnym okregu 360 st. (`src/af_gameplay_3d.i`, `src/aether_falcon.s`):** ortonormalna macierz transformacji typu *Gyruss / Tempest* utrzymujaca dziob zawsze w kierunku srodka ekranu, brzuch kadluba na zewnatrz ku krawedzi ekranu oraz skrzydla stycznie wzdluz okregu; klawisze Gora/Dol reguluja wylacznie promien lotu bez obracania kadlubem.
+- **System uszkodzen tarczy i ekran Game Over / Debriefing (`src/af_gameplay_3d.i`, `src/af_campaigns.i`):** detekcja trafien 2D na calym okregu 360 st., dynamiczny kolor paska tarczy (blekit/zloto/czerwien), czerwona ramka alarmowa i ostrzezenia `SHIELD HIT!` / `CRITICAL SHIELD!`, a po spadku energii do zera ekran `GAME OVER - XF-14 DESTROYED` z mozliwoscia natychmiastowego restartu kampanii.
+- **Nowe formacje 360 st. oraz walka z Bossem Lewiatanem w Misji 03 (`src/af_gameplay_3d.i`):** spiralne i helikalne formacje przeciwnikow na pelnym okregu 360 st. oraz cytadela Lewiatana w centrum tunelu z 4 wirujacymi po okregu 360 st. reaktorami i ostrzalem promieniowym.
+
+---
+
 ## [v0.0.5] - 2026-11-25
 
 | <img src="docs/screenshots/01_intro_topgun.png" width="210"> | <img src="docs/screenshots/02_intro_takeoff_logo.png" width="210"> | <img src="docs/screenshots/03_briefing_controls.png" width="210"> | <img src="docs/screenshots/04_gameplay_plasma_cannons.png" width="210"> |

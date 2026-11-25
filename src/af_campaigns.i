@@ -207,7 +207,10 @@ af_render_vector_screen:
 
 .draw_debriefing:
         jsr     af_draw_aw_debrief
-        ; --- EKRAN 2: DEBRIEFING (Awans Pilota) ---
+        tst.b   af_game_over
+        bne.s   .deb_gameover
+
+        ; --- EKRAN 2A: DEBRIEFING (Misja Zaliczona / Awans Pilota) ---
         move.w  #160,d0
         ifd FULL_RES
         move.w  #108,d1
@@ -231,6 +234,54 @@ af_render_vector_screen:
         endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
+        bra.s   .deb_rank_eval
+
+.deb_gameover:
+        ; --- EKRAN 2B: GAME OVER / DEBRIEFING PO UTRACIE TARCZY ---
+        move.w  #160,d0
+        ifd FULL_RES
+        move.w  #108,d1
+        else
+        move.w  #52,d1
+        endif
+        moveq   #24,d3
+        move.b  #$FC,d6
+        jsr     af_fill_chunky_diamond
+        moveq   #28,d3
+        move.b  #$FC,d6
+        jsr     af_draw_chunky_rect
+
+        lea     str_go_title(pc),a0
+        moveq   #76,d0
+        ifd FULL_RES
+        moveq   #24,d1
+        else
+        moveq   #12,d1
+        endif
+        move.b  #$FC,d6
+        bsr.w   af_print_chunky_str
+
+        lea     str_go_sub(pc),a0
+        moveq   #64,d0
+        ifd FULL_RES
+        moveq   #40,d1
+        else
+        moveq   #24,d1
+        endif
+        move.b  #$FF,d6
+        bsr.w   af_print_chunky_str
+
+        lea     str_go_retry(pc),a0
+        moveq   #70,d0
+        ifd FULL_RES
+        move.w  #222,d1
+        else
+        moveq   #106,d1
+        endif
+        move.b  #$FE,d6
+        bsr.w   af_print_chunky_str
+
+.deb_rank_eval:
 
         move.l  af_score,d2
         cmp.l   #2500,d2
@@ -335,4 +386,9 @@ str_deb_win:    dc.b    "CAMPAIGN VICTORY - LEVIATHAN DESTROYED",0
 str_rank_1:     dc.b    "PILOT RANK: SOLAR CADET",0
 str_rank_2:     dc.b    "PILOT RANK: VANGUARD WINGMAN",0
 str_rank_3:     dc.b    "PILOT RANK: ACE OF SOLIS",0
+        even
+
+str_go_title:   dc.b    "GAME OVER - XF-14 DESTROYED",0
+str_go_sub:     dc.b    "SHIELD DEPLETED - MISSION FAILED",0
+str_go_retry:   dc.b    "PRESS FIRE OR SPACE TO RESTART",0
         even

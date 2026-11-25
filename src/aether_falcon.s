@@ -108,6 +108,14 @@ mainloop:
         addq.w  #1,d0
         cmp.w   #STATE_DEBRIEF,d0
         ble.s   .store_st
+        tst.b   af_game_over
+        beq.s   .next_mission
+        clr.b   af_game_over
+        clr.w   af_mission
+        clr.l   af_score
+        moveq   #STATE_INTRO,d0
+        bra.s   .store_st
+.next_mission:
         moveq   #STATE_BRIEFING,d0
         addq.w  #1,af_mission
 .store_st:
@@ -196,11 +204,14 @@ af_init_mission:
         jsr     copper_set_sky_theme
         clr.w   af_roll
         clr.w   af_pitch
+        clr.w   af_roll
         move.w  #64,af_orbit_angle
         move.w  #126,af_orbit_radius
         clr.w   af_ship_dx
         move.w  #56,af_ship_dy
         move.w  #200,af_energy
+        clr.b   af_shield_flash
+        clr.b   af_game_over
         clr.w   af_locks
         clr.b   af_boss_active
         clr.b   af_boss_done
@@ -219,11 +230,7 @@ af_init_mission:
         clr.b   2(a0)
         move.b  #1,3(a0)
         move.w  d7,d0
-        muls.w  #37,d0
-        ext.l   d0
-        asl.l   #8,d0
-        move.l  d0,4(a0)
-        move.l  #110<<16,8(a0)
+        jsr     af_set_entity_360_slot
         move.w  d1,d0
         swap    d0
         clr.w   d0
@@ -414,6 +421,8 @@ af_mission_len: dc.w    8192
 af_boss_reactors_left: dc.w 0
 af_boss_active: dc.b    0
 af_boss_done:   dc.b    0
+af_shield_flash:dc.b    0
+af_game_over:   dc.b    0
         even
 af_boss_reactors: ds.b  24
 af_particles:   ds.b    10*MAX_PARTICLES

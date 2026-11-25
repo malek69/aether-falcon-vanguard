@@ -61,12 +61,9 @@ af_render_gameplay_3d:
         move.b  #1,af_ptrail_init
         jsr     ptrail_reset
 .pt_ok:
-        clr.w   user_yaw
-        clr.w   user_pitch
-        moveq   #0,d0
-        move.w  #-20,d1
-        move.w  af_roll,d2
-        jsr     build_rot_matrix_3d
+        ; Sztywna orientacja 360 st. (Gyruss/Tempest):
+        ; dziob w srodek ekranu, brzuch na zewnatrz, skrzydla stycznie wzdluz okregu
+        bsr.w   af_build_xf14_gyruss_matrix
 
         ; Pozycja XF-14 na okregu unikow (Lewo/Prawo = kat, Gora/Dol = promien)
         move.w  af_ship_dx,d4
@@ -146,11 +143,15 @@ af_draw_world_entities:
         sub.w   d5,d2
         cmp.w   #48,d2
         bge.s   .z_far
-        ; Gdy wrog minal gracza, odrodz go na horyzoncie w nowej pozycji X
+        ; Gdy wrog minal gracza, odrodz go na horyzoncie w nowej formacji 360 st.
         move.l  af_pos_z,d0
         add.l   #2800<<16,d0
         move.l  d0,12(a4)
         clr.b   2(a4)
+        move.l  a4,a0
+        move.w  d7,d0
+        add.w   vbl_tick+2,d0
+        jsr     af_set_entity_360_slot
         bra.w   .next_ent
 .z_far: cmp.w   #3200,d2
         bgt.w   .next_ent
@@ -277,7 +278,7 @@ af_update_enemy_bolts:
         addq.w  #5,d0
         sub.w   d0,(a2)
         bgt.s   .eb_drw
-        ; Sprawdz trafienie w aktualna pozycje mysliwca na okregu (160+dx, 136+dy)
+        ; Sprawdz trafienie 2D w aktualna pozycje mysliwca na okregu 360 st.
         move.w  af_ship_dx,d0
         add.w   #160,d0
         sub.w   2(a2),d0
@@ -285,11 +286,30 @@ af_update_enemy_bolts:
         neg.w   d0
 .adx:   cmp.w   #22,d0
         bgt.w   .eb_nxt
+        move.w  af_ship_dy,d1
+        ifd FULL_RES
+        add.w   #136,d1
+        else
+        add.w   #68,d1
+        endif
+        sub.w   4(a2),d1
+        bpl.s   .ady
+        neg.w   d1
+.ady:   cmp.w   #18,d1
+        bgt.w   .eb_nxt
+        ; Trafienie w tarcze XF-14!
+        move.b  #14,af_shield_flash
         moveq   #SFX_EXPLODE,d0
         bsr.w   af_trigger_sfx
         sub.w   #25,af_energy
         bgt.s   .sh_ok
-        move.w  #200,af_energy
+        clr.w   af_energy
+        st      af_game_over
+        clr.b   af_boss_active
+        moveq   #3,d0
+        jsr     copper_set_sky_theme
+        clr.l   af_state_timer
+        move.w  #STATE_DEBRIEF,af_state
 .sh_ok:
         bra.w   .eb_nxt
 .eb_drw:move.w  #260,d2
@@ -489,22 +509,70 @@ af_draw_reticle_and_hud:
         move.b  #$FF,d6
         bsr.w   af_draw_chunky_rect
 
-        ; Rysuj pasek energii z Rdzeni Eteru (lewy gorny rog chunky_buf)
-        lea     chunky_buf+(8*320)+10,a0
+        ; Rysuj pasek energii tarczy (lewy gorny rog chunky_buf) z kolorem wg stanu
+        move.b  #$FD,d6                 ; Blekit = tarcza pelna (>100)
         move.w  af_energy,d2
+        cmp.w   #50,d2
+        bgt.s   .sh_col1
+        move.b  #$FC,d6                 ; Czerwien = stan krytyczny (<=50)
+        bra.s   .sh_col_ok
+.sh_col1:
+        cmp.w   #100,d2
+        bgt.s   .sh_col_ok
+        move.b  #$FE,d6                 ; Zloto = tarcza oslabiona (<=100)
+.sh_col_ok:
+        lea     chunky_buf+(8*320)+10,a0
         lsr.w   #3,d2                   ; Skaluj 0..255 -> 0..32 px
         cmp.w   #40,d2
         ble.s   .eb_ok
         moveq   #40,d2
 .eb_ok: tst.w   d2
-        beq.s   .hud_done
+        beq.s   .sh_warn_chk
         subq.w  #1,d2
-.eb_lp: move.b  #$FD,(a0)
-        move.b  #$FD,320(a0)
+.eb_lp: move.b  d6,(a0)
+        move.b  d6,320(a0)
         addq.l  #1,a0
         dbf     d2,.eb_lp
+
+.sh_warn_chk:
+        ; Ostrzezenie o trafieniu / niskiej tarczy
+        tst.b   af_shield_flash
+        beq.s   .sh_crit_chk
+        subq.b  #1,af_shield_flash
+        ; Czerwona ramka alarmowa przy trafieniu w tarcze
+        move.w  #160,d0
+        ifd FULL_RES
+        move.w  #128,d1
+        moveq   #122,d3
+        else
+        moveq   #64,d1
+        moveq   #60,d3
+        endif
+        move.b  #$FC,d6
+        bsr.w   af_draw_chunky_rect
+        lea     str_shield_hit(pc),a0
+        move.w  #128,d0
+        moveq   #6,d1
+        move.b  #$FC,d6
+        jsr     af_print_chunky_str
+        bra.s   .hud_done
+
+.sh_crit_chk:
+        cmp.w   #50,af_energy
+        bgt.s   .hud_done
+        btst    #3,vbl_tick+3
+        beq.s   .hud_done
+        lea     str_shield_low(pc),a0
+        moveq   #112,d0
+        moveq   #6,d1
+        move.b  #$FC,d6
+        jsr     af_print_chunky_str
 .hud_done:
         rts
+
+str_shield_hit: dc.b    "SHIELD HIT!",0
+str_shield_low: dc.b    "CRITICAL SHIELD!",0
+        even
 
 ; ============================================================================
 ; Prymitywy rysowania 2D w natywnym buforze Chunky 160x128
@@ -667,53 +735,92 @@ af_update_and_draw_boss:
         beq.w   .boss_ret
 
         movem.l d0-d7/a0-a3,-(sp)
-        ; Oscylacja boczna fortecy Lewiatan
+        ; Cytadela Lewiatan w centrum tunelu 360 st. z lekka oscylacja orbitalna
         move.l  vbl_tick,d0
         and.w   #$ff,d0
         lea     sin_tab,a1
         move.w  (a1,d0.w*2),d4
-        asr.w   #3,d4
-        add.w   #160,d4                 ; d4 = boss_cx (128..192)
+        asr.w   #4,d4
+        add.w   #160,d4                 ; d4 = boss_cx (144..176)
+        add.w   #64,d0
+        and.w   #$ff,d0
+        move.w  (a1,d0.w*2),d5
+        asr.w   #5,d5
         ifd FULL_RES
-        moveq   #84,d5                  ; d5 = boss_cy dla 320x256
+        add.w   #128,d5                 ; d5 = centrum okregu 320x256
         else
-        moveq   #42,d5                  ; d5 = boss_cy dla 320x128
+        add.w   #64,d5                  ; d5 = centrum okregu 320x128
         endif
 
-        ; Glowny pancerz cytadeli Lewiatan (wielokat wektorowy)
+        ; Glowny pancerz cytadeli Lewiatan (podwojny romb energetyczny w centrum tunelu)
         move.w  d4,d0
-        sub.w   #76,d0
         move.w  d5,d1
-        sub.w   #18,d1
-        move.w  d4,d2
-        add.w   #76,d2
-        move.w  d5,d3
-        sub.w   #18,d3
-        move.w  d4,d4
-        move.w  d5,d6
-        add.w   #24,d6
-        move.l  d4,-(sp)
-        move.w  d6,d5
-        move.b  #$F4,d6
-        jsr     af_aw_fill_tri
-        move.l  (sp)+,d4
         ifd FULL_RES
-        moveq   #84,d5
+        moveq   #26,d3
         else
-        moveq   #42,d5
+        moveq   #14,d3
         endif
+        move.b  #$F4,d6
+        bsr.w   af_fill_chunky_diamond
+        ifd FULL_RES
+        moveq   #14,d3
+        else
+        moveq   #8,d3
+        endif
+        move.b  #$FC,d6
+        bsr.w   af_fill_chunky_diamond
 
-        ; Rysuj i sprawdzaj namierzanie 4 niezaleznych reaktorow
+        ; Co 64 klatki Lewiatan odpala salwe promieniowa w strone pozycji gracza na okregu 360 st.
+        move.l  vbl_tick,d0
+        and.w   #$3f,d0
+        bne.s   .boss_no_shot
+        lea     af_ebolt_pool(pc),a3
+        tst.w   (a3)
+        bgt.s   .boss_no_shot
+        move.w  #220,(a3)
+        move.w  af_ship_dx,d0
+        add.w   #160,d0
+        move.w  d0,2(a3)
+        move.w  af_ship_dy,d0
+        ifd FULL_RES
+        add.w   #136,d0
+        else
+        add.w   #68,d0
+        endif
+        move.w  d0,4(a3)
+        move.w  vbl_tick+2,6(a3)
+.boss_no_shot:
+
+        ; Rysuj i obracaj 4 niezalezne reaktory na pelnym okregu 360 st. wokol rdzenia!
         lea     af_boss_reactors,a2
         moveq   #3,d7
 .br_lp:
         tst.b   (a2)                    ; hp > 0?
         beq.w   .br_next
 
-        move.w  d4,d0
-        add.w   2(a2),d0                ; rx
-        move.w  d5,d1
-        add.w   4(a2),d1                ; ry
+        ; Kat reaktora = d7*64 + vbl_tick (pelny obrot 360 st. wokol cytadeli)
+        move.w  d7,d2
+        lsl.w   #6,d2
+        add.w   vbl_tick+2,d2
+        and.w   #$ff,d2
+        lea     sin_tab,a1
+        move.w  (a1,d2.w*2),d0          ; sin(a)
+        muls.w  #62,d0
+        asr.l   #8,d0
+        add.w   d4,d0                   ; rx = boss_cx + 62*sin(a)
+
+        add.w   #64,d2
+        and.w   #$ff,d2
+        move.w  (a1,d2.w*2),d1          ; cos(a)
+        ifd FULL_RES
+        muls.w  #54,d1
+        else
+        muls.w  #27,d1
+        endif
+        asr.l   #8,d1
+        add.w   d5,d1                   ; ry = boss_cy + R_y*cos(a)
+        move.w  d0,2(a2)
+        move.w  d1,4(a2)
 
         ; Rysuj rdzen reaktora (pulsacja zloto/czerwien)
         moveq   #6,d3
@@ -723,7 +830,7 @@ af_update_and_draw_boss:
         move.b  #$FE,d6
         bsr.w   af_fill_chunky_diamond
 
-        ; Sprawdz najazd celownika gracza na reaktor
+        ; Sprawdz najazd celownika lub promienia dziobu XF-14 na reaktor
         move.w  af_reticle_x,d2
         sub.w   d0,d2
         bpl.s   .bdx
@@ -750,10 +857,8 @@ af_update_and_draw_boss:
 .b_chk_lock:
         tst.b   1(a2)
         beq.s   .br_next
-        move.w  d4,d0
-        add.w   2(a2),d0
-        move.w  d5,d1
-        add.w   4(a2),d1
+        move.w  2(a2),d0
+        move.w  4(a2),d1
         moveq   #8,d3
         move.b  #$FF,d6
         bsr.w   af_draw_chunky_rect
@@ -893,8 +998,9 @@ af_draw_cannon_beams:
         and.w   #255,d0
         add.w   d0,d0
         move.w  (a0,d0.w),d3          ; cos(angle) -> wektor skrzydla Y
+        neg.w   d3                  ; styczny wektor skrzydla Y = -cos(angle)
         muls.w  #14,d3
-        asr.l   #8,d3               ; wy = 14 * cos(angle)
+        asr.l   #8,d3               ; wy = -14 * cos(angle)
         ; Srodek mysliwca na ekranie: sx = 160 + af_ship_dx, sy = 120 + af_ship_dy (60 dla lowres)
         move.w  af_ship_dx,d4
         add.w   #160,d4
@@ -947,4 +1053,129 @@ af_draw_cannon_beams:
         movem.w (sp)+,d2-d5
         dbf     d7,.cb_lp
         movem.l (sp)+,d0-d7/a0-a1
+        rts
+
+;------------------------------------------------------------------------------
+; af_build_xf14_gyruss_matrix
+; Buduje ortonormalna macierz 3x3 (rot_m00..rot_m22, skala 256) dla XF-14:
+; - Skrzydla (+X, kolumna 0): stycznie wzdluz okregu (sin(a), -cos(a), 0)
+; - Brzuch   (+Y, kolumna 1): na zewnatrz okregu (ca*cos(a), ca*sin(a), sa)
+; - Dziob    (+Z, kolumna 2): w glab i lekko w srodek ekranu (-sa*cos(a), -sa*sin(a), ca)
+; Klawisze Gora/Dol zmieniaja tylko promien bez obracania kadlubem.
+;------------------------------------------------------------------------------
+af_build_xf14_gyruss_matrix:
+        movem.l d0-d5/a0-a1,-(sp)
+        lea     sin_tab,a0
+        move.w  af_orbit_angle,d0
+        and.w   #255,d0
+        add.w   d0,d0
+        move.w  (a0,d0.w),d2          ; d2 = sin(theta) (-256..256)
+        move.w  af_orbit_angle,d0
+        add.w   #64,d0
+        and.w   #255,d0
+        add.w   d0,d0
+        move.w  (a0,d0.w),d3          ; d3 = cos(theta) (-256..256)
+
+        ; Staly kat pochylenia dziobu ku srodkowi tunelu: alpha = 14/256 (~20 st.)
+        ; sin(alpha) = 88, cos(alpha) = 240 (88^2 + 240^2 = 65344 ~= 256^2)
+        moveq   #88,d4                ; sa = sin(alpha)
+        move.w  #240,d5               ; ca = cos(alpha)
+
+        lea     rot_m00,a1
+        ; Kolumna 0 (+X = prawe skrzydlo): (sin(theta), -cos(theta), 0)
+        move.w  d2,(a1)               ; m00 = sin(theta)
+        move.w  d3,d0
+        neg.w   d0
+        move.w  d0,6(a1)              ; m10 = -cos(theta)
+        clr.w   12(a1)                ; m20 = 0
+
+        ; Kolumna 1 (+Y = brzuch na zewnatrz): (ca*cos(theta), ca*sin(theta), sa)
+        move.w  d5,d0
+        muls.w  d3,d0
+        asr.l   #8,d0
+        move.w  d0,2(a1)              ; m01 = ca * cos(theta)
+        move.w  d5,d0
+        muls.w  d2,d0
+        asr.l   #8,d0
+        move.w  d0,8(a1)              ; m11 = ca * sin(theta)
+        move.w  d4,14(a1)             ; m21 = sa
+
+        ; Kolumna 2 (+Z = dziob w srodek ekranu): (-sa*cos(theta), -sa*sin(theta), ca)
+        move.w  d4,d0
+        muls.w  d3,d0
+        asr.l   #8,d0
+        neg.w   d0
+        move.w  d0,4(a1)              ; m02 = -sa * cos(theta)
+        move.w  d4,d0
+        muls.w  d2,d0
+        asr.l   #8,d0
+        neg.w   d0
+        move.w  d0,10(a1)             ; m12 = -sa * sin(theta)
+        move.w  d5,16(a1)             ; m22 = ca
+
+        movem.l (sp)+,d0-d5/a0-a1
+        rts
+
+;------------------------------------------------------------------------------
+; af_set_entity_360_slot
+; Rozmieszcza encje (a0) na pelnym okregu 360 st. wg aktualnej misji:
+; - Misja 01: Spirala 360 st. (co 30 st., promien R=135)
+; - Misja 02: Podwojna Helisa Krell 360 st. (naprzemiennie R=155 i R=90)
+; - Misja 03: Pierścienie Cytadeli 360 st. (4 sektory co 90 st. + rozrzut)
+; Wejscie: a0 = wskaznik rekordu encji (16B), d0.w = indeks slotu
+;------------------------------------------------------------------------------
+af_set_entity_360_slot:
+        movem.l d0-d4/a1,-(sp)
+        lea     sin_tab,a1
+        move.w  af_mission,d3
+        cmp.w   #1,d3
+        beq.s   .f_m2
+        cmp.w   #2,d3
+        beq.s   .f_m3
+
+        ; Misja 01: pelna spirala 360 st. (krok ~21 jednostek z 256)
+        move.w  d0,d1
+        mulu.w  #21,d1
+        move.w  #135,d2
+        bra.s   .f_calc
+
+.f_m2:  ; Misja 02: podwojna helisa 360 st.
+        move.w  d0,d1
+        mulu.w  #32,d1
+        move.w  #155,d2
+        btst    #0,d0
+        beq.s   .f_calc
+        moveq   #90,d2
+        add.w   #16,d1
+        bra.s   .f_calc
+
+.f_m3:  ; Misja 03: formacja pierscieniowa 4 sektorow cytadeli (co 64 z 256)
+        move.w  d0,d1
+        and.w   #3,d1
+        lsl.w   #6,d1
+        move.w  d0,d4
+        and.w   #12,d4
+        add.w   d4,d1
+        move.w  #140,d2
+
+.f_calc:
+        and.w   #$ff,d1
+        move.w  (a1,d1.w*2),d3          ; sin(angle)
+        muls.w  d2,d3
+        asr.l   #8,d3
+        swap    d3
+        clr.w   d3
+        move.l  d3,4(a0)                ; X na okregu 360 st.
+
+        add.w   #64,d1
+        and.w   #$ff,d1
+        move.w  (a1,d1.w*2),d3          ; cos(angle)
+        muls.w  d2,d3
+        asr.l   #8,d3
+        add.w   #110,d3                 ; Y wzgledem osi tunelu (110)
+        swap    d3
+        clr.w   d3
+        move.l  d3,8(a0)                ; Y na okregu 360 st.
+
+        movem.l (sp)+,d0-d4/a1
         rts
