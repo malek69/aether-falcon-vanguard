@@ -388,6 +388,7 @@ af_update_entities:
         include "lens_flare.i"
         include "terrain_3d.i"
         include "af_vector_scenes.i"
+        include "af_skel_rig.i"
         section code,code
         include "af_disk_loader.i"
         include "af_audio_sfx.i"
