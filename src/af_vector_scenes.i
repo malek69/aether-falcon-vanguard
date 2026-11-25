@@ -571,3 +571,39 @@ poly_debrief_ship:
         dc.w    5, 160,36, 212,68, 176,76, 144,76, 108,68
         endif
 
+af_draw_vanguard_crest:
+        movem.l d0-d6,-(sp)
+        ifd FULL_RES
+        move.w  #112,d1
+        else
+        moveq   #54,d1
+        endif
+        move.w  #160,d0
+        move.w  #104,d2
+        move.w  d1,d3
+        sub.w   #16,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #12,d5
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_tri
+        move.w  #160,d0
+        move.w  #216,d2
+        move.w  d1,d3
+        sub.w   #16,d3
+        move.w  #160,d4
+        move.w  d1,d5
+        add.w   #12,d5
+        move.b  #$FE,d6
+        bsr.w   af_aw_fill_tri
+        move.w  #160,d0
+        sub.w   #14,d1
+        move.w  #142,d2
+        move.w  d1,d3
+        add.w   #18,d3
+        move.w  #178,d4
+        move.w  d3,d5
+        move.b  #$FD,d6
+        bsr.w   af_aw_fill_tri
+        movem.l (sp)+,d0-d6
+        rts
