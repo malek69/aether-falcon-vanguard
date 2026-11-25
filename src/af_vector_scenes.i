@@ -730,144 +730,188 @@ af_intro_cut2:
         lea     poly_intro_deck(pc),a0
         move.b  #$12,d6
         bsr.w   af_aw_fill_ngon
-        lea     poly_intro_bridge(pc),a0
-        move.b  #$15,d6
-        bsr.w   af_aw_fill_ngon
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #255,(a0)+
-        move.w #46,(a0)+
-        move.w  #319,(a0)+
-        move.w #46,(a0)+
-        move.w  #319,(a0)+
-        move.w #176,(a0)+
-        move.w  #190,(a0)+
-        move.w #176,(a0)+
-        move.b  #$16,d6
-        bsr.w   af_emit_dyn_poly
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  #272,(a0)+
-        move.w #52,(a0)+
-        move.w  #319,(a0)+
-        move.w #52,(a0)+
-        move.w  #319,(a0)+
-        move.w #176,(a0)+
-        move.w  #224,(a0)+
-        move.w #176,(a0)+
-        move.b  #$FF,d6
-        bsr.w   af_emit_dyn_poly
-        move.w  d7,d4
-        sub.w   #115,d4
-        add.w   #68,d4
-        move.w  d4,d2
-        lsr.w   #2,d2
-        and.w   #3,d2
-        move.w  #112,d5
-        sub.w   d2,d5
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        sub.w #16,d0
-        move.w d0,(a0)+
-        move.w #158,(a0)+
-        move.w  d4,d0
-        subq.w #2,d0
-        move.w d0,(a0)+
-        move.w #158,(a0)+
-        move.w  d4,d0
-        subq.w #8,d0
-        move.w d0,(a0)+
-        move.w #216,(a0)+
-        move.w  d4,d0
-        sub.w #22,d0
-        move.w d0,(a0)+
-        move.w #216,(a0)+
-        move.b  #$14,d6
-        bsr.w   af_emit_dyn_poly
-        lea     af_dyn_poly(pc),a0
-        move.w  #4,(a0)+
-        move.w  d4,d0
-        addq.w #2,d0
-        move.w d0,(a0)+
-        move.w #158,(a0)+
-        move.w  d4,d0
-        add.w #16,d0
-        move.w d0,(a0)+
-        move.w #158,(a0)+
-        move.w  d4,d0
-        add.w #24,d0
-        move.w d0,(a0)+
-        move.w #216,(a0)+
-        move.w  d4,d0
-        add.w #10,d0
-        move.w d0,(a0)+
-        move.w #216,(a0)+
-        move.b  #$15,d6
-        bsr.w   af_emit_dyn_poly
+        ; Przedni kadlub XF-14 z otwartym kokpitem po prawej stronie (X=165..319)
         lea     af_dyn_poly(pc),a0
         move.w  #5,(a0)+
-        move.w  d4,d0
-        sub.w #22,d0
-        move.w d0,(a0)+
-        move.w d5,(a0)+
-        move.w  d4,d0
-        add.w #22,d0
-        move.w d0,(a0)+
-        move.w d5,(a0)+
-        move.w  d4,d0
-        add.w #18,d0
-        move.w d0,(a0)+
-        add.w #48,d5
-        move.w d5,(a0)+
-        move.w  d4,d0
-        sub.w #18,d0
-        move.w d0,(a0)+
-        move.w d5,(a0)+
-        move.w  d4,d0
-        sub.w #26,d0
-        move.w d0,(a0)+
-        sub.w #26,d5
-        move.w d5,(a0)+
-        move.b  #$FD,d6
+        move.w  #164,(a0)+
+        move.w  #146,(a0)+
+        move.w  #230,(a0)+
+        move.w  #118,(a0)+
+        move.w  #319,(a0)+
+        move.w  #118,(a0)+
+        move.w  #319,(a0)+
+        move.w  #174,(a0)+
+        move.w  #195,(a0)+
+        move.w  #174,(a0)+
+        move.b  #$FF,d6
         bsr.w   af_emit_dyn_poly
+        ; Ciemna wneka otwartego kokpitu (X=214..266, Y=106..126)
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  #212,(a0)+
+        move.w  #118,(a0)+
+        move.w  #224,(a0)+
+        move.w  #104,(a0)+
+        move.w  #268,(a0)+
+        move.w  #104,(a0)+
+        move.w  #276,(a0)+
+        move.w  #118,(a0)+
+        move.b  #$01,d6
+        bsr.w   af_emit_dyn_poly
+        ; Zlota drabinka wejsciowa do kokpitu (X=188..214, Y=118..214)
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  #210,(a0)+
+        move.w  #118,(a0)+
+        move.w  #222,(a0)+
+        move.w  #118,(a0)+
+        move.w  #198,(a0)+
+        move.w  #214,(a0)+
+        move.w  #186,(a0)+
+        move.w  #214,(a0)+
+        move.b  #$FE,d6
+        bsr.w   af_emit_dyn_poly
+        ; Oblicz pozycje pilota: idzie (t=115..165) -> wchodzi po drabince (t=165..205) -> siedzi w kokpicie (t>=205)
+        move.w  d7,d4
+        sub.w   #115,d4
+        cmp.w   #50,d4
+        bge.s   .p_climb
+        ; Marsz po pokladzie: X = 80 + d4*2 (80..180), Y = 112
+        move.w  d4,d0
+        lsl.w   #1,d0
+        add.w   #80,d0
+        move.w  d0,d4
+        move.w  #112,d5
+        bra.s   .p_draw
+.p_climb:
+        cmp.w   #90,d4
+        bge.s   .p_seated
+        ; Wspinaczka po drabince: d0 = d4 - 50 (0..40), X = 180 + d0, Y = 112 - d0
+        sub.w   #50,d4
+        move.w  #180,d0
+        add.w   d4,d0
+        move.w  #112,d5
+        sub.w   d4,d5
+        move.w  d0,d4
+        bra.s   .p_draw
+.p_seated:
+        ; Pilot siedzi w kabinie XF-14 (X=238, Y=96)
+        move.w  #238,d4
+        move.w  #96,d5
+.p_draw:
+        ; Jesli pilot nie siedzi jeszcze w kabinie (d5 > 100), rysuj kroczace/wchodzace nogi
+        cmp.w   #100,d5
+        ble.s   .p_torso
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
         move.w  d4,d0
-        sub.w #12,d0
-        move.w d0,(a0)+
-        move.w #82,(a0)+
+        sub.w   #12,d0
+        move.w  d0,(a0)+
+        move.w  d5,d1
+        add.w   #42,d1
+        move.w  d1,(a0)+
         move.w  d4,d0
-        add.w #12,d0
-        move.w d0,(a0)+
-        move.w #82,(a0)+
+        add.w   #12,d0
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        add.w   #54,d1
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
         move.w  d4,d0
-        add.w #14,d0
-        move.w d0,(a0)+
-        move.w #108,(a0)+
+        sub.w   #12,d0
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        move.b  #$14,d6
+        bsr.w   af_emit_dyn_poly
+.p_torso:
+        ; Kurtka pilota (blekitna)
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
         move.w  d4,d0
-        sub.w #12,d0
-        move.w d0,(a0)+
-        move.w #108,(a0)+
+        sub.w   #16,d0
+        move.w  d0,(a0)+
+        move.w  d5,(a0)+
+        move.w  d4,d0
+        add.w   #16,d0
+        move.w  d0,(a0)+
+        move.w  d5,(a0)+
+        move.w  d0,(a0)+
+        move.w  d5,d1
+        add.w   #42,d1
+        move.w  d1,(a0)+
+        move.w  d4,d0
+        sub.w   #16,d0
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        move.b  #$FD,d6
+        bsr.w   af_emit_dyn_poly
+        ; Helm pilota + zloty wizjer
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0
+        sub.w   #10,d0
+        move.w  d0,(a0)+
+        move.w  d5,d1
+        sub.w   #26,d1
+        move.w  d1,(a0)+
+        move.w  d4,d0
+        add.w   #12,d0
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        add.w   #22,d1
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        move.w  d4,d0
+        sub.w   #10,d0
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
         move.b  #$FF,d6
         bsr.w   af_emit_dyn_poly
         lea     af_dyn_poly(pc),a0
         move.w  #4,(a0)+
+        move.w  d4,(a0)+
+        move.w  d5,d1
+        sub.w   #20,d1
+        move.w  d1,(a0)+
         move.w  d4,d0
-        move.w d0,(a0)+
-        move.w #88,(a0)+
-        move.w  d4,d0
-        add.w #15,d0
-        move.w d0,(a0)+
-        move.w #88,(a0)+
-        move.w  d4,d0
-        add.w #15,d0
-        move.w d0,(a0)+
-        move.w #102,(a0)+
-        move.w  d4,d0
-        move.w d0,(a0)+
-        move.w #102,(a0)+
+        add.w   #13,d0
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        add.w   #12,d1
+        move.w  d0,(a0)+
+        move.w  d1,(a0)+
+        move.w  d4,(a0)+
+        move.w  d1,(a0)+
         move.b  #$FE,d6
+        bsr.w   af_emit_dyn_poly
+        ; Otwarta owiewka kabiny (t < 205: uniesiona do gory, t >= 205: zamknieta nad pilotem!)
+        cmp.w   #205,d7
+        bge.s   .canopy_closed
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  #212,(a0)+
+        move.w  #118,(a0)+
+        move.w  #246,(a0)+
+        move.w  #56,(a0)+
+        move.w  #268,(a0)+
+        move.w  #62,(a0)+
+        move.w  #224,(a0)+
+        move.w  #118,(a0)+
+        move.b  #$FD,d6
+        bsr.w   af_emit_dyn_poly
+        bra.w   af_intro_done
+.canopy_closed:
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  #212,(a0)+
+        move.w  #118,(a0)+
+        move.w  #226,(a0)+
+        move.w  #84,(a0)+
+        move.w  #262,(a0)+
+        move.w  #84,(a0)+
+        move.w  #276,(a0)+
+        move.w  #118,(a0)+
+        move.b  #$FD,d6
         bsr.w   af_emit_dyn_poly
         bra.w   af_intro_done
 
