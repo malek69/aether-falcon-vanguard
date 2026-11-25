@@ -1,19 +1,50 @@
-# AETHER FALCON: VANGUARD (v0.0.2)
+<p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a></p>
 
-> [Polski](README.md) · **English**
+<div align="center">
+  <h1>AETHER FALCON: VANGUARD v0.0.2</h1>
+  <p><strong>Bare-metal 3D combat flight simulator for Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
+  <p>
+    <a href="https://github.com">Download .LHA</a> &bull;
+    <a href="https://github.com">Download FS-UAE .ZIP</a> &bull;
+    <a href="CHANGELOG_EN.md">Changelog</a>
+  </p>
+</div>
 
-Bare-metal 3D combat flight simulator for **Amiga 1200 (AGA / M68020+)** and **THEA1200**, written 100% in M68k assembly (`vasmm68k_mot`).
+---
 
-## Engines Used (`refs/`)
-- **AURA-3D AGA Engine (`refs/aura3d/`):** 3D heightmap terrain (`terrain_3d.i`), XF-14 fighter (`aura3d_v2.i`), 256-color C2P (`c2p_chunky.i`), Copper sky (`copper_sky.i`), trails (`particle_trail.i`), lens flare (`lens_flare.i`), controls (`input_ctrl.i`), 5x7 font (`hud_fps.i`), and `.MOD` player (`pt_player.i`).
-- **Amiga 1200 Vector Engine (`refs/vector/`):** tactical vector screen architecture (*Intro*, *Briefing*, *Debriefing* in `src/af_campaigns.i`) unified into the 256-color AGA framebuffer.
+## Downloads (v0.0.2 — 3 Release Profiles)
 
-## Build Profiles (`python3 tools/build_game.py --profile all`)
-- `standard` (`_020`): Stock Amiga 1200 68EC020 + Fast RAM (`320x128`)
-- `thea1200` (`_THEA1200`): THEA1200 / Amiberry / FS-UAE (`320x256 -DFULL_RES`)
-- `060` (`_060`): MC68060 accelerators (`320x256 -DFULL_RES -DM68060`)
+| Profile (`--profile`) | Target Platform | Download Packages |
+| :--- | :--- | :--- |
+| **1. Standard `020` (`--profile standard`)** | Stock **Amiga 1200 (`68EC020`)** + Fast RAM — **`320×128`** mode | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
+| **2. THEA1200 (`--profile thea1200`)** | **THEA1200**, **Amiberry (PC)**, **FS-UAE** — full PAL **`320×256`** (`-DFULL_RES`) | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
+| **3. Turbo `MC68060` (`--profile 060`)** | **`MC68060` (50+ MHz)** accelerators — full PAL **`320×256`** (`-DFULL_RES`, `-m68060`, `-DM68060`) | [.LHA](https://github.com) · [.ZIP (FS-UAE/WinUAE)](https://github.com) |
+
+---
+
+## Engines Used & Related Repositories
+
+| Engine | GitHub Repository | Role in Project |
+| :--- | :--- | :--- |
+| **AURA-3D AGA Engine** | [github.com](https://github.com) | Core 3D gameplay pipeline (`STATE_GAMEPLAY`), terrain (`terrain_3d.i`), **XF-14 Albatros** fighter (`aura3d_v2.i`), 256-color C2P (`c2p_chunky.i`), Copper sky (`copper_sky.i`), trails (`particle_trail.i`), lens flare (`lens_flare.i`), controls (`input_ctrl.i`), 5×7 font (`hud_fps.i`), and `.MOD` player (`pt_player.i`). |
+| **Amiga 1200 Vector Engine** | [github.com](https://github.com) | Tactical vector screen architecture (**Intro**, **Briefing** sector map, and **Debriefing** pilot rank evaluation in `src/af_campaigns.i`), unified into the 256-color AGA framebuffer. |
+
+---
 
 ## Controls
-- **Arrows / Joy2:** bank (Roll), turn (Yaw), and altitude (Pitch)
-- **Space / Enter / Fire / RMB:** launch mission, Lock-On missile barrage, afterburner
-- **ESC / LMB:** exit to AmigaOS
+
+- **Left / Right Arrows** or **Joystick Port 2:** bank (`Roll`) and turn (`Yaw`) **XF-14 Albatros**
+- **Up / Down Arrows** or **Joystick Port 2:** altitude and **Lock-On** reticle movement (`Pitch`)
+- **Space / Enter / Fire / RMB:** launch mission, fire **Lock-On** missile barrage (up to 8 targets), afterburner
+- **H / L:** toggle Help overlay (`HELP`) and HUD language (`PL` / `EN`)
+- **ESC / LMB:** exit to AmigaOS / WHDLoad
+
+---
+
+## Building from Source
+
+```bash
+python3 tools/build_game.py --profile all
+```
+
+See [CHANGELOG_EN.md](CHANGELOG_EN.md) for the complete version history.
