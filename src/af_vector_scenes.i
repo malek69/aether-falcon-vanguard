@@ -155,12 +155,8 @@ af_aw_fill_tri:
         ifd FULL_RES
         cmp.w   #255,d1
         else
-        ifd FULL_RES
-        cmp.w   #255,
-        else
-        cmp.w   #127,
+        cmp.w   #127,d1
         endif
-                endif
         bgt.s   .sp_ret
 
         move.l  d4,d3
