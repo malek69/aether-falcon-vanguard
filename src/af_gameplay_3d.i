@@ -61,11 +61,11 @@ af_render_gameplay_3d:
         move.b  #1,af_ptrail_init
         jsr     ptrail_reset
 .pt_ok:
-        moveq   #0,d0                   ; Yaw = 0 (lot w glab ekranu, widok zza ogona)
-        move.w  af_pitch,d1
-        asr.w   #3,d1                   ; Naturalny kat pochylenia -13..+13 (bez stawania deba!)
-        subq.w  #8,d1                   ; Lekki kat z gory na kadlub i skrzydla
-        move.w  af_roll,d2                   ; Naturalny przechyl skrzydel +/-60 st.
+        clr.w   user_yaw
+        clr.w   user_pitch
+        moveq   #0,d0
+        move.w  #-20,d1
+        move.w  af_roll,d2
         jsr     build_rot_matrix_3d
 
         ; Pozycja XF-14 na okregu unikow (Lewo/Prawo = kat, Gora/Dol = promien)
