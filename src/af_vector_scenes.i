@@ -478,188 +478,138 @@ poly_debrief_ship:
 af_draw_aw_intro:
         movem.l d0-d7/a0-a5,-(sp)
         move.l  af_state_timer,d7
-        cmp.l   #480,d7
-        ble.s   .t_ok
-        move.w  #480,d7
-.t_ok:
         cmp.w   #115,d7
         blo.w   .cut1_bike
         cmp.w   #230,d7
         blo.w   .cut2_pilot
         bra.w   .cut34_3d_jet
 
+af_emit_dyn_poly:
+        movem.l d0-d1/a0,-(sp)
+        ifnd FULL_RES
+        lea     af_dyn_poly(pc),a0
+        move.w  (a0)+,d0
+        subq.w  #1,d0
+.sc_y:  addq.l  #2,a0
+        move.w  (a0),d1
+        asr.w   #1,d1
+        move.w  d1,(a0)+
+        dbf     d0,.sc_y
+        endif
+        lea     af_dyn_poly(pc),a0
+        bsr.w   af_aw_fill_ngon
+        movem.l (sp)+,d0-d1/a0
+        rts
+
 .cut1_bike:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
         bsr.w   af_aw_fill_ngon
         lea     poly_intro_deck(pc),a0
-        move.b  #$13,d6
+        move.b  #$12,d6
         bsr.w   af_aw_fill_ngon
+        ; Pedzacy pas na pokladzie (perspektywiczny trapez)
         move.w  d7,d5
         lsl.w   #3,d5
         and.w   #255,d5
-        move.w  #290,d0
+        move.w  #310,d0
         sub.w   d5,d0
-        ifd FULL_RES
-        move.w  #226,d1
-        else
-        moveq   #116,d1
-        endif
-        moveq   #22,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
-        move.w  d7,d4
-        asr.w   #1,d4
-        add.w   #70,d4
-        ifd FULL_RES
-        move.w  #194,d5
-        else
-        moveq   #104,d5
-        endif
-        move.w  d4,d0
-        add.w   #56,d0
-        move.w  d5,d1
-        sub.w   #22,d1
-        move.w  d4,d2
-        add.w   #150,d2
-        move.w  d5,d3
-        sub.w   #36,d3
-        move.w  d2,d4
-        move.b  #$FE,d6
-        bsr.w   af_aw_fill_tri
-        move.w  d7,d4
-        asr.w   #1,d4
-        add.w   #70,d4
-        ifd FULL_RES
-        move.w  #194,d5
-        else
-        moveq   #104,d5
-        endif
-        move.w  d4,d0
-        sub.w   #46,d0
-        move.w  d5,d1
-        moveq   #22,d3
-        move.b  #$01,d6
-        jsr     af_fill_chunky_diamond
-        moveq   #10,d3
-        move.b  #$16,d6
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        add.w   #48,d0
-        moveq   #22,d3
-        move.b  #$01,d6
-        jsr     af_fill_chunky_diamond
-        moveq   #10,d3
-        move.b  #$16,d6
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        sub.w   #54,d0
-        move.w  d5,d1
-        sub.w   #26,d1
-        move.w  d4,d2
-        add.w   #58,d2
-        move.w  d5,d3
-        sub.w   #28,d3
-        subq.w  #4,d5
-        move.b  #$FC,d6
-        bsr.w   af_aw_fill_tri
-        move.w  d7,d4
-        asr.w   #1,d4
-        add.w   #70,d4
-        ifd FULL_RES
-        move.w  #194,d5
-        else
-        moveq   #104,d5
-        endif
-        move.w  d4,d0
-        add.w   #14,d0
-        move.w  d5,d1
-        sub.w   #44,d1
-        move.w  d4,d2
-        add.w   #58,d2
-        move.w  d5,d3
-        sub.w   #28,d3
-        sub.w   #10,d4
-        sub.w   #26,d5
-        move.b  #$FF,d6
-        bsr.w   af_aw_fill_tri
-        move.w  d7,d0
-        asr.w   #1,d0
-        add.w   #68,d0
-        ifd FULL_RES
-        move.w  #146,d1
-        else
-        moveq   #78,d1
-        endif
-        moveq   #16,d3
-        move.b  #$FD,d6
-        jsr     af_fill_chunky_diamond
-        add.w   #12,d0
-        sub.w   #16,d1
-        moveq   #11,d3
-        move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
-        bra.w   .intro_done
-
-.cut2_pilot:
-        lea     poly_intro_deck(pc),a0
-        move.b  #$12,d6
-        bsr.w   af_aw_fill_ngon
-        lea     poly_intro_bridge(pc),a0
-        move.b  #$15,d6
-        bsr.w   af_aw_fill_ngon
-        move.w  #275,d0
-        ifd FULL_RES
-        move.w  #62,d1
-        else
-        moveq   #32,d1
-        endif
-        move.w  #195,d2
-        move.w  d1,d3
-        add.w   #96,d3
-        move.w  #319,d4
-        move.w  d1,d5
-        add.w   #82,d5
-        move.b  #$FF,d6
-        bsr.w   af_aw_fill_tri
-        move.w  d7,d4
-        sub.w   #115,d4
-        add.w   #76,d4
-        move.w  d4,d2
-        lsr.w   #3,d2
-        and.w   #3,d2
-        ifd FULL_RES
-        move.w  #138,d5
-        else
-        moveq   #74,d5
-        endif
-        sub.w   d2,d5
-        move.w  d4,d0
-        move.w  d5,d1
-        moveq   #26,d3
-        move.b  #$FD,d6
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d0,(a0)+ ; move.w #222,(a0)+
+        add.w   #55,d0
+        move.w  d0,(a0)+ ; move.w #222,(a0)+
         sub.w   #12,d0
-        move.w  d5,d1
-        add.w   #32,d1
-        moveq   #15,d3
-        move.b  #$16,d6
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        add.w   #12,d0
-        jsr     af_fill_chunky_diamond
-        move.w  d4,d0
-        move.w  d5,d1
-        sub.w   #34,d1
-        moveq   #14,d3
-        move.b  #$FF,d6
-        jsr     af_fill_chunky_diamond
-        addq.w  #5,d0
-        moveq   #8,d3
+        move.w  d0,(a0)+ ; move.w #232,(a0)+
+        sub.w   #55,d0
+        move.w  d0,(a0)+ ; move.w #232,(a0)+
         move.b  #$FE,d6
-        jsr     af_fill_chunky_diamond
+        bsr.s   af_emit_dyn_poly
+        ; Pozycja motocykla (d4 = srodek X)
+        move.w  d7,d4
+        asr.w   #1,d4
+        add.w   #88,d4
+        ; Stozek swiatla reflektora
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; add.w #62,d0 ; move.w d0,(a0)+ ; move.w #162,(a0)+
+        add.w   #115,d0 ; move.w d0,(a0)+ ; move.w #144,(a0)+
+        move.w  d0,(a0)+ ; move.w #196,(a0)+
+        move.w  d4,d0 ; add.w #62,d0 ; move.w d0,(a0)+ ; move.w #172,(a0)+
+        move.b  #$FE,d6
+        bsr.w   af_emit_dyn_poly
+        ; Tylne kolo (6-kat) + felga
+        move.w  d4,d0 ; sub.w #52,d0
+        bsr.w   .draw_wheel
+        ; Przednie kolo (6-kat) + felga
+        move.w  d4,d0 ; add.w #56,d0
+        bsr.w   .draw_wheel
+        ; Ciemny dolny plug i silnik motocykla (4-kat)
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; sub.w #34,d0 ; move.w d0,(a0)+ ; move.w #178,(a0)+
+        move.w  d4,d0 ; add.w #42,d0 ; move.w d0,(a0)+ ; move.w #178,(a0)+
+        move.w  d4,d0 ; add.w #28,d0 ; move.w d0,(a0)+ ; move.w #198,(a0)+
+        move.w  d4,d0 ; sub.w #24,d0 ; move.w d0,(a0)+ ; move.w #198,(a0)+
+        move.b  #$14,d6
+        bsr.w   af_emit_dyn_poly
+        ; Glowna czerwona owiewka i ogon motocykla (6-kat)
+        lea     af_dyn_poly(pc),a0
+        move.w  #6,(a0)+
+        move.w  d4,d0 ; sub.w #68,d0 ; move.w d0,(a0)+ ; move.w #156,(a0)+
+        move.w  d4,d0 ; sub.w #18,d0 ; move.w d0,(a0)+ ; move.w #162,(a0)+
+        move.w  d4,d0 ; add.w #18,d0 ; move.w d0,(a0)+ ; move.w #148,(a0)+
+        move.w  d4,d0 ; add.w #66,d0 ; move.w d0,(a0)+ ; move.w #160,(a0)+
+        move.w  d4,d0 ; add.w #48,d0 ; move.w d0,(a0)+ ; move.w #180,(a0)+
+        move.w  d4,d0 ; sub.w #46,d0 ; move.w d0,(a0)+ ; move.w #176,(a0)+
+        move.b  #$FC,d6
+        bsr.w   af_emit_dyn_poly
+        ; Jasny bialo-blekitny pas na owiewce i szyba
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; add.w #16,d0 ; move.w d0,(a0)+ ; move.w #148,(a0)+
+        move.w  d4,d0 ; add.w #34,d0 ; move.w d0,(a0)+ ; move.w #136,(a0)+
+        move.w  d4,d0 ; add.w #54,d0 ; move.w d0,(a0)+ ; move.w #154,(a0)+
+        move.w  d4,d0 ; add.w #24,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
+        move.b  #$FD,d6
+        bsr.w   af_emit_dyn_poly
+        ; Pochylony kierowca (kurtka + kask + zloty wizjer)
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; sub.w #24,d0 ; move.w d0,(a0)+ ; move.w #158,(a0)+
+        move.w  d4,d0 ; sub.w #6,d0  ; move.w d0,(a0)+ ; move.w #134,(a0)+
+        move.w  d4,d0 ; add.w #18,d0 ; move.w d0,(a0)+ ; move.w #142,(a0)+
+        move.w  d4,d0 ; add.w #4,d0  ; move.w d0,(a0)+ ; move.w #162,(a0)+
+        move.b  #$17,d6
+        bsr.w   af_emit_dyn_poly
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; add.w #2,d0  ; move.w d0,(a0)+ ; move.w #120,(a0)+
+        move.w  d4,d0 ; add.w #20,d0 ; move.w d0,(a0)+ ; move.w #120,(a0)+
+        move.w  d4,d0 ; add.w #24,d0 ; move.w d0,(a0)+ ; move.w #136,(a0)+
+        move.w  d4,d0 ; add.w #2,d0  ; move.w d0,(a0)+ ; move.w #136,(a0)+
+        move.b  #$FF,d6
+        bsr.w   af_emit_dyn_poly
         bra.w   .intro_done
+.draw_wheel:
+        lea     af_dyn_poly(pc),a0
+        move.w  #6,(a0)+
+        move.w  d0,d1 ; sub.w #12,d1 ; move.w d1,(a0)+ ; move.w #174,(a0)+
+        move.w  d0,d1 ; add.w #12,d1 ; move.w d1,(a0)+ ; move.w #174,(a0)+
+        move.w  d0,d1 ; add.w #22,d1 ; move.w d1,(a0)+ ; move.w #194,(a0)+
+        move.w  d0,d1 ; add.w #12,d1 ; move.w d1,(a0)+ ; move.w #214,(a0)+
+        move.w  d0,d1 ; sub.w #12,d1 ; move.w d1,(a0)+ ; move.w #214,(a0)+
+        move.w  d0,d1 ; sub.w #22,d1 ; move.w d1,(a0)+ ; move.w #194,(a0)+
+        move.b  #$01,d6
+        bsr.w   af_emit_dyn_poly
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d0,d1 ; subq.w #8,d1 ; move.w d1,(a0)+ ; move.w #186,(a0)+
+        move.w  d0,d1 ; addq.w #8,d1 ; move.w d1,(a0)+ ; move.w #186,(a0)+
+        move.w  d0,d1 ; addq.w #8,d1 ; move.w d1,(a0)+ ; move.w #202,(a0)+
+        move.w  d0,d1 ; subq.w #8,d1 ; move.w d1,(a0)+ ; move.w #202,(a0)+
+        move.b  #$16,d6
+        bra.w   af_emit_dyn_poly
 
 .cut34_3d_jet:
         lea     poly_intro_mountains(pc),a0
@@ -677,33 +627,45 @@ af_draw_aw_intro:
         move.w  #-155,cam_oz
         clr.w   cam_sin
         move.w  #256,cam_cos
-        move.w  d7,d3
-        sub.w   #230,d3
+        move.l  af_state_timer,d3
+        sub.l   #230,d3
+        cmp.l   #1600,d3
+        bge.w   .intro_done
         moveq   #0,d0
-        moveq   #-14,d1
+        moveq   #-16,d1
         move.w  d3,d2
-        asr.w   #1,d2
-        cmp.w   #48,d2
+        asr.w   #2,d2
+        cmp.w   #38,d2
         ble.s   .rl_ok
-        moveq   #48,d2
+        moveq   #38,d2
 .rl_ok: jsr     build_rot_matrix_3d
+        ; Pozycja 3D XF-14: wznosi sie w niebo i leci ciagle w glab az do wielkosci kropki!
         move.w  d3,d4
-        asr.w   #3,d4
-        move.w  d3,d5
+        asr.w   #2,d4
+        cmp.w   #110,d4
+        ble.s   .jx_ok
+        move.w  #110,d4
+.jx_ok: move.w  d3,d5
         asr.w   #2,d5
         ifd FULL_RES
-        move.w  #26,d1
+        move.w  #28,d1
         sub.w   d5,d1
-        move.w  d1,d5
+        cmp.w   #-64,d1
+        bge.s   .jy_ok
+        move.w  #-64,d1
         else
-        moveq   #12,d1
+        moveq   #14,d1
         asr.w   #1,d5
         sub.w   d5,d1
-        move.w  d1,d5
+        cmp.w   #-32,d1
+        bge.s   .jy_ok
+        move.w  #-32,d1
         endif
+.jy_ok: move.w  d1,d5
+        ; Glebokosc Z (d6): rosnie nieprzerwanie 12 -> 1800, az samolot stanie sie kropka!
         move.w  d3,d6
-        asr.w   #2,d6
-        add.w   #14,d6
+        lsl.w   #1,d6
+        add.w   #12,d6
         movem.w d4-d6,-(sp)
         lea     xf14_verts,a0
         lea     v2_proj_buf,a1
@@ -719,11 +681,16 @@ af_draw_aw_intro:
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
         movem.w (sp)+,d4-d6
+        cmp.w   #260,d6
+        bgt.s   .intro_done
         jsr     ptrail_emit_twin_nozzles
         jsr     ptrail_update_and_draw
 .intro_done:
         movem.l (sp)+,d0-d7/a0-a5
         rts
+
+af_dyn_poly:
+        ds.w    18
 
 af_draw_vanguard_crest:
         movem.l d0-d6,-(sp)
@@ -733,18 +700,18 @@ af_draw_vanguard_crest:
         moveq   #54,d1
         endif
         move.w  #160,d0
-        move.w  #104,d2
+        move.w  #96,d2
         move.w  d1,d3
-        sub.w   #16,d3
+        sub.w   #18,d3
         move.w  #160,d4
         move.w  d1,d5
         add.w   #12,d5
         move.b  #$FE,d6
         bsr.w   af_aw_fill_tri
         move.w  #160,d0
-        move.w  #216,d2
+        move.w  #224,d2
         move.w  d1,d3
-        sub.w   #16,d3
+        sub.w   #18,d3
         move.w  #160,d4
         move.w  d1,d5
         add.w   #12,d5
@@ -752,10 +719,10 @@ af_draw_vanguard_crest:
         bsr.w   af_aw_fill_tri
         move.w  #160,d0
         sub.w   #14,d1
-        move.w  #142,d2
+        move.w  #140,d2
         move.w  d1,d3
-        add.w   #18,d3
-        move.w  #178,d4
+        add.w   #20,d3
+        move.w  #180,d4
         move.w  d3,d5
         move.b  #$FD,d6
         bsr.w   af_aw_fill_tri
