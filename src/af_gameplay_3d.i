@@ -206,7 +206,7 @@ af_draw_world_entities:
         move.b  #253,d6
 .far_020:
         bsr.w   af_fill_chunky_diamond
-        bra.s   .after_3d_ent
+        bra.w   .after_3d_ent
 .do_3d_020:
         endif
         ; Prawdziwy model 3D Gouraud/EnvMap dla wrogich mysliwcow Vespera i Rdzeni Eteru
