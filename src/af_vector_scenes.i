@@ -689,6 +689,45 @@ af_intro_cut2:
         bsr.w   af_emit_dyn_poly
         bra.w   af_intro_done
 
+af_intro_cut2:
+        lea     poly_intro_mountains(pc),a0
+        move.b  #$11,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_deck(pc),a0
+        move.b  #$12,d6
+        bsr.w   af_aw_fill_ngon
+        lea     poly_intro_bridge(pc),a0
+        move.b  #$15,d6
+        bsr.w   af_aw_fill_ngon
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  #255,(a0)+ ; move.w #46,(a0)+
+        move.w  #319,(a0)+ ; move.w #46,(a0)+
+        move.w  #319,(a0)+ ; move.w #176,(a0)+
+        move.w  #190,(a0)+ ; move.w #176,(a0)+
+        move.b  #$16,d6
+        bsr.w   af_emit_dyn_poly
+        move.w  d7,d4
+        sub.w   #115,d4
+        add.w   #68,d4
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; sub.w #18,d0 ; move.w d0,(a0)+ ; move.w #112,(a0)+
+        move.w  d4,d0 ; add.w #18,d0 ; move.w d0,(a0)+ ; move.w #112,(a0)+
+        move.w  d4,d0 ; add.w #16,d0 ; move.w d0,(a0)+ ; move.w #214,(a0)+
+        move.w  d4,d0 ; sub.w #16,d0 ; move.w d0,(a0)+ ; move.w #214,(a0)+
+        move.b  #$FD,d6
+        bsr.w   af_emit_dyn_poly
+        lea     af_dyn_poly(pc),a0
+        move.w  #4,(a0)+
+        move.w  d4,d0 ; sub.w #10,d0 ; move.w d0,(a0)+ ; move.w #82,(a0)+
+        move.w  d4,d0 ; add.w #14,d0 ; move.w d0,(a0)+ ; move.w #82,(a0)+
+        move.w  d4,d0 ; add.w #14,d0 ; move.w d0,(a0)+ ; move.w #106,(a0)+
+        move.w  d4,d0 ; sub.w #10,d0 ; move.w d0,(a0)+ ; move.w #106,(a0)+
+        move.b  #$FE,d6
+        bsr.w   af_emit_dyn_poly
+        bra.w   af_intro_done
+
 af_intro_cut34:
         lea     poly_intro_mountains(pc),a0
         move.b  #$11,d6
