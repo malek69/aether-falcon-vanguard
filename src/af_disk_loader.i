@@ -238,7 +238,9 @@ af_mission_table:
         section fastram_bss,bss
         even
 af_disk_title_pal:  ds.l    256
+        even
 af_disk_title_chk:  ds.b    81920
+        even
 af_polar_tun_lut:   ds.b    81920
 af_polar_tun_tex:   ds.b    4096
 

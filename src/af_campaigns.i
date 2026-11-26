@@ -66,7 +66,10 @@ af_intro_rect:
 af_render_vector_screen:
         movem.l d0-d7/a0-a5,-(sp)
         cmp.w   #STATE_INTRO,af_state
-        beq.s   .pal_cached
+        bne.s   .chk_p2
+        cmp.l   #480,af_state_timer
+        bge.s   .pal_cached
+.chk_p2:
         cmp.b   #2,pal_loaded
         beq.s   .pal_cached
         move.b  #2,pal_loaded
@@ -99,7 +102,9 @@ af_render_vector_screen:
         cmp.w   #STATE_DEBRIEF,d0
         beq.w   .draw_debriefing
 
-        ; --- EKRAN 0: INTRO (Pelnoekranowy obraz 256 kol. AGA + przelot 3D) ---
+        ; --- EKRAN 0: INTRO (Najpierw 4-aktowa animacja Top Gun / Another World / Eon, potem Tytul) ---
+        cmp.l   #480,af_state_timer
+        blo.s   .fb_vec_intro
         tst.b   af_has_disk_title
         beq.s   .fb_vec_intro
         cmp.b   #3,pal_loaded

@@ -69,7 +69,22 @@ af_draw_nahkolor_polar_tunnel:
         lsl.w   #6,d0
         or.w    d1,d0
         move.b  (a1,d0.w),d2
-        move.b  d2,(a3)+
+        cmp.b   #252,d2
+        beq.s   .nt_put
+        move.w  d3,d7
+        sub.w   #160,d7
+        bpl.s   .nt_ax
+        neg.w   d7
+.nt_ax: cmp.w   #34,d7
+        bge.s   .nt_put
+        move.w  d4,d7
+        sub.w   #64,d7
+        bpl.s   .nt_ay
+        neg.w   d7
+.nt_ay: cmp.w   #16,d7
+        bge.s   .nt_put
+        moveq   #16,d2                  ; gleboki mrok Z-Fog w centrum tunelu
+.nt_put:move.b  d2,(a3)+
         move.b  d2,(a4)+
         dbf     d3,.nt_x
         lea     640(a2),a2
@@ -310,18 +325,18 @@ render_3d_terrain_flyover:
         asr.l   #1,d4
         ifd FULL_RES
         add.l   #142,d4
-        cmp.l   #104,d4
+        cmp.l   #64,d4
         bge.s   .sy_hi
-        move.w  #104,d4
+        move.w  #64,d4
 .sy_hi: cmp.l   #255,d4
         ble.s   .sy_ok
         move.w  #255,d4
         else
         asr.l   #1,d4
         add.l   #71,d4
-        cmp.l   #52,d4
+        cmp.l   #32,d4
         bge.s   .sy_hi
-        moveq   #52,d4
+        moveq   #32,d4
 .sy_hi: cmp.l   #127,d4
         ble.s   .sy_ok
         moveq   #127,d4
