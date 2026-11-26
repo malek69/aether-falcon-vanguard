@@ -56,7 +56,7 @@ start:
         clr.b   info_visible
         nop
         bsr.w   af_init_campaign
-        jsr     af_play_intro_pcm
+        nop
 
         cnop    0,16
 mainloop:

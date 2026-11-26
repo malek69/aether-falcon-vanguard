@@ -102,7 +102,7 @@ af_render_vector_screen:
         bsr.w   af_print_chunky_str
 
 .scr_blit:
-        jsr     c2p_convert_320x256
+        jsr     c2p_160x128_to_aga
         movem.l (sp)+,d0-d7/a0-a5
         rts
 
@@ -135,3 +135,7 @@ str_mood_norm:  dc.b    "STATUS: PERIMETER HOLDING",0
 str_mood_ace:   dc.b    "ACE REPORT: HIGH MORALE BONUS!",0
 str_mood_crit:  dc.b    "RED ALERT: HULL DAMAGE CRITICAL!",0
         even
+
+        cnop    0,4
+af_hiscore:      dc.l    0
+af_mission_table:dc.w    12,18,24, 15,22,30, 18,26,36
