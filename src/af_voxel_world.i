@@ -50,60 +50,59 @@ af_voxel_init_mission:
         bra.w   .vi_nx
 .m1_p:  move.b  #4,(a1)+
         bra.w   .vi_nx
-.gen_m2:; --- MISJA 02: KRELL STORM CANYON (kreta rzeka + strome sciany kanionu) ---
+.gen_m2:; --- MISJA 02: KRELL STORM CANYON (gleboki wawoz i strome sciany kanionu) ---
         move.w  d5,d0
         lsl.w   #3,d0
         and.w   #255,d0
-        move.w  (a2,d0.w*2),d2          ; sinus meandra rzeki
+        move.w  (a2,d0.w*2),d2
         asr.w   #8,d2
         asr.w   #1,d2
-        add.w   #32,d2                  ; srodek koryta rzeki (24..40)
+        add.w   #32,d2                  ; meandrujace dno kanionu (24..40)
         move.w  d4,d0
         sub.w   d2,d0
         bpl.s   .m2_a
         neg.w   d0
-.m2_a:  asr.w   #5,d1
-        cmp.w   #5,d0
+.m2_a:  asr.w   #6,d1
+        cmp.w   #4,d0
         bgt.s   .m2_c
-        move.b  #6,(a0)+                ; dno rzeki w kanionie
+        move.b  #2,(a0)+                ; glebokie dno rzeki w kanionie
         move.b  #1,(a1)+                ; woda kanionu
         bra.w   .vi_nx
 .m2_c:  move.w  d0,d2
         mulu.w  #3,d2
-        asr.w   #1,d2
         add.w   d1,d2
-        cmp.w   #38,d2
+        cmp.w   #42,d2
         ble.s   .m2_h
-        moveq   #38,d2
+        moveq   #42,d2
 .m2_h:  move.b  d2,(a0)+
-        cmp.w   #24,d2
+        cmp.w   #28,d2
         bgt.s   .m2_t
-        move.b  #8,(a1)+                ; warstwowe zbocza kanionu (ochra / skala)
+        move.b  #8,(a1)+                ; strome skaliste zbocza kanionu
         bra.w   .vi_nx
-.m2_t:  move.b  #4,(a1)+                ; burzowe szczyty kanionu
+.m2_t:  move.b  #4,(a1)+                ; wysokie szczyty kanionu
         bra.w   .vi_nx
-.gen_m3:; --- MISJA 03: LEVIATHAN CITADEL (wulkaniczny lad, lawa i bastiony cytadeli) ---
-        asr.w   #5,d1
-        add.w   #15,d1
+.gen_m3:; --- MISJA 03: LEVIATHAN CITADEL (tunel cytadeli, bastiony i rzeki lawy) ---
         move.w  d4,d0
-        and.w   #15,d0
-        cmp.w   #5,d0
-        blo.s   .m3_g
-        cmp.w   #9,d0
-        bhi.s   .m3_g
-        move.w  d5,d2
-        and.w   #15,d2
-        cmp.w   #5,d2
-        blo.s   .m3_g
-        cmp.w   #9,d2
-        bhi.s   .m3_g
-        move.b  #34,(a0)+               ; wysokie bastiony / wieze Cytadeli
+        sub.w   #32,d0
+        bpl.s   .m3_a
+        neg.w   d0
+.m3_a:  asr.w   #6,d1
+        cmp.w   #11,d0
+        ble.s   .m3_c
+        move.w  d0,d2
+        mulu.w  #3,d2
+        add.w   d1,d2
+        cmp.w   #42,d2
+        ble.s   .m3_w
+        moveq   #42,d2
+.m3_w:  move.b  d2,(a0)+                ; wysokie sciany tunelu i bastiony Cytadeli
         move.b  #6,(a1)+
         bra.s   .vi_nx
-.m3_g:  cmp.w   #10,d1
+.m3_c:  add.w   #8,d1
+        cmp.w   #8,d1
         bgt.s   .m3_r
-        move.b  #8,(a0)+                ; rozpadliny z lawa
-        move.b  #7,(a1)+                ; zarzaca sie magma
+        move.b  #3,(a0)+                ; gleboka rozpadlina magmy pod Lewiatanem
+        move.b  #7,(a1)+                ; zarzaca sie lawa
         bra.s   .vi_nx
 .m3_r:  move.b  d1,(a0)+
         move.b  #5,(a1)+                ; czarny obsydian i bazalt wulkaniczny
@@ -117,9 +116,10 @@ af_voxel_init_mission:
         rts
 render_3d_terrain_flyover:
         movem.l d0-d7/a0-a6,-(sp)
-        tst.b   vox_inited(pc)
-        bne.s   .vrdy
-        move.b  #1,vox_inited
+        move.w  af_mission,d0
+        cmp.w   vox_last_mission(pc),d0
+        beq.s   .vrdy
+        move.w  d0,vox_last_mission
         bsr.w   af_voxel_init_mission
 .vrdy:  lea     vox_ybuf(pc),a0
         ifd FULL_RES
@@ -309,7 +309,7 @@ render_3d_terrain_flyover:
         moveq   #18,d1
 .vpc_d: rts
         even
-vox_inited:     dc.b 0,0
+vox_last_mission: dc.w -1
 vox_cam_x:      dc.w 32
 vox_cam_z:      dc.w 0
 vox_row_off:    dc.w 0
