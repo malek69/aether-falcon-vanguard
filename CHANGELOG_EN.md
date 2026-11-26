@@ -20,10 +20,10 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ## [v0.1.3] - 2026-11-25
 
-| <img src="docs/screenshots/v013_eon_01.png" width="220"> | <img src="docs/screenshots/v013_eon_02.png" width="220"> | <img src="docs/screenshots/v013_eon_03.png" width="220"> |
+| <img src="docs/archive/screenshots/v013_eon_01.png" width="220"> | <img src="docs/archive/screenshots/v013_eon_02.png" width="220"> | <img src="docs/archive/screenshots/v013_eon_03.png" width="220"> |
 |:---:|:---:|:---:|
 | **1. Act I: Salute to the Sky** | **2. Act II: Solis Airbase** | **3. Act III: XF-14 Cockpit** |
-| <img src="docs/screenshots/v013_eon_04.png" width="220"> | <img src="docs/screenshots/v013_eon_05.png" width="220"> | <img src="docs/screenshots/v013_eon_06.png" width="220"> |
+| <img src="docs/archive/screenshots/v013_eon_04.png" width="220"> | <img src="docs/archive/screenshots/v013_eon_05.png" width="220"> | <img src="docs/archive/screenshots/v013_eon_06.png" width="220"> |
 |:---:|:---:|:---:|
 | **4. Act IV: 3D XF-14 Launch** | **5. Briefing: Commander** | **6. Debriefing: Pilot Portrait** |
 
@@ -49,7 +49,7 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ## [v0.1.0] - 2026-11-25
 
-| <img src="docs/screenshots/v010_01_briefing_board.png" width="340"> | <img src="docs/screenshots/v010_02_hud_score_clouds.png" width="340"> |
+| <img src="docs/archive/screenshots/v010_01_briefing_board.png" width="340"> | <img src="docs/archive/screenshots/v010_02_hud_score_clouds.png" width="340"> |
 |:---:|:---:|
 | **1. Tactical Mission Briefing Board** | **2. Volumetric 3D Clouds, Voxels & Live SCORE** |
 
