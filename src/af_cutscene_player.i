@@ -180,85 +180,96 @@ af_aw_fill_tri:
 .s12:   move.w  d5,d7
         sub.w   d1,d7
         ble.w   .tr_end
-        ; Prosty i bezpieczny rasteryzer trojkata scanline
-        move.w  d1,d6
+        ; Zapisz posortowane wierzcholki w rejestrach adresowych: a0=(x0,y0), a1=(x1,y1), a2=(x2,y2)
+        swap    d0
+        move.w  d1,d0
+        move.l  d0,a0
+        swap    d2
+        move.w  d3,d2
+        move.l  d2,a1
+        swap    d4
+        move.w  d5,d4
+        move.l  d4,a2
+
+        move.w  a0,d6                   ; d6 = aktualny Y (od y0 do y2)
         ifd FULL_RES
-        move.w  #255,a3
+        move.w  #255,a4
         else
-        move.w  #127,a3
+        move.w  #127,a4
         endif
-.ylp:   cmp.w   d5,d6
+.ylp:   move.w  a2,d5
+        cmp.w   d5,d6
         bgt.w   .tr_end
         tst.w   d6
-        blt.s   .nxt_y
-        cmp.w   a3,d6
+        blt.w   .nxt_y
+        cmp.w   a4,d6
         bgt.w   .tr_end
-        ; Oblicz x_long na krawedzi (x0,y0)->(x2,y2)
-        move.w  d4,d7
-        sub.w   d0,d7
-        move.w  d6,a0
-        sub.w   d1,a0
-        move.w  a0,a1
-        muls.w  a1,d7
-        move.w  d5,a1
-        sub.w   d1,a1
-        divs.w  a1,d7
-        add.w   d0,d7                   ; d7 = xa
-        ; Oblicz x_short na gornej lub dolnej polowce
+
+        ; xa = x0 + (x2 - x0) * (y - y0) / (y2 - y0)
+        move.l  a0,d0
+        swap    d0                      ; d0.w = x0
+        move.l  a2,d4
+        swap    d4                      ; d4.w = x2
+        sub.w   d0,d4                   ; x2 - x0
+        move.w  a0,d1                   ; y0
+        move.w  d6,d2
+        sub.w   d1,d2                   ; y - y0
+        muls.w  d2,d4
+        move.w  a2,d3
+        sub.w   d1,d3                   ; y2 - y0
+        divs.w  d3,d4
+        add.w   d0,d4                   ; d4 = xa
+
+        ; xb na gornej (y0..y1) lub dolnej (y1..y2) polowce
+        move.w  a1,d3                   ; y1
         cmp.w   d3,d6
         bge.s   .bot_h
-        move.w  d3,a1
-        sub.w   d1,a1
-        beq.s   .eq_x
-        move.w  d2,a2
-        sub.w   d0,a2
-        move.w  a2,a4
-        move.w  d6,a2
-        sub.w   d1,a2
-        exg     d0,a4
-        muls.w  a2,d0
-        divs.w  a1,d0
-        exg     d0,a4
-        add.w   d0,a4
-        move.w  a4,a1
+        sub.w   d1,d3                   ; y1 - y0
+        beq.s   .xb_eq0
+        move.l  a1,d5
+        swap    d5                      ; x1
+        sub.w   d0,d5                   ; x1 - x0
+        muls.w  d2,d5
+        divs.w  d3,d5
+        add.w   d0,d5                   ; d5 = xb
         bra.s   .span
-.eq_x:  move.w  d0,a1
+.xb_eq0:move.w  d0,d5
         bra.s   .span
-.bot_h: move.w  d5,a1
-        sub.w   d3,a1
-        beq.s   .eq_x2
-        move.w  d4,a2
-        sub.w   d2,a2
-        move.w  a2,a4
-        move.w  d6,a2
-        sub.w   d3,a2
-        exg     d0,a4
-        muls.w  a2,d0
-        divs.w  a1,d0
-        exg     d0,a4
-        add.w   d2,a4
-        move.w  a4,a1
+.bot_h: move.w  a2,d2
+        sub.w   d3,d2                   ; y2 - y1
+        beq.s   .xb_eq1
+        move.l  a1,d0
+        swap    d0                      ; x1
+        move.l  a2,d5
+        swap    d5                      ; x2
+        sub.w   d0,d5                   ; x2 - x1
+        move.w  d6,d1
+        sub.w   d3,d1                   ; y - y1
+        muls.w  d1,d5
+        divs.w  d2,d5
+        add.w   d0,d5                   ; d5 = xb
         bra.s   .span
-.eq_x2: move.w  d2,a1
-.span:  move.w  a1,a2
-        cmp.w   a2,d7
+.xb_eq1:move.l  a1,d5
+        swap    d5
+.span:  cmp.w   d5,d4
         ble.s   .ord
-        exg     d7,a2
-.ord:   tst.w   d7
+        exg     d4,d5
+.ord:   tst.w   d4
         bge.s   .cl_l
-        moveq   #0,d7
-.cl_l:  cmp.w   #319,a2
+        moveq   #0,d4
+.cl_l:  cmp.w   #319,d5
         ble.s   .cl_r
-        move.w  #319,a2
-.cl_r:  sub.w   d7,a2
+        move.w  #319,d5
+.cl_r:  sub.w   d4,d5
         blt.s   .nxt_y
-        move.w  d6,a0
-        mulu.w  #320,a0
-        add.w   d7,a0
-        add.l   #chunky_buf,a0
-        move.w  a2,d7
-.hlp:   move.b  af_tri_col(pc),(a0)+
-        dbf     d7,.hlp
+        move.w  d6,d0
+        mulu.w  #320,d0
+        add.w   d4,d0
+        lea     chunky_buf,a3
+        add.l   d0,a3
+        move.b  af_tri_col(pc),d0
+.hlp:   move.b  d0,(a3)+
+        dbf     d5,.hlp
 .nxt_y: addq.w  #1,d6
         bra.w   .ylp
 .tr_end:movem.l (sp)+,d0-d7/a0-a4
