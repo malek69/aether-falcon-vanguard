@@ -91,7 +91,7 @@ af_play_scripted_intro:
         move.w  (a2)+,d3                ; x1
         sub.w   d2,d3
         muls.w  d5,d3
-        divs.w  af_scn_cur_dur(pc),d3
+        divs.w  af_scn_cur_dur,d3
         add.w   d2,d3
         ifd FULL_RES
         move.w  d3,(a0)+
@@ -102,7 +102,7 @@ af_play_scripted_intro:
         move.w  (a2)+,d3                ; y1
         sub.w   d2,d3
         muls.w  d5,d3
-        divs.w  af_scn_cur_dur(pc),d3
+        divs.w  af_scn_cur_dur,d3
         add.w   d2,d3
         ifd FULL_RES
         move.w  d3,(a0)+
@@ -134,6 +134,6 @@ af_play_scripted_intro:
 
         section fastram_bss,bss
         even
-af_scn_cur_dur:  dc.w 150
+af_scn_cur_dur:  ds.w 1
         even
 af_scn_poly_tmp: ds.w 40
