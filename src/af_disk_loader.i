@@ -65,6 +65,31 @@ af_disk_load_all:
         bne.s   .close_dos
         move.b  #1,af_has_disk_title
 
+        ; 5. Wczytaj bogate mapy terenu 128x128 (data/map_m1..m3.bin -> 3x32KB)
+        lea     fn_map_m1(pc),a0
+        lea     af_vox_hmap,a1
+        move.l  #16384,d0
+        bsr.w   af_read_file_to_buf
+        lea     fn_map_m1(pc),a0
+        lea     af_vox_m1_raw,a1
+        move.l  #32768,d0
+        bsr.w   af_read_file_to_buf
+        cmp.l   #32768,d0
+        bne.s   .close_dos
+        lea     fn_map_m2(pc),a0
+        lea     af_vox_m2_raw,a1
+        move.l  #32768,d0
+        bsr.w   af_read_file_to_buf
+        cmp.l   #32768,d0
+        bne.s   .close_dos
+        lea     fn_map_m3(pc),a0
+        lea     af_vox_m3_raw,a1
+        move.l  #32768,d0
+        bsr.w   af_read_file_to_buf
+        cmp.l   #32768,d0
+        bne.s   .close_dos
+        move.b  #1,af_has_disk_maps
+
 .close_dos:
         move.l  4.w,a6
         move.l  af_dos_base,a1
@@ -180,12 +205,16 @@ fn_hiscore:     dc.b    "data/hiscore.dat",0
 fn_intro_pcm:   dc.b    "data/intro.pcm",0
 fn_title_pal:   dc.b    "data/title.pal",0
 fn_title_chk:   dc.b    "data/title.chk",0
+fn_map_m1:      dc.b    "data/map_m1.bin",0
+fn_map_m2:      dc.b    "data/map_m2.bin",0
+fn_map_m3:      dc.b    "data/map_m3.bin",0
         even
 
 af_dos_base:        dc.l    0
 af_hiscore:         dc.l    0
 af_intro_pcm_len:   dc.l    0
 af_has_disk_title:  dc.b    0
+af_has_disk_maps:   dc.b    0
         even
 
 ; Domyslna tablica 3 misji (nadpisywana z data/missions.dat jesli plik istnieje)

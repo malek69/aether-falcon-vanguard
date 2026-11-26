@@ -3,6 +3,32 @@
 ; ============================================================================
         section code,code
         cnop    0,4
+af_voxel_load_mission_map:
+        movem.l d0-d2/a0-a2,-(sp)
+        tst.b   af_has_disk_maps
+        beq.s   .fb_proc
+        lea     af_vox_m1_raw,a0
+        move.w  af_mission,d0
+        cmp.w   #1,d0
+        bne.s   .chk_m3
+        lea     af_vox_m2_raw,a0
+        bra.s   .do_cp
+.chk_m3:cmp.w   #2,d0
+        bne.s   .do_cp
+        lea     af_vox_m3_raw,a0
+.do_cp: lea     af_vox_hmap,a1
+        move.w  #4095,d1                ; 16384 B hmap (4096 longow)
+.cp_h:  move.l  (a0)+,(a1)+
+        dbf     d1,.cp_h
+        lea     af_vox_cmap,a1
+        move.w  #4095,d1                ; 16384 B cmap (4096 longow)
+.cp_c:  move.l  (a0)+,(a1)+
+        dbf     d1,.cp_c
+        movem.l (sp)+,d0-d2/a0-a2
+        rts
+.fb_proc:movem.l (sp)+,d0-d2/a0-a2
+        bra.w   af_voxel_init_mission
+
 terrain_3d_init:
 af_voxel_init_mission:
         movem.l d0-d7/a0-a3,-(sp)
@@ -120,7 +146,7 @@ render_3d_terrain_flyover:
         cmp.w   vox_last_mission(pc),d0
         beq.s   .vrdy
         move.w  d0,vox_last_mission
-        bsr.w   af_voxel_init_mission
+        bsr.w   af_voxel_load_mission_map
 .vrdy:  lea     vox_ybuf(pc),a0
         ifd FULL_RES
         move.w  #255,d0
@@ -136,7 +162,7 @@ render_3d_terrain_flyover:
         move.w  d0,vox_cam_z
         move.w  af_ship_dx,d0
         asr.w   #3,d0
-        add.w   #32,d0
+        add.w   #64,d0
         move.w  d0,vox_cam_x
         lea     af_vox_hmap,a3
         lea     af_vox_cmap,a4
@@ -146,8 +172,8 @@ render_3d_terrain_flyover:
         move.w  d7,d0
         lsr.w   #2,d0
         add.w   vox_cam_z(pc),d0
-        and.w   #63,d0
-        lsl.w   #6,d0
+        and.w   #127,d0
+        lsl.w   #7,d0
         move.w  d0,vox_row_off
         move.w  vox_cam_x(pc),d0
         swap    d0
@@ -172,7 +198,7 @@ render_3d_terrain_flyover:
         moveq   #0,d5
 .vx_lp: move.l  d0,d2
         swap    d2
-        and.w   #63,d2
+        and.w   #127,d2
         add.w   vox_row_off(pc),d2
         moveq   #0,d3
         move.b  (a3,d2.w),d3
@@ -289,13 +315,28 @@ render_3d_terrain_flyover:
         move.w  #252,d1                 ; ciemniejszy zar magmy ($FC)
 .vp7r:  rts
 .vp8:   cmp.b   #8,d1
-        bne.s   .vp5
-        move.w  #120,d1                 ; skaliste zbocza kanionu Krell
+        bne.s   .vp9
+        move.w  #120,d1                 ; warstwa ochry kanionu Krell
         bra.s   .vps
+.vp9:   cmp.b   #9,d1
+        bne.s   .vp10
+        move.w  #216,d1                 ; turkusowa rafa przybrzezna
+        rts
+.vp10:  cmp.b   #10,d1
+        bne.s   .vp11
+        move.w  #118,d1                 ; ceglasta terakota scian kanionu
+        bra.s   .vps
+.vp11:  cmp.b   #11,d1
+        bne.s   .vp5
+        move.w  #253,d1                 ; energetyczna wieza obronna Cytadeli
+        btst    #0,d5
+        beq.s   .vp11r
+        move.w  #26,d1
+.vp11r: rts
 .vp5:   move.w  #23,d1                  ; ciemny bazalt / skala wulkaniczna (czysta skala szarosci)
 .vps:   move.w  d2,d4
         addq.w  #1,d4
-        and.w   #4095,d4
+        and.w   #16383,d4
         move.b  (a3,d4.w),d4
         sub.b   (a3,d2.w),d4
         ext.w   d4
@@ -487,6 +528,9 @@ af_cloud_table:
         dc.w -290,-124, 820,108,   230, -96, 880, 85,   -90,-116, 940, 94,   370,-104,1000, 88
 
         section fastram_bss,bss_p
-af_vox_hmap:    ds.b 64*64
-af_vox_cmap:    ds.b 64*64
+af_vox_hmap:    ds.b 128*128
+af_vox_cmap:    ds.b 128*128
+af_vox_m1_raw:  ds.b 32768
+af_vox_m2_raw:  ds.b 32768
+af_vox_m3_raw:  ds.b 32768
         section code,code
