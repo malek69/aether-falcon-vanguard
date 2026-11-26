@@ -289,17 +289,17 @@ render_3d_terrain_flyover:
         bne.s   .vp3
         move.w  #122,d1
         cmp.w   #2,af_mission
-        bne.s   .vps
+        bne.w   .vps
         move.w  #24,d1                  ; mroczny bazalt wokol Cytadeli Lewiatana
-        bra.s   .vps
+        bra.w   .vps
 .vp3:   cmp.b   #3,d1
         bne.s   .vp4
         move.w  #114,d1
-        bra.s   .vps
+        bra.w   .vps
 .vp4:   cmp.b   #4,d1
         bne.s   .vp6
         move.w  #28,d1
-        bra.s   .vps
+        bra.w   .vps
 .vp6:   cmp.b   #6,d1
         bne.s   .vp7
         move.b  #253,d1
@@ -317,7 +317,7 @@ render_3d_terrain_flyover:
 .vp8:   cmp.b   #8,d1
         bne.s   .vp9
         move.w  #120,d1                 ; warstwa ochry kanionu Krell
-        bra.s   .vps
+        bra.w   .vps
 .vp9:   cmp.b   #9,d1
         bne.s   .vp10
         move.w  #216,d1                 ; turkusowa rafa przybrzezna
@@ -325,7 +325,7 @@ render_3d_terrain_flyover:
 .vp10:  cmp.b   #10,d1
         bne.s   .vp11
         move.w  #118,d1                 ; ceglasta terakota scian kanionu
-        bra.s   .vps
+        bra.w   .vps
 .vp11:  cmp.b   #11,d1
         bne.s   .vp5
         move.w  #253,d1                 ; energetyczna wieza obronna Cytadeli

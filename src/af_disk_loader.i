@@ -55,14 +55,14 @@ af_disk_load_all:
         move.l  #1024,d0
         bsr.w   af_read_file_to_buf
         cmp.l   #1024,d0
-        bne.s   .close_dos
+        bne.w   .close_dos
 
         lea     fn_title_chk(pc),a0
         lea     af_disk_title_chk,a1
         move.l  #40960,d0
         bsr.w   af_read_file_to_buf
         cmp.l   #40960,d0
-        bne.s   .close_dos
+        bne.w   .close_dos
         move.b  #1,af_has_disk_title
 
         ; 5. Wczytaj bogate mapy terenu 128x128 (data/map_m1..m3.bin -> 3x32KB)
@@ -75,19 +75,19 @@ af_disk_load_all:
         move.l  #32768,d0
         bsr.w   af_read_file_to_buf
         cmp.l   #32768,d0
-        bne.s   .close_dos
+        bne.w   .close_dos
         lea     fn_map_m2(pc),a0
         lea     af_vox_m2_raw,a1
         move.l  #32768,d0
         bsr.w   af_read_file_to_buf
         cmp.l   #32768,d0
-        bne.s   .close_dos
+        bne.w   .close_dos
         lea     fn_map_m3(pc),a0
         lea     af_vox_m3_raw,a1
         move.l  #32768,d0
         bsr.w   af_read_file_to_buf
         cmp.l   #32768,d0
-        bne.s   .close_dos
+        bne.w   .close_dos
         move.b  #1,af_has_disk_maps
 
 .close_dos:
