@@ -1461,50 +1461,66 @@ af_set_entity_360_slot:
         cmp.w   #2,d3
         beq.s   .f_m3
 
-        ; Misja 01: pelna spirala 360 st. (krok ~21 jednostek z 256)
+        ; Misja 01 (Sargas Ocean): Eskadry w formacji V-Wing nad falami (-90..+90)
         move.w  d0,d1
-        mulu.w  #21,d1
-        move.w  #135,d2
-        bra.s   .f_calc
+        and.w   #7,d1
+        subq.w  #4,d1
+        move.w  d1,d2
+        muls.w  #24,d2
+        swap    d2
+        clr.w   d2
+        move.l  d2,4(a0)                ; X: rozstaw skrzydla eskadry
 
-.f_m2:  ; Misja 02: podwojna helisa 360 st.
+        tst.w   d1
+        bge.s   .m1_abs
+        neg.w   d1
+.m1_abs:mulu.w  #10,d1
+        add.w   #55,d1                  ; Y: uklad klina V nad horyzontem
+        swap    d1
+        clr.w   d1
+        move.l  d1,8(a0)
+        bra.s   .f_done
+
+.f_m2:  ; Misja 02 (Krell Canyon): Fala slalomowa przez kanion 3D
         move.w  d0,d1
-        mulu.w  #32,d1
-        move.w  #155,d2
-        btst    #0,d0
-        beq.s   .f_calc
-        moveq   #90,d2
-        add.w   #16,d1
-        bra.s   .f_calc
-
-.f_m3:  ; Misja 03: formacja pierscieniowa 4 sektorow cytadeli (co 64 z 256)
-        move.w  d0,d1
-        and.w   #3,d1
-        lsl.w   #6,d1
-        move.w  d0,d4
-        and.w   #12,d4
-        add.w   d4,d1
-        move.w  #140,d2
-
-.f_calc:
+        mulu.w  #28,d1
         and.w   #$ff,d1
-        move.w  (a1,d1.w*2),d3          ; sin(angle)
-        muls.w  d2,d3
-        asr.l   #8,d3
-        swap    d3
-        clr.w   d3
-        move.l  d3,4(a0)                ; X na okregu 360 st.
+        move.w  (a1,d1.w*2),d2
+        muls.w  #96,d2
+        asr.l   #8,d2
+        swap    d2
+        clr.w   d2
+        move.l  d2,4(a0)                ; X: slalom sinusoidalny (-96..+96)
 
         add.w   #64,d1
         and.w   #$ff,d1
-        move.w  (a1,d1.w*2),d3          ; cos(angle)
-        muls.w  d2,d3
-        asr.l   #8,d3
-        add.w   #110,d3                 ; Y wzgledem osi tunelu (110)
-        swap    d3
-        clr.w   d3
-        move.l  d3,8(a0)                ; Y na okregu 360 st.
+        move.w  (a1,d1.w*2),d2
+        muls.w  #28,d2
+        asr.l   #8,d2
+        add.w   #68,d2                  ; Y: niskie przeloty nad dnem kanionu
+        swap    d2
+        clr.w   d2
+        move.l  d2,8(a0)
+        bra.s   .f_done
 
+.f_m3:  ; Misja 03 (Leviathan Citadel): Eskadra szturmowa 3-poziomowa przed Cytadela
+        move.w  d0,d1
+        and.w   #3,d1
+        subq.w  #2,d1
+        muls.w  #36,d1
+        swap    d1
+        clr.w   d1
+        move.l  d1,4(a0)
+
+        move.w  d0,d2
+        and.w   #1,d2
+        mulu.w  #26,d2
+        add.w   #48,d2
+        swap    d2
+        clr.w   d2
+        move.l  d2,8(a0)
+
+.f_done:
         movem.l (sp)+,d0-d4/a1
         rts
 

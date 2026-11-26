@@ -1,6 +1,6 @@
 ; ============================================================================
 ;  PLIK / FILE: aether_falcon.s
-;  PROJEKT: AETHER FALCON: VANGUARD (Amiga 1200 AGA / THEA1200)
+;  PROJEKT: AETHER FALCON: VANGUARD v0.2.0 (Amiga 1200 AGA / THEA1200 / 060)
 ; ============================================================================
 
 BPL_SIZE        equ     40*256
@@ -81,7 +81,7 @@ mainloop:
         cmp.w   #STATE_GAMEPLAY,d0
         beq.w   .do_gameplay
 
-        ; --- TRYB WEKTOROWY: INTRO / BRIEFING / DEBRIEFING ---
+        ; --- TRYB SCEN CEL-SHADED: INTRO / BRIEFING / DEBRIEFING ---
         jsr     af_render_vector_screen
         jsr     af_update_reactive_world
         jsr     hud_fps_tick
@@ -100,7 +100,7 @@ mainloop:
         beq.s   .advance_state
         cmp.b   #$77,d1                 ; Enter (raw $44 << 1 | 1)
         beq.s   .advance_state
-        move.b  kbd_held_raw,d1         ; Zdekodowany rawkey z input_ctrl.i!
+        move.b  kbd_held_raw,d1         ; Zdekodowany rawkey z input_ctrl.i
         cmp.b   #$40,d1                 ; Spacja
         beq.s   .advance_state
         cmp.b   #$44,d1                 ; Enter
@@ -109,7 +109,7 @@ mainloop:
 .advance_state:
         move.b  #$ff,kbd_held_raw
         move.b  #$ff,kbd_last_sdr
-        clr.b   fire_held            ; Skonsumuj klawisz (brak przeskoku 2 ekranow naraz)
+        clr.b   fire_held
         clr.l   af_state_timer
         move.w  af_state,d0
         addq.w  #1,d0
@@ -130,16 +130,16 @@ mainloop:
         cmp.w   #STATE_GAMEPLAY,d0
         bne.w   mainloop
         lea     aga_pal256,a0
-        move.l  #$00FF3040,252*4(a0)    ; $FC = czerwien bojowa (wrogowie / celownik)
-        move.l  #$0020E8FF,253*4(a0)    ; $FD = blekit Eteru (skrzydla / rdzenie)
-        move.l  #$00FFD020,254*4(a0)    ; $FE = zloto Solis (emblem / lock-on)
-        move.l  #$00FFFFFF,255*4(a0)    ; $FF = czysta biel (napisy / HUD)
+        move.l  #$00FF3040,252*4(a0)
+        move.l  #$0020E8FF,253*4(a0)
+        move.l  #$00FFD020,254*4(a0)
+        move.l  #$00FFFFFF,255*4(a0)
         jsr     load_aga_256_palette
         move.b  #1,pal_loaded
         bsr.w   af_init_mission
         bra.w   mainloop
 
-        ; --- TRYB 3D GAMEPLAY (XF-14 Albatros + Teren 3D + Lock-On) ---
+        ; --- TRYB 3D GAMEPLAY (XF-14 Albatros + Obracany Horyzont + Lock-On) ---
 .do_gameplay:
         jsr     af_sfx_tick
         bsr.w   af_update_flight
@@ -153,7 +153,7 @@ mainloop:
         cmp.w   af_mission_len,d0
         blo.w   mainloop
 
-        ; W Misji 03 (af_mission == 2) przywolaj Bossa "Lewiatan" przed Debriefingiem
+        ; W Misji 03 (af_mission == 2) przywolaj Bossa Lewiatan przed Debriefingiem
         cmp.w   #2,af_mission
         bne.s   .mission_clear
         tst.b   af_boss_done
@@ -180,7 +180,7 @@ exit_program:
         rts
 
 ; ============================================================================
-; LOGIKA LOTU MYSLIWCA XF-14 "ALBATROS" + PRZEWIJANIE TERENU 3D
+; LOGIKA LOTU MYSLIWCA XF-14 ALBATROS ZZA OGONA (AFTER BURNER / STAR FOX)
 ; ============================================================================
         cnop    0,4
 af_init_campaign:
@@ -203,28 +203,33 @@ af_init_mission:
 .m_idx_ok:
         lsl.w   #4,d0
         adda.w  d0,a1
-        move.w  (a1),d0                 ; vel_z z data/missions.dat
+        move.w  (a1),d0
         swap    d0
         clr.w   d0
         move.l  d0,af_vel_z
-        move.w  2(a1),af_mission_len    ; dlugosc trasy misji
+        move.w  2(a1),af_mission_len
         move.w  4(a1),d0
         jsr     copper_set_sky_theme
         clr.w   af_roll
         clr.w   af_pitch
-        clr.w   af_roll
+        clr.w   af_yaw_center
+        clr.w   af_pitch_center
         move.w  #64,af_orbit_angle
-        move.w  #126,af_orbit_radius
+        move.w  #62,af_orbit_radius
         clr.w   af_ship_dx
-        move.w  #56,af_ship_dy
+        move.w  #16,af_ship_dy
         move.w  #200,af_energy
         clr.b   af_shield_flash
         clr.b   af_game_over
         clr.w   af_locks
         clr.b   af_boss_active
         clr.b   af_boss_done
-        move.w  #80,af_reticle_x
-        move.w  #56,af_reticle_y
+        move.w  #160,af_reticle_x
+        ifd FULL_RES
+        move.w  #108,af_reticle_y
+        else
+        move.w  #54,af_reticle_y
+        endif
 
         lea     af_entities,a0
         moveq   #MAX_ENTITIES-1,d7
@@ -255,82 +260,110 @@ af_update_flight:
         lsr.w   #1,d1
         eor.w   d0,d1
         move.b  kbd_held_raw,d4
-        move.w  af_orbit_angle,d2
-        ; Lewo / Prawo: obrot po okregu (0..255)
+
+        move.w  af_ship_dx,d2
+        move.w  af_roll,d5
+
+        ; Lewo / Prawo: przesuniecie boczne XF-14 + przechyl skrzydel
         btst    #9,d0
-        bne.s   .orb_left
+        bne.s   .fly_left
         cmp.b   #$4F,d4
         bne.s   .chk_rt
-.orb_left:
-        addq.w  #5,d2
-        bra.s   .ang_ok
+.fly_left:
+        subq.w  #4,d2
+        cmp.w   #-112,d2
+        bge.s   .rl_dec
+        move.w  #-112,d2
+.rl_dec:subq.w  #4,d5
+        cmp.w   #-44,d5
+        bge.s   .dx_ok
+        move.w  #-44,d5
+        bra.s   .dx_ok
+
 .chk_rt:
         btst    #1,d0
-        bne.s   .orb_right
+        bne.s   .fly_right
         cmp.b   #$4E,d4
-        bne.s   .ang_ok
-.orb_right:
-        subq.w  #5,d2
-.ang_ok:
-        and.w   #255,d2
-        move.w  d2,af_orbit_angle
-        ; Gora / Dol: do srodka okregu (Gora) lub na zewnatrz okregu (Dol)
-        move.w  af_orbit_radius,d3
+        bne.s   .auto_level
+.fly_right:
+        addq.w  #4,d2
+        cmp.w   #112,d2
+        ble.s   .rl_inc
+        move.w  #112,d2
+.rl_inc:addq.w  #4,d5
+        cmp.w   #44,d5
+        ble.s   .dx_ok
+        move.w  #44,d5
+        bra.s   .dx_ok
+
+.auto_level:
+        tst.w   d5
+        beq.s   .dx_ok
+        bgt.s   .lvl_dec
+        addq.w  #2,d5
+        ble.s   .dx_ok
+        clr.w   d5
+        bra.s   .dx_ok
+.lvl_dec:
+        subq.w  #2,d5
+        bge.s   .dx_ok
+        clr.w   d5
+.dx_ok:
+        move.w  d2,af_ship_dx
+        move.w  d5,af_roll
+
+        ; Gora / Dol: wysokosc lotu nad terenem + pochylenie dziobu (Pitch)
+        move.w  af_ship_dy,d3
+        move.w  af_pitch,d6
         btst    #8,d1
-        bne.s   .rad_in
+        bne.s   .fly_up
         cmp.b   #$4C,d4
         bne.s   .chk_dn
-.rad_in:
+.fly_up:
         subq.w  #3,d3
-        cmp.w   #72,d3
-        bge.s   .rad_ok
-        moveq   #72,d3
-        bra.s   .rad_ok
+        cmp.w   #-42,d3
+        bge.s   .pt_up
+        move.w  #-42,d3
+.pt_up: subq.w  #3,d6
+        cmp.w   #-28,d6
+        bge.s   .dy_ok
+        move.w  #-28,d6
+        bra.s   .dy_ok
+
 .chk_dn:
         btst    #0,d1
-        bne.s   .rad_out
+        bne.s   .fly_dn
         cmp.b   #$4D,d4
-        bne.s   .rad_ok
-.rad_out:
+        bne.s   .auto_pitch
+.fly_dn:
         addq.w  #3,d3
-        cmp.w   #132,d3
-        ble.s   .rad_ok
-        move.w  #132,d3
-.rad_ok:
-        move.w  d3,af_orbit_radius
-        ; Oblicz jednostkowy cos(angle) i sin(angle) z sin_tab (-256..256)
-        lea     sin_tab,a0
-        move.w  d2,d0
-        add.w   d0,d0
-        move.w  (a0,d0.w),d5          ; unit sin(angle)
-        add.w   #64,d2
-        and.w   #255,d2
-        add.w   d2,d2
-        move.w  (a0,d2.w),d4          ; unit cos(angle)
-        ; 1. Kąty 3D (Yaw, Pitch, Roll) zalezne WYLACZNIE od kata po okregu (nie od promienia!)
-        move.w  d4,d0
-        neg.w   d0
-        asr.w   #3,d0
-        move.w  d0,af_yaw_center
-        move.w  d5,d0
-        neg.w   d0
-        asr.w   #3,d0
-        move.w  d0,af_pitch_center
-        moveq   #64,d0
-        sub.w   af_orbit_angle,d0
-        and.w   #255,d0
-        move.w  d0,af_roll
-        ; 2. Pozycja (dx, dy) skalowana promieniem af_orbit_radius (Gora/Dol = tylko promien!)
-        muls.w  d3,d4
-        asr.l   #8,d4
-        move.w  d4,af_ship_dx
-        muls.w  d3,d5
-        asr.l   #8,d5
-        muls.w  #190,d5
-        asr.l   #8,d5
-        move.w  d5,af_ship_dy
-        clr.w   af_pitch
-        ; Przesuwanie kamery wzdluz kanionu 3D
+        cmp.w   #64,d3
+        ble.s   .pt_dn
+        move.w  #64,d3
+.pt_dn: addq.w  #3,d6
+        cmp.w   #28,d6
+        ble.s   .dy_ok
+        move.w  #28,d6
+        bra.s   .dy_ok
+
+.auto_pitch:
+        tst.w   d6
+        beq.s   .dy_ok
+        bgt.s   .pt_dec
+        addq.w  #2,d6
+        ble.s   .dy_ok
+        clr.w   d6
+        bra.s   .dy_ok
+.pt_dec:
+        subq.w  #2,d6
+        bge.s   .dy_ok
+        clr.w   d6
+.dy_ok:
+        move.w  d3,af_ship_dy
+        move.w  d6,af_pitch
+        clr.w   af_yaw_center
+        clr.w   af_pitch_center
+
         move.l  af_vel_z,d0
         btst    #7,CIAAPRA
         beq.s   .boost
@@ -344,9 +377,10 @@ af_update_flight:
 af_orbit_angle: dc.w 64
 af_orbit_radius:dc.w 62
 af_ship_dx:     dc.w 0
-af_ship_dy:     dc.w 31
+af_ship_dy:     dc.w 16
 af_yaw_center:  dc.w 0
-af_pitch_center:dc.w -28
+af_pitch_center:dc.w 0
+
 af_update_entities:
         lea     af_entities,a0
         move.l  af_pos_z,d4
@@ -409,7 +443,6 @@ af_update_entities:
         include "mirror_reflect.i"
         include "lens_flare.i"
         include "af_terrain_3d.i"
-        ; clean v0.2.0
         section code,code
         include "af_disk_loader.i"
         include "af_audio_sfx.i"
@@ -492,10 +525,6 @@ ptrail_pool:    ds.b 1024
 
         even
 sin_tab:
-        dc.w 0,6,13,19,25,31,38,44,50,56,62,68,74,80,86,92
-        dc.w 98,104,109,115,121,126,132,137,142,147,152,157,162,167,172,177
-        dc.w 181,185,190,194,198,202,206,209,213,216,220,223,226,229,231,234
-        dc.w 237,239,241,243,245,247,248,250,251,252,253,254,255,255,256,256
         dc.w 256,256,256,255,255,254,253,252,251,250,248,247,245,243,241,239
         dc.w 237,234,231,229,226,223,220,216,213,209,206,202,198,194,190,185
         dc.w 181,177,172,167,162,157,152,147,142,137,132,126,121,115,109,104
@@ -533,76 +562,3 @@ chunky_buf:     ds.b 320*128
         endif
 edge_buf:       ds.b 256*40
 af_entities:    ds.b 16*MAX_ENTITIES
-
-; ============================================================================
-; Szybki blitter pelnoekranowego tla lotniska 256 kol. AGA + sprite motocykla
-; ============================================================================
-        section code,code
-af_blit_airbase_bg:
-        movem.l d0-d7/a0-a1,-(sp)
-        lea     bg_airbase_gfx,a0
-        lea     chunky_buf,a1
-        ifd FULL_RES
-        move.w  #255,d7
-.ab_row:moveq   #19,d6
-.ab_col:move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        dbf     d6,.ab_col
-        dbf     d7,.ab_row
-        else
-        moveq   #127,d7
-.ab_row:moveq   #19,d6
-.ab_col:move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        dbf     d6,.ab_col
-        lea     320(a0),a0
-        dbf     d7,.ab_row
-        endif
-        movem.l (sp)+,d0-d7/a0-a1
-        rts
-
-; Rysuje przezroczysty sprite motocykla (96x48) w pozycji (d0=X, d1=Y)
-af_blit_moto_sprite:
-        movem.l d0-d7/a0-a2,-(sp)
-        lea     spr_moto_gfx,a0
-        lea     chunky_buf,a1
-        mulu.w  #320,d1
-        add.l   d1,a1
-        add.w   d0,a1
-        ifd FULL_RES
-        moveq   #47,d7
-.sm_y:  move.l  a1,a2
-        moveq   #95,d6
-.sm_x:  move.b  (a0)+,d2
-        beq.s   .sm_sk
-        move.b  d2,(a2)
-.sm_sk: addq.l  #1,a2
-        dbf     d6,.sm_x
-        lea     320(a1),a1
-        dbf     d7,.sm_y
-        else
-        moveq   #23,d7
-.sm_y:  move.l  a1,a2
-        moveq   #95,d6
-.sm_x:  move.b  (a0)+,d2
-        beq.s   .sm_sk
-        move.b  d2,(a2)
-.sm_sk: addq.l  #1,a2
-        dbf     d6,.sm_x
-        lea     96(a0),a0
-        lea     320(a1),a1
-        dbf     d7,.sm_y
-        endif
-        movem.l (sp)+,d0-d7/a0-a2
-        rts
-
-        section fastram_data,data
-        cnop    0,4
-bg_airbase_gfx:
-        ds.b    16
-spr_moto_gfx:
-        ds.b    16

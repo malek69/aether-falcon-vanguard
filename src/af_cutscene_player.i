@@ -1,21 +1,29 @@
         section code,code
 ; ============================================================================
-; AETHER FALCON: VANGUARD - Odtwarzacz Modulowych Scen Fabularnych (AFSC)
+; AETHER FALCON: VANGUARD v0.2.0 - Uniwersalny Odtwarzacz Scen AFSC v2
 ; ============================================================================
+
+        ifd FULL_RES
+AF_SCN_H        equ     180
+        else
+AF_SCN_H        equ     90
+        endif
 
         cnop    0,4
 af_play_scripted_intro:
-        movem.l d0-d7/a0-a5,-(sp)
         lea     af_scene_intro_buf,a4
         tst.b   af_has_scene_intro
-        bne.s   .sc_hdr
+        bne.s   af_play_scene_stream
         lea     af_builtin_scene_intro,a4
-.sc_hdr:
-        cmp.l   #$41465343,(a4)+        ; sprawdz naglowek "AFSC"
-        bne.w   .sc_exit
-        move.w  (a4)+,d7                ; num_acts
 
-        ; Zaladuj 16 kolorow palety sceny (indeksy 240..255)
+        cnop    0,4
+af_play_scene_stream:
+        movem.l d0-d7/a0-a5,-(sp)
+        cmp.l   #$41465343,(a4)+
+        bne.w   .sc_exit
+        move.w  (a4)+,d7
+        ble.w   .sc_exit
+
         lea     aga_pal256+240*4,a0
         moveq   #15,d0
 .sp_lp: move.l  (a4)+,(a0)+
@@ -26,33 +34,59 @@ af_play_scripted_intro:
         lea     aga_pal256,a0
         jsr     load_aga_256_palette
 .sp_ok:
-        ; Wybierz aktualny akt na podstawie af_state_timer (zapetlone co 450 klatek)
+        move.l  a4,a0
+        move.w  d7,d1
+        subq.w  #1,d1
+        moveq   #0,d3
+.sum_lp:
+        moveq   #0,d0
+        move.w  (a0)+,d0
+        add.l   d0,d3
+        addq.l  #2,a0
+        move.w  (a0)+,d0
+        add.w   d0,a0
+        move.w  (a0)+,d2
+        subq.w  #1,d2
+        blt.s   .sum_nx
+.sum_p: moveq   #0,d0
+        move.b  1(a0),d0
+        addq.l  #2,a0
+        lsl.w   #3,d0
+        add.w   d0,a0
+        dbf     d2,.sum_p
+.sum_nx:dbf     d1,.sum_lp
+
+        tst.l   d3
+        ble.w   .sc_exit
+
         move.l  af_state_timer,d5
-.mod_t: cmp.l   #450,d5
-        blo.s   .mod_ok
-        sub.l   #450,d5
+.mod_t: cmp.l   d3,d5
+        blo.s   .act_lp
+        sub.l   d3,d5
         bra.s   .mod_t
-.mod_ok:
+
 .act_lp:
-        move.w  (a4)+,d6                ; duration_frames
+        moveq   #0,d6
+        move.w  (a4)+,d6
         move.w  d6,af_scn_cur_dur
-        move.b  (a4)+,d2                ; sky_top_idx
-        move.b  (a4)+,d3                ; sky_bot_idx
-        move.w  (a4)+,d4                ; subtitle_len
-        move.l  a4,a3                   ; a3 = wskaznik na napis aktu
+        moveq   #0,d2
+        move.b  (a4)+,d2
+        moveq   #0,d3
+        move.b  (a4)+,d3
+        move.w  (a4)+,d4
+        move.l  a4,a3
         add.w   d4,a4
-        move.w  (a4)+,d1                ; num_polys
+        move.w  (a4)+,d1
 
         cmp.l   d6,d5
         blo.s   .render_act
         sub.l   d6,d5
-        ; Przeskocz wielokaty tego aktu
         subq.w  #1,d1
         blt.s   .next_act
 .sk_p:  moveq   #0,d0
-        move.b  1(a4),d0                ; num_verts
+        move.b  1(a4),d0
         addq.l  #2,a4
-        lsl.w   #3,d0                   ; 2 klatki * 4B na wierzcholek
+        lsl.w   #3,d0
         add.w   d0,a4
         dbf     d1,.sk_p
 .next_act:
@@ -61,18 +95,15 @@ af_play_scripted_intro:
         bra.w   .sc_exit
 
 .render_act:
-        ; Rysuj plynny gradient nieba (sky_top_idx -> sky_bot_idx)
         lea     chunky_buf,a0
-        ifd FULL_RES
-        move.w  #179,d0
-        else
-        moveq   #89,d0
-        endif
-.sky_y: move.b  d2,d4
-        cmp.w   #90,d0
-        bgt.s   .sky_c
-        move.b  d3,d4
-.sky_c: move.b  d4,d7
+        sub.w   d2,d3
+        moveq   #0,d6
+        move.w  #AF_SCN_H-1,d0
+.sky_y: move.w  d6,d4
+        muls.w  d3,d4
+        divs.w  #AF_SCN_H,d4
+        add.w   d2,d4
+        move.b  d4,d7
         lsl.w   #8,d7
         move.b  d4,d7
         move.w  d7,d4
@@ -81,58 +112,51 @@ af_play_scripted_intro:
         moveq   #79,d4
 .sky_x: move.l  d7,(a0)+
         dbf     d4,.sky_x
+        addq.w  #1,d6
         dbf     d0,.sky_y
 
-        ; Renderuj wielokaty z interpolacja klatek kluczowych A -> B
         subq.w  #1,d1
         blt.w   .draw_sub
 .poly_lp:
-        move.b  (a4)+,d6                ; color_idx
+        move.b  (a4)+,d6
         moveq   #0,d7
-        move.b  (a4)+,d7                ; num_verts
+        move.b  (a4)+,d7
         lea     af_scn_poly_tmp,a0
         move.w  d7,(a0)+
         move.w  d7,d0
         lsl.w   #2,d0
-        lea     (a4,d0.w),a2            ; a2 = verts_end
+        lea     (a4,d0.w),a2
         subq.w  #1,d7
-.v_lp:  move.w  (a4)+,d2                ; x0
-        move.w  (a2)+,d3                ; x1
+.v_lp:  move.w  (a4)+,d2
+        move.w  (a2)+,d3
         sub.w   d2,d3
         muls.w  d5,d3
         divs.w  af_scn_cur_dur,d3
         add.w   d2,d3
-        ifd FULL_RES
         move.w  d3,(a0)+
-        else
-        move.w  d3,(a0)+
-        endif
-        move.w  (a4)+,d2                ; y0
-        move.w  (a2)+,d3                ; y1
+
+        move.w  (a4)+,d2
+        move.w  (a2)+,d3
         sub.w   d2,d3
         muls.w  d5,d3
         divs.w  af_scn_cur_dur,d3
         add.w   d2,d3
-        ifd FULL_RES
+        mulu.w  #AF_SCN_H,d3
+        lsr.w   #8,d3
         move.w  d3,(a0)+
-        else
-        asr.w   #1,d3
-        move.w  d3,(a0)+
-        endif
         dbf     d7,.v_lp
         move.l  a2,a4
         lea     af_scn_poly_tmp,a0
-        jsr     af_aw_fill_ngon
+        bsr.s   af_aw_fill_ngon
         dbf     d1,.poly_lp
 
 .draw_sub:
-        ; Napis fabularny u dolu ekranu
         move.l  a3,a0
         moveq   #14,d0
         ifd FULL_RES
-        move.w  #216,d1
+        move.w  #156,d1
         else
-        moveq   #104,d1
+        moveq   #74,d1
         endif
         move.b  #254,d6
         jsr     af_print_chunky_str
@@ -140,7 +164,6 @@ af_play_scripted_intro:
 .sc_exit:
         movem.l (sp)+,d0-d7/a0-a5
         rts
-
 
         cnop    0,4
 af_aw_fill_ngon:
@@ -162,25 +185,23 @@ af_aw_fill_ngon:
         movem.l (sp)+,d0-d7/a0-a1
         rts
 
+        cnop    0,4
 af_aw_fill_tri:
-        move.b  d6,af_tri_col
         movem.l d0-d7/a0-a4,-(sp)
-        cmp.w   d1,d3
-        bge.s   .s01
+        move.b  d6,af_tri_col
+        cmp.w   d3,d1
+        ble.s   .s1
         exg     d0,d2
         exg     d1,d3
-.s01:   cmp.w   d3,d5
-        bge.s   .s12
+.s1:    cmp.w   d5,d1
+        ble.s   .s2
+        exg     d0,d4
+        exg     d1,d5
+.s2:    cmp.w   d5,d3
+        ble.s   .s3
         exg     d2,d4
         exg     d3,d5
-        cmp.w   d1,d3
-        bge.s   .s12
-        exg     d0,d2
-        exg     d1,d3
-.s12:   move.w  d5,d7
-        sub.w   d1,d7
-        ble.w   .tr_end
-        ; Zapisz posortowane wierzcholki w rejestrach adresowych: a0=(x0,y0), a1=(x1,y1), a2=(x2,y2)
+.s3:
         swap    d0
         move.w  d1,d0
         move.l  d0,a0
@@ -191,66 +212,68 @@ af_aw_fill_tri:
         move.w  d5,d4
         move.l  d4,a2
 
-        move.w  a0,d6                   ; d6 = aktualny Y (od y0 do y2)
-        ifd FULL_RES
-        move.w  #255,a4
-        else
-        move.w  #127,a4
-        endif
-.ylp:   move.w  a2,d5
-        cmp.w   d5,d6
-        bgt.w   .tr_end
+        move.w  a0,d6
+        move.w  a2,d7
+        cmp.w   d7,d6
+        beq.w   .tr_end
+
         tst.w   d6
-        blt.w   .nxt_y
-        cmp.w   a4,d6
+        bge.s   .ymin_ok
+        moveq   #0,d6
+.ymin_ok:
+        cmp.w   #AF_SCN_H-1,d7
+        ble.s   .ymax_ok
+        move.w  #AF_SCN_H-1,d7
+.ymax_ok:
+        cmp.w   d7,d6
         bgt.w   .tr_end
 
-        ; xa = x0 + (x2 - x0) * (y - y0) / (y2 - y0)
+.ylp:   move.w  a2,d3
+        sub.w   a0,d3
         move.l  a0,d0
-        swap    d0                      ; d0.w = x0
+        swap    d0
         move.l  a2,d4
-        swap    d4                      ; d4.w = x2
-        sub.w   d0,d4                   ; x2 - x0
-        move.w  a0,d1                   ; y0
+        swap    d4
+        sub.w   d0,d4
         move.w  d6,d2
-        sub.w   d1,d2                   ; y - y0
+        sub.w   a0,d2
         muls.w  d2,d4
-        move.w  a2,d3
-        sub.w   d1,d3                   ; y2 - y0
         divs.w  d3,d4
-        add.w   d0,d4                   ; d4 = xa
+        add.w   d0,d4
 
-        ; xb na gornej (y0..y1) lub dolnej (y1..y2) polowce
-        move.w  a1,d3                   ; y1
+        move.w  a1,d3
         cmp.w   d3,d6
         bge.s   .bot_h
-        sub.w   d1,d3                   ; y1 - y0
+
+        sub.w   a0,d3
         beq.s   .xb_eq0
         move.l  a1,d5
-        swap    d5                      ; x1
-        sub.w   d0,d5                   ; x1 - x0
+        swap    d5
+        sub.w   d0,d5
         muls.w  d2,d5
         divs.w  d3,d5
-        add.w   d0,d5                   ; d5 = xb
+        add.w   d0,d5
         bra.s   .span
 .xb_eq0:move.w  d0,d5
         bra.s   .span
+
 .bot_h: move.w  a2,d2
-        sub.w   d3,d2                   ; y2 - y1
+        sub.w   d3,d2
         beq.s   .xb_eq1
         move.l  a1,d0
-        swap    d0                      ; x1
+        swap    d0
         move.l  a2,d5
-        swap    d5                      ; x2
-        sub.w   d0,d5                   ; x2 - x1
+        swap    d5
+        sub.w   d0,d5
         move.w  d6,d1
-        sub.w   d3,d1                   ; y - y1
+        sub.w   d3,d1
         muls.w  d1,d5
         divs.w  d2,d5
-        add.w   d0,d5                   ; d5 = xb
+        add.w   d0,d5
         bra.s   .span
 .xb_eq1:move.l  a1,d5
         swap    d5
+
 .span:  cmp.w   d5,d4
         ble.s   .ord
         exg     d4,d5
@@ -271,7 +294,8 @@ af_aw_fill_tri:
 .hlp:   move.b  d0,(a3)+
         dbf     d5,.hlp
 .nxt_y: addq.w  #1,d6
-        bra.w   .ylp
+        cmp.w   d7,d6
+        ble.w   .ylp
 .tr_end:movem.l (sp)+,d0-d7/a0-a4
         rts
 

@@ -1,19 +1,5 @@
+#!/usr/bin/env python3
 import os, struct
-
-# Format pliku binarnego sceny fabularnej data/scene_*.bin:
-# Header:
-#   magic: "AFSC" (4B)
-#   num_acts: uint16
-#   palette_rgb: 16 x uint32 (indeksy palety 240..255 dla cieniowania Eon / Another World)
-# Dla kazdego aktu:
-#   duration_frames: uint16
-#   sky_top_idx: uint8, sky_bot_idx: uint8
-#   subtitle_len: uint16 + ASCII (padded to even)
-#   num_polys: uint16
-#   Dla kazdego wielokata:
-#     color_idx: uint8, num_verts: uint8
-#     verts_start: num_verts x (int16 x, int16 y)   [klatka kluczowa A]
-#     verts_end:   num_verts x (int16 x, int16 y)   [klatka kluczowa B -> plynna interpolacja!]
 
 PAL_EON_SUNSET = [
     0x00080C1C, # 240: gleboki granat nocy
@@ -43,108 +29,414 @@ def pack_scene(out_path, palette, acts):
         sub_b = subtitle.encode("ascii", "ignore")
         if len(sub_b) % 2 == 1:
             sub_b += b" "
-        buf += struct.pack(">HBBH", dur, sky_top, sky_bot, len(sub_b))
-        buf += sub_b
-        buf += struct.pack(">H", len(polys))
-        for col_idx, v_start, v_end in polys:
-            assert len(v_start) == len(v_end) and 3 <= len(v_start) <= 16
-            buf += struct.pack(">BB", col_idx, len(v_start))
-            for x, y in v_start:
-                buf += struct.pack(">hh", x, y)
-            for x, y in v_end:
-                buf += struct.pack(">hh", x, y)
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-    with open(out_path, "wb") as f:
-        f.write(buf)
-    print(f"Zbudowano modul sceny: {out_path} ({len(buf)} B, {len(acts)} aktow)")
-
-def build_intro_scene():
-    # Akt 1: Baza Solis o zmierzchu - pilot patrzy na horyzont, kamera zbliza sie plynnie
-    act1_polys = [
-        # Pasmo gor w oddali (parallax)
-        (241, [(0,165),(55,118),(125,152),(195,112),(265,148),(319,124),(319,175),(0,175)],
-              [(0,170),(45,112),(120,150),(190,104),(260,145),(319,118),(319,180),(0,180)]),
-        # Plyta lotniska Solis
-        (248, [(0,170),(319,170),(319,255),(0,255)],
-              [(0,175),(319,175),(319,255),(0,255)]),
-        # Sylwetka mysliwca XF-14 na plycie (cel-shaded: kadlub + zloty rim light)
-        (249, [(135,168),(215,152),(298,166),(235,182),(145,180)],
-              [(115,166),(205,146),(305,164),(230,184),(128,182)]),
-        (247, [(135,168),(215,152),(298,166),(285,168),(214,156)],
-              [(115,166),(205,146),(305,164),(290,167),(204,151)]),
-        # Sylwetka pilota na pierwszym planie (styl Another World / Eon)
-        (248, [(42,255),(48,188),(64,162),(82,162),(94,192),(102,255)],
-              [(52,255),(58,182),(74,154),(92,154),(106,186),(115,255)]),
-        # Zlote podswietlenie krawedzi kasku i ramienia pilota (Eon Rim Light)
-        (247, [(76,162),(84,163),(95,192),(90,194),(79,167)],
-              [(86,154),(94,155),(107,186),(101,188),(89,160)]),
-    ]
-    # Akt 2: Kokpit XF-14 - zamykanie opancerzonej owiewki i rozruch HUD
-    act2_polys = [
-        (241, [(0,0),(319,0),(319,255),(0,255)],
-              [(0,0),(319,0),(319,255),(0,255)]),
-        # Rama kokpitu opadajaca z gory (klatka A -> klatka B)
-        (248, [(0,0),(319,0),(285,35),(35,35)],
-              [(0,0),(319,0),(265,95),(55,95)]),
-        (250, [(35,35),(285,35),(275,44),(45,44)],
-              [(55,95),(265,95),(255,106),(65,106)]),
-        # Ekran celownika HUD rozswietlajacy sie w centrum
-        (253, [(150,130),(170,130),(170,145),(150,145)],
-              [(105,112),(215,112),(215,178),(105,178)]),
-        (249, [(112,118),(208,118),(208,172),(112,172)],
-              [(112,118),(208,118),(208,172),(112,172)]),
-    ]
-    # Akt 3: Start XF-14 na dopalaczu w niebo (kamera sledzi wzlot)
-    act3_polys = [
-        (248, [(0,195),(319,195),(319,255),(0,255)],
-              [(0,238),(319,238),(319,255),(0,255)]),
-        # Smuga ognia dopalacza
-        (254, [(30,198),(125,186),(125,196)],
-              [(90,148),(215,112),(205,126)]),
-        # Kadlub XF-14 wzbijajacy sie pod katem
-        (250, [(115,182),(195,168),(245,180),(180,196)],
-              [(195,106),(278,76),(312,92),(248,122)]),
-        (247, [(115,182),(195,168),(245,180),(235,183),(194,172)],
-              [(195,106),(278,76),(312,92),(302,96),(276,81)]),
-    ]
-    acts = [
-        (160, 240, 245, "SOLIS AIRBASE - DAWN ALERT: VESPERA FLEET INBOUND", act1_polys),
-        (140, 240, 242, "XF-14 ALBATROS ONLINE - CANOPY LOCKED, REACTORS HOT", act2_polys),
-        (150, 240, 246, "VANGUARD SQUADRON LAUNCH - INTERCEPT COURSE SET", act3_polys),
-    ]
-    pack_scene("data/scene_intro.bin", PAL_EON_SUNSET, acts)
-
-def build_reactive_cutscenes():
-    # Scena Zwyciestwa Asa (odtwarzana gdy pilot osiaga wysoka skutecznosc / pokonuje Lewiatana)
-    vic_polys = [
-        (241, [(0,165),(65,112),(145,148),(220,108),(319,135),(319,175),(0,175)],
-              [(0,175),(65,122),(145,158),(220,118),(319,145),(319,185),(0,185)]),
-        (254, [(40,150),(155,115),(150,126)],
-              [(110,110),(255,68),(248,82)]),
-        (251, [(145,112),(225,94),(268,108),(205,126)],
-              [(225,66),(298,48),(318,62),(268,80)]),
-        (247, [(145,112),(225,94),(268,108),(258,111),(224,99)],
-              [(225,66),(298,48),(318,62),(310,65),(296,53)]),
-    ]
-    pack_scene("data/scene_victory.bin", PAL_EON_SUNSET, [
-        (180, 240, 246, "ACE VICTORY - VESPERA FLEET RETREATING FROM SOLIS!", vic_polys),
-    ])
-
-    # Scena Kryzysu / Red Alert (odtwarzana przy ciezkich uszkodzeniach kadluba)
-    cri_polys = [
-        (248, [(0,175),(319,175),(319,255),(0,255)],
-              [(0,175),(319,175),(319,255),(0,255)]),
-        (252, [(85,175),(125,115),(165,175)],
-              [(70,175),(130,92),(185,175)]),
-        (254, [(105,175),(128,132),(148,175)],
-              [(95,175),(130,114),(165,175)]),
-        (249, [(185,148),(265,134),(305,152),(240,168)],
-              [(155,156),(245,144),(292,162),(220,176)]),
-    ]
-    pack_scene("data/scene_crisis.bin", PAL_EON_SUNSET, [
-        (180, 240, 252, "RED ALERT - HEAVY HULL DAMAGE! EMERGENCY SCRAMBLE!", cri_polys),
-    ])
-
-if __name__ == "__main__":
-    build_intro_scene()
-    build_reactive_cutscenes()
+        buf += struct.pack(">HBBH", dur, sky_tÜÚÞWØ›Ý[ŠÝX—ØŠJBˆYˆ
+ÏHÝX—Ø‚ˆYˆ
+ÏHÝXÝœXÚÊ’‹[ŠÛ\ÊJBˆ›ÜˆÛÛÚY—ÜÝ\—Ù[™[ˆÛ\Î‚ˆ\ÜÙ\[Š—ÜÝ\
+HOH[Š—Ù[™
+H[™ÈH[Š—ÜÝ\
+HHM‚ˆYˆ
+ÏHÝXÝœXÚÊˆ‹ÛÛÚY[Š—ÜÝ\
+JBˆ›ÜˆH[ˆ—ÜÝ\‚ˆYˆ
+ÏHÝXÝœXÚÊš‹JBˆ›ÜˆH[ˆ—Ù[™‚ˆYˆ
+ÏHÝXÝœXÚÊš‹JBˆÜË›XZÙY\œÊÜËœ]™\›˜[YJÝ]Ü]
+K^\ÝÛÚÏUYJBˆÚ]Ü[ŠÝ]Ü]ØˆŠH\ÈŽ‚ˆ‹Üš]JYŠBˆš[
+ˆ–ÐQ”Ð×H˜YÝØ[›ÈÛÝ]Ü]H
+Û[ŠYŠ_H‹Û[ŠXÝÊ_HZÝÝÊHŠB‚™YˆZ[Ú[›×ÜØÙ[™J
+N‚ˆXÝHH
+ML‹”ÓÓTÈRTTÑHHTÒÈÐÔSP“H‹Âˆ
+‹ÊMMJK
+NLJK
+LÌMJK
+ŒN
+K
+ŽM
+K
+ÌNKLLŠK
+ÌNKMÍJK
+MÍJWKˆÊMŒŠK
+N
+K
+LŒ‹M
+K
+NL‹L
+K
+ŒLÍŠK
+ÌNKLJK
+ÌNKN
+K
+N
+WJKˆ
+ÊMŽ
+K
+ÌNKMŽ
+K
+ÌNKMJK
+MJWKˆÊMÍ
+K
+ÌNKMÍ
+K
+ÌNKMJK
+MJWJKˆ
+KÊLÌ‹MŠK
+ŒMM
+K
+ŽNM
+K
+ŒÍNŠK
+MN
+WKˆÊLM
+K
+Œ‹MŠK
+Ì‹MŒŠK
+ŒŽN
+K
+LNŠWJKˆ
+ËÊLÌ‹MŠK
+ŒMM
+K
+ŽNM
+K
+ŽKMÊK
+ŒLËMLÊWKˆÊLM
+K
+Œ‹MŠK
+Ì‹MŒŠK
+ŽL‹MŠK
+ŒKM
+WJKˆ
+ÊÎMJK
+‹N
+K
+Œ‹MMŠK
+MMŠK
+MN
+K
+L‹MJWKˆÊL‹MJK
+ŒMÍŠK
+Í‹M
+K
+MM
+K
+LNŠK
+LNMJWJKˆ
+ËÊÍMMŠK
+‹MMÊK
+MKN
+K
+KNL
+K
+ÍËMŒJWKˆÊM
+K
+M‹MJK
+LKNŠK
+LËN
+K
+LKMM
+WJKˆJBˆXÝˆH
+MLË–‹LMSU“ÔÈHÐS“ÔHÐÒÑQ‹Âˆ
+Ê
+K
+ÌNK
+K
+ŽŽ
+K
+Ž
+WKˆÊ
+K
+ÌNK
+K
+KŽ
+K
+MKŽ
+WJKˆ
+KÊMJK
+ÍKNMJK
+ŽKNMJK
+ÌNKMJWKˆÊMJK
+KMÌŠK
+ÍKMÌŠK
+ÌNKMJWJKˆ
+LËÊLMKLLŠK
+ŒKLLŠK
+ŒL‹MN
+K
+LMN
+WKˆÊMKMŠK
+ŒKMŠK
+ŒÍKMŠK
+KMŠWJKˆ
+MÊMLŽ
+K
+MÌ‹LŽ
+K
+MŒM
+WKˆÊLÎLN
+K
+N‹LN
+K
+MŒM
+WJKˆJBˆXÝÈH
+MLKKQ•T•T“‘T”ÈQÓ’UQH•S•TÕ‹Âˆ
+ÊML
+K
+ÌNKML
+K
+ÌNKMJK
+MJWKˆÊNJK
+ÌNKNJK
+ÌNKMJK
+MJWJKˆ
+LÊKM
+K
+MŒLŒŠK
+ŒÍKM
+K
+NMKMÌŠK
+LKMÌŠWKˆÊKMJK
+MŒLÌŠK
+MKMJK
+ŒKNLŠK
+LMKNLŠWJKˆ
+L‹ÊLÍMŒŠK
+ML‹MŒŠK
+M‹NLŠK
+MNLŠWKˆÊLMÎ
+K
+ML‹MÎ
+K
+MKŒÎ
+K
+LÌKŒÎ
+WJKˆ
+L‹ÊMŽMŒŠK
+N‹MŒŠK
+NNLŠK
+MÍNLŠWKˆÊMŽMÎ
+K
+NM‹MÎ
+K
+NKŒÎ
+K
+MÍKŒÎ
+WJKˆ
+MÊLÎM
+K
+MM
+K
+MËNŠWKˆÊLÌN
+K
+MN
+K
+LÎKŒN
+WJKˆ
+MÊMÌ‹M
+K
+N‹M
+K
+MÍËNŠWKˆÊMÌ‹N
+K
+NLN
+K
+NKŒN
+WJKˆJBˆXÝH
+MLË•S‘ÕPT‘ÒS‘ÈH‘PÕÔˆÈ”“Ó•‹Âˆ
+ËÊNMJK
+MKMÎ
+K
+ŒMKN
+K
+ÌNKMÌ
+K
+ÌNKMJK
+MJWKˆÊŒJK
+MKŒLŠK
+ŒMKŒN
+K
+ÌNKŒ
+K
+ÌNKMJK
+MJWJKˆ
+LKÊLKMMJK
+MŒLJK
+ŒMKMMJK
+MŒMJWKˆÊLKLJK
+MŒŠK
+NMKLJK
+MŒLM
+WJKˆ
+ËÊLKMMJK
+MŒLJK
+ŒMKMMJK
+Œ‹MMÊK
+MŒLÌJWKˆÊLKLJK
+MŒŠK
+NMKLJK
+NKLÊK
+MŒÊWJKˆJBˆXÚ×ÜØÙ[™J™]KÜØÙ[™WÚ[›Ë˜š[ˆ‹SÑSÓ—ÔÕS”ÑUØXÝKXÝ‹XÝËXÝJB‚™YˆZ[ØÜš\Ú\×ÜØÙ[™J
+N‚ˆXÝHH
+ML‹”‘QST•H‘TÔTH“QU”‘PPÒ‹Âˆ
+ÊMÌ
+K
+ÌNKMÌ
+K
+ÌNKMJK
+MJWKˆÊMÌ
+K
+ÌNKMÌ
+K
+ÌNKMJK
+MJWJKˆ
+L‹ÊLKLŠK
+NMKLŠK
+ŒMKMŠK
+MŒL
+K
+LKMŠWKˆÊLK
+K
+ŒMK
+K
+‹LŠK
+MŒMŠK
+ÎLŠWJKˆ
+ÊLÍK
+K
+NK
+K
+NNM
+K
+MŒLLŠK
+LŒ‹M
+WKˆÊLŒMŠK
+ŒMŠK
+ŒNN
+K
+MŒLŠK
+L‹N
+WJKˆJBˆXÝˆH
+MK’S•TÑTSSQQPUSHHQ‘S‘ÓÓTÈ‹Âˆ
+KÊLŒ
+K
+MKMJK
+LÌLŒ
+K
+MKLÍJWKˆÊMKL
+K
+KŒŠK
+LÍKL
+K
+KLLŠWJKˆ
+KÊNLLMJK
+KL
+K
+ŽLMJK
+KLÌ
+WKˆÊNKJK
+MKMŠK
+ÌKJK
+MKL
+WJKˆ
+L‹ÊLLŠK
+L‹LLŠK
+MKLŒŠWKˆÊÍ‹ŠK
+M‹ŠK
+‹MŠWJKˆ
+L‹ÊŒÎLÊK
+L‹LÊK
+KLMÊWKˆÊÍŠK
+ÍŠK
+ML
+WJKˆJBˆXÚ×ÜØÙ[™J™]KÜØÙ[™WØÜš\Ú\Ë˜š[ˆ‹SÑSÓ—ÔÕS”ÑUØXÝKXÝ—JB‚™YˆZ[ÝšXÝÜžWÜØÙ[™J
+N‚ˆXÝHH
+ML‹Ë•T‘ÑU‘UUSV‘QHÓÓSˆÔ’V“Óˆ‹Âˆ
+ËÊN
+K
+LLMŒŠK
+ŒŒMÌŠK
+ÌNKMMŠK
+ÌNKMJK
+MJWKˆÊNLŠK
+LLMÍŠK
+ŒŒN
+K
+ÌNKMÌ
+K
+ÌNKMJK
+MJWJKˆ
+LKÊLŒLN
+K
+MŒMŠK
+ŒLN
+K
+MŒLÌ
+WKˆÊMKLÌŠK
+MŒL
+K
+ŒKLÌŠK
+MŒM
+WJKˆ
+ËÊLŒLN
+K
+MŒMŠK
+ŒLN
+K
+NLŒ
+K
+MŒLŠWKˆÊMKLÌŠK
+MŒL
+K
+ŒKLÌŠK
+ŒLLÍJK
+MŒLLJWJKˆJBˆXÝˆH
+MLK‹”ÓÓTÈÓÓ‘‘QTUSÓˆÐSUTÈS‘ÕPT‘‹Âˆ
+ÊMÌŠK
+ÌNKMÌŠK
+ÌNKMJK
+MJWKˆÊMÌŠK
+ÌNKMÌŠK
+ÌNKMJK
+MJWJKˆ
+KÊLKMJK
+LÍMŽ
+K
+MM‹LÍŠK
+MÎLÍŠK
+NM‹MÌŠK
+Œ‹MJWKˆÊLKMJK
+LÍM
+K
+MM‹LÌŠK
+MÎLÌŠK
+NM‹MŽ
+K
+Œ‹MJWJKˆ
+ËÊMÌ‹LÍŠK
+N‹LÎ
+K
+NNMÌŠK
+NLMÍ
+K
+MÍKMŠWKˆÊMÌ‹LÌŠK
+N‹LÍ
+K
+NNMŽ
+K
+NLMÌ
+K
+MÍKLÎ
+WJKˆ
+MÊNLŠK
+ŒMN
+K
+ŒŒ‹L
+K
+NM‹LÍ
+WKˆÊNLN
+K
+ŒN
+K
+Œ‹M
+K
+NM‹LŠWJKˆJBˆXÚ×ÜØÙ[™J™]KÜØÙ[™WÝšXÝÜžK˜š[ˆ‹SÑSÓ—ÔÕS”ÑUØXÝKXÝ—JB‚šYˆ×Û˜[YW×ÈOH—×ÛXZ[—×ÈŽ‚ˆZ[Ú[›×ÜØÙ[™J
+BˆZ[ØÜš\Ú\×ÜØÙ[™J
+BˆZ[ÝšXÝÜžWÜØÙ[™J
+B
