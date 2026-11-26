@@ -603,6 +603,6 @@ af_blit_moto_sprite:
         section fastram_data,data
         cnop    0,4
 bg_airbase_gfx:
-        incbin  "../data/bg_airbase.bin"
+        ds.b    16
 spr_moto_gfx:
-        incbin  "../data/spr_moto.bin"
+        ds.b    16
