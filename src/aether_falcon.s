@@ -94,6 +94,11 @@ mainloop:
         beq.s   .advance_state
         btst    #2,$dff016              ; Prawy przycisk myszy (RMB)
         beq.s   .advance_state
+        move.b  $bfec01,d1              ; Bezposredni odczyt sprzetowy CIA SDR
+        cmp.b   #$7f,d1                 ; Spacja (raw $40 << 1 | 1)
+        beq.s   .advance_state
+        cmp.b   #$77,d1                 ; Enter (raw $44 << 1 | 1)
+        beq.s   .advance_state
         move.b  kbd_held_raw,d1         ; Zdekodowany rawkey z input_ctrl.i!
         cmp.b   #$40,d1                 ; Spacja
         beq.s   .advance_state

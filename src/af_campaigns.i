@@ -4,6 +4,47 @@
 
         section code,code
         cnop    0,4
+; --- Zywy przelot mysliwca + pulsujace swiatla bazy Solis na ekranie Intro ---
+af_draw_intro_live_flyby:
+        movem.l d0-d6/a0-a1,-(sp)
+        move.l  vbl_tick(pc),d0
+        lsl.w   #1,d0
+        and.w   #511,d0
+        sub.w   #96,d0                  ; d0 = X przelatujacego mysliwca (-96..415)
+        cmp.w   #12,d0
+        blt.s   .fb_done
+        cmp.w   #276,d0
+        bgt.s   .fb_done
+        ifd FULL_RES
+        moveq   #68,d1
+        else
+        moveq   #34,d1
+        endif
+        ; Smuga dopalacza za mysliwcem
+        move.w  d0,d2
+        sub.w   #18,d2
+        moveq   #16,d3
+        moveq   #2,d4
+        move.b  #$FE,d5                 ; zloty ogien dopalacza
+        bsr.w   af_fill_rect
+        ; Kadlub eskortowego mysliwca XF-14 na niebie
+        move.w  d0,d2
+        moveq   #22,d3
+        moveq   #3,d4
+        move.b  #$FF,d5                 ; jasny kadlub
+        bsr.w   af_fill_rect
+        ; Skrzydlo + kabina
+        move.w  d0,d2
+        addq.w  #6,d2
+        subq.w  #3,d1
+        moveq   #8,d3
+        moveq   #3,d4
+        move.b  #$FD,d5                 ; cyjanowy kokpit
+        bsr.w   af_fill_rect
+.fb_done:
+        movem.l (sp)+,d0-d6/a0-a1
+        rts
+
 af_render_vector_screen:
         movem.l d0-d7/a0-a5,-(sp)
         cmp.w   #STATE_INTRO,af_state
@@ -66,36 +107,17 @@ af_render_vector_screen:
 .fb_vec_intro:
         jsr     af_draw_aw_intro
 .intro_txt:
-        cmp.l   #560,af_state_timer
-        blo.w   .vec_blit
-        jsr     af_draw_vanguard_crest
-        ; Napisy tytulowe
-        lea     str_game_title(pc),a0
-        moveq   #82,d0
-        ifd FULL_RES
-        moveq   #28,d1
-        else
-        moveq   #18,d1
-        endif
-        move.b  #$FF,d6
-        bsr.w   af_print_chunky_str
-
-        lea     str_intro_1(pc),a0
-        moveq   #55,d0
-        ifd FULL_RES
-        move.w  #198,d1
-        else
-        moveq   #92,d1
-        endif
-        move.b  #$FE,d6
-        bsr.w   af_print_chunky_str
-
+        bsr.w   af_draw_intro_live_flyby
+        ; Migajacy napis startowy od pierwszej sekundy
+        move.l  vbl_tick(pc),d0
+        btst    #4,d0
+        bne.w   .vec_blit
         lea     str_intro_2(pc),a0
         moveq   #76,d0
         ifd FULL_RES
-        move.w  #224,d1
+        move.w  #234,d1
         else
-        moveq   #108,d1
+        moveq   #114,d1
         endif
         move.b  #$FF,d6
         bsr.w   af_print_chunky_str
