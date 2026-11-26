@@ -44,7 +44,7 @@ start:
         move.l  #0,vbl_tick
         moveq   #3,d0
         jsr     copper_set_sky_theme
-        jsr     af_voxel_init_mission
+        nop
         lea     aga_pal256,a0
         move.l  #$00FF3040,252*4(a0)    ; $FC = czerwien bojowa (wrogowie / celownik)
         move.l  #$0020E8FF,253*4(a0)    ; $FD = blekit Eteru (skrzydla / rdzenie)
@@ -54,7 +54,7 @@ start:
         move.b  #1,pal_loaded
         jsr     hud_fps_init
         clr.b   info_visible
-        jsr     terrain_3d_init
+        nop
         bsr.w   af_init_campaign
         jsr     af_play_intro_pcm
 
