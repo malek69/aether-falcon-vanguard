@@ -3,6 +3,35 @@
 ; ============================================================================
         section code,code
         cnop    0,4
+; --- Sufit i zebra tunelu Cytadeli Lewiatana (Misja 03) ---
+af_draw_m3_tunnel_ceiling:
+        cmp.w   #2,af_mission
+        bne.w   .tc_ret
+        movem.l d0-d7/a0-a2,-(sp)
+        lea     chunky_buf,a0
+        move.l  vbl_tick(pc),d6
+        lsr.l   #1,d6
+        ifd FULL_RES
+        moveq   #0,d5
+.tc_y:  move.w  d5,d0
+        add.w   d6,d0
+        move.l  #$14141414,d4
+        and.w   #15,d0
+        cmp.w   #3,d0
+        bhi.s   .tc_w
+        move.l  #$fcfcfcfc,d4           ; ogniste zebra energetyczne sufitu tunelu
+.tc_w:  move.w  #79,d1
+        move.l  a0,a1
+.tc_x:  move.l  d4,(a1)+
+        dbf     d1,.tc_x
+        lea     320(a0),a0
+        addq.w  #1,d5
+        cmp.w   #56,d5
+        blo.s   .tc_y
+        endif
+        movem.l (sp)+,d0-d7/a0-a2
+.tc_ret:rts
+
 af_voxel_load_mission_map:
         movem.l d0-d2/a0-a2,-(sp)
         tst.b   af_has_disk_maps
@@ -209,19 +238,19 @@ render_3d_terrain_flyover:
         asr.l   #8,d4
         asr.l   #1,d4
         ifd FULL_RES
-        add.l   #134,d4
-        cmp.l   #134,d4
+        add.l   #142,d4
+        cmp.l   #48,d4
         bge.s   .sy_hi
-        move.w  #134,d4
+        move.w  #48,d4
 .sy_hi: cmp.l   #255,d4
         ble.s   .sy_ok
         move.w  #255,d4
         else
         asr.l   #1,d4
-        add.l   #67,d4
-        cmp.l   #67,d4
+        add.l   #71,d4
+        cmp.l   #24,d4
         bge.s   .sy_hi
-        moveq   #67,d4
+        moveq   #24,d4
 .sy_hi: cmp.l   #127,d4
         ble.s   .sy_ok
         moveq   #127,d4
