@@ -43,8 +43,8 @@ af_draw_nahkolor_polar_tunnel:
         lea     af_polar_tun_tex,a1     ; tekstura Cytadeli 64x64
         lea     chunky_buf,a2
         moveq   #2,d1
-        tst.b   joy_up
-        beq.s   .t_na
+        cmp.w   #-10,af_ship_dy
+        bge.s   .t_na
         moveq   #5,d1
 .t_na:  tst.b   joy_down
         beq.s   .t_nb
@@ -247,8 +247,8 @@ render_3d_terrain_flyover:
         move.w  d0,(a0)+
         dbf     d1,.yb_cl
         moveq   #2,d1                   ; bazowa predkosc przelotu
-        tst.b   joy_up
-        beq.s   .no_acc
+        cmp.w   #-10,af_ship_dy
+        bge.s   .no_acc
         moveq   #5,d1                   ; dopalacz / przyspieszenie do przodu!
 .no_acc:tst.b   joy_down
         beq.s   .no_brk
