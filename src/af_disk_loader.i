@@ -59,9 +59,9 @@ af_disk_load_all:
 
         lea     fn_title_chk(pc),a0
         lea     af_disk_title_chk,a1
-        move.l  #40960,d0
+        move.l  #81920,d0
         bsr.w   af_read_file_to_buf
-        cmp.l   #40960,d0
+        cmp.l   #81920,d0
         bne.w   .close_dos
         move.b  #1,af_has_disk_title
 
@@ -227,7 +227,7 @@ af_mission_table:
         section fastram_bss,bss
         even
 af_disk_title_pal:  ds.l    256
-af_disk_title_chk:  ds.b    40960
+af_disk_title_chk:  ds.b    81920
 
         section sfx_chip,data_c
         even

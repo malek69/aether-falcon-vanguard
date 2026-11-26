@@ -32,6 +32,57 @@ af_draw_m3_tunnel_ceiling:
         movem.l (sp)+,d0-d7/a0-a2
 .tc_ret:rts
 
+; ============================================================================
+; af_draw_nahkolor_polar_tunnel - Prawdziwy tunel polarny 3D (Nah-Kolor/Supersonic)
+; Mapuje (theta, 1/Z) z tunnel_lut.bin na teksture uv_tex_bank (Misja 03)
+; ============================================================================
+        cnop    0,4
+af_draw_nahkolor_polar_tunnel:
+        movem.l d0-d7/a0-a6,-(sp)
+        lea     tunnel_lut,a0
+        lea     uv_tex_bank+4096,a1     ; tekstura Cytadeli 64x64
+        lea     chunky_buf,a2
+        move.l  vbl_tick(pc),d6
+        move.w  d6,d5
+        lsl.w   #1,d6                   ; ruch w glab tunelu (V)
+        add.w   af_ship_dx,d5           ; obrot tunelu (U)
+        move.w  #40959,d7               ; 320x128 klatek LUT (dublowane w FULL_RES)
+        ifd FULL_RES
+        moveq   #127,d4
+.nt_y:  move.l  a2,a3
+        lea     320(a2),a4
+        move.w  #319,d3
+.nt_x:  move.w  (a0)+,d0                ; hi=u (kat), lo=v (glebokosc 1/Z)
+        move.w  d0,d1
+        lsr.w   #8,d1
+        add.w   d5,d1
+        and.w   #63,d1
+        add.w   d6,d0
+        and.w   #63,d0
+        lsl.w   #6,d0
+        or.w    d1,d0
+        move.b  (a1,d0.w),d2
+        move.b  d2,(a3)+
+        move.b  d2,(a4)+
+        dbf     d3,.nt_x
+        lea     640(a2),a2
+        dbf     d4,.nt_y
+        else
+.nt_lp: move.w  (a0)+,d0
+        move.w  d0,d1
+        lsr.w   #8,d1
+        add.w   d5,d1
+        and.w   #63,d1
+        add.w   d6,d0
+        and.w   #63,d0
+        lsl.w   #6,d0
+        or.w    d1,d0
+        move.b  (a1,d0.w),(a2)+
+        dbf     d7,.nt_lp
+        endif
+        movem.l (sp)+,d0-d7/a0-a6
+        rts
+
 af_voxel_load_mission_map:
         movem.l d0-d2/a0-a2,-(sp)
         tst.b   af_has_disk_maps
@@ -170,6 +221,8 @@ af_voxel_init_mission:
         movem.l (sp)+,d0-d7/a0-a3
         rts
 render_3d_terrain_flyover:
+        cmp.w   #2,af_mission
+        beq.w   af_draw_nahkolor_polar_tunnel
         movem.l d0-d7/a0-a6,-(sp)
         move.w  af_mission,d0
         cmp.w   vox_last_mission(pc),d0

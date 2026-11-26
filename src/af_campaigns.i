@@ -6,6 +6,8 @@
         cnop    0,4
 af_render_vector_screen:
         movem.l d0-d7/a0-a5,-(sp)
+        cmp.w   #STATE_INTRO,af_state
+        beq.s   .pal_cached
         cmp.b   #2,pal_loaded
         beq.s   .pal_cached
         move.b  #2,pal_loaded
@@ -38,8 +40,32 @@ af_render_vector_screen:
         cmp.w   #STATE_DEBRIEF,d0
         beq.w   .draw_debriefing
 
-        ; --- EKRAN 0: INTRO (Zywa scena wektorowa Another World + Tytul) ---
+        ; --- EKRAN 0: INTRO (Pelnoekranowy obraz 256 kol. AGA + przelot 3D) ---
+        tst.b   af_has_disk_title
+        beq.s   .fb_vec_intro
+        cmp.b   #3,pal_loaded
+        beq.s   .tpal_ok
+        move.b  #3,pal_loaded
+        lea     af_disk_title_pal,a0
+        jsr     load_aga_256_palette
+.tpal_ok:lea     af_disk_title_chk,a0
+        lea     chunky_buf,a1
+        ifd FULL_RES
+        move.w  #20479,d2
+.tcp_f: move.l  (a0)+,(a1)+
+        dbf     d2,.tcp_f
+        else
+        moveq   #127,d2
+.tcp_y: moveq   #79,d3
+.tcp_x: move.l  (a0)+,(a1)+
+        dbf     d3,.tcp_x
+        lea     320(a0),a0
+        dbf     d2,.tcp_y
+        endif
+        bra.s   .intro_txt
+.fb_vec_intro:
         jsr     af_draw_aw_intro
+.intro_txt:
         cmp.l   #560,af_state_timer
         blo.w   .vec_blit
         jsr     af_draw_vanguard_crest
