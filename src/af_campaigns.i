@@ -117,7 +117,7 @@ af_print_chunky_str:
         move.w  d4,d1
         move.w  d5,d2
         move.b  d6,d3
-        jsr     draw_char_5x7
+        jsr     hud_chars
         addq.w  #6,d4
         bra.s   .ps_lp
 .ps_done:
