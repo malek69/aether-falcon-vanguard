@@ -26,13 +26,13 @@ af_draw_intro_live_flyby:
         moveq   #16,d3
         moveq   #2,d4
         move.b  #$FE,d5                 ; zloty ogien dopalacza
-        bsr.w   af_fill_rect
+        bsr.w   af_intro_rect
         ; Kadlub eskortowego mysliwca XF-14 na niebie
         move.w  d0,d2
         moveq   #22,d3
         moveq   #3,d4
         move.b  #$FF,d5                 ; jasny kadlub
-        bsr.w   af_fill_rect
+        bsr.w   af_intro_rect
         ; Skrzydlo + kabina
         move.w  d0,d2
         addq.w  #6,d2
@@ -40,9 +40,27 @@ af_draw_intro_live_flyby:
         moveq   #8,d3
         moveq   #3,d4
         move.b  #$FD,d5                 ; cyjanowy kokpit
-        bsr.w   af_fill_rect
+        bsr.w   af_intro_rect
 .fb_done:
         movem.l (sp)+,d0-d6/a0-a1
+        rts
+
+af_intro_rect:
+        movem.l d0-d5/a0-a1,-(sp)
+        mulu.w  #320,d1
+        ext.l   d2
+        add.l   d2,d1
+        lea     chunky_buf,a0
+        add.l   d1,a0
+        subq.w  #1,d4
+.ir_y:  move.l  a0,a1
+        move.w  d3,d0
+        subq.w  #1,d0
+.ir_x:  move.b  d5,(a1)+
+        dbf     d0,.ir_x
+        lea     320(a0),a0
+        dbf     d4,.ir_y
+        movem.l (sp)+,d0-d5/a0-a1
         rts
 
 af_render_vector_screen:

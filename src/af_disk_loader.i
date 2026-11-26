@@ -90,6 +90,15 @@ af_disk_load_all:
         bne.w   .close_dos
         move.b  #1,af_has_disk_maps
 
+        lea     fn_tun_lut(pc),a0
+        lea     af_polar_tun_lut,a1
+        move.l  #81920,d0
+        bsr.w   af_read_file_to_buf
+        lea     fn_tun_tex(pc),a0
+        lea     af_polar_tun_tex,a1
+        move.l  #4096,d0
+        bsr.w   af_read_file_to_buf
+
 .close_dos:
         move.l  4.w,a6
         move.l  af_dos_base,a1
@@ -208,6 +217,8 @@ fn_title_chk:   dc.b    "data/title.chk",0
 fn_map_m1:      dc.b    "data/map_m1.bin",0
 fn_map_m2:      dc.b    "data/map_m2.bin",0
 fn_map_m3:      dc.b    "data/map_m3.bin",0
+fn_tun_lut:     dc.b    "data/polar_tunnel.lut",0
+fn_tun_tex:     dc.b    "data/tunnel_tex.bin",0
         even
 
 af_dos_base:        dc.l    0
@@ -228,6 +239,8 @@ af_mission_table:
         even
 af_disk_title_pal:  ds.l    256
 af_disk_title_chk:  ds.b    81920
+af_polar_tun_lut:   ds.b    81920
+af_polar_tun_tex:   ds.b    4096
 
         section sfx_chip,data_c
         even

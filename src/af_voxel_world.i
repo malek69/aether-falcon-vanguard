@@ -39,12 +39,19 @@ af_draw_m3_tunnel_ceiling:
         cnop    0,4
 af_draw_nahkolor_polar_tunnel:
         movem.l d0-d7/a0-a6,-(sp)
-        lea     tunnel_lut,a0
-        lea     uv_tex_bank+4096,a1     ; tekstura Cytadeli 64x64
+        lea     af_polar_tun_lut,a0
+        lea     af_polar_tun_tex,a1     ; tekstura Cytadeli 64x64
         lea     chunky_buf,a2
-        move.l  vbl_tick(pc),d6
-        move.w  d6,d5
-        lsl.w   #1,d6                   ; ruch w glab tunelu (V)
+        moveq   #2,d1
+        tst.b   joy_up
+        beq.s   .t_na
+        moveq   #5,d1
+.t_na:  tst.b   joy_down
+        beq.s   .t_nb
+        moveq   #1,d1
+.t_nb:  add.w   d1,vox_z_accum
+        move.w  vox_z_accum(pc),d6
+        move.l  vbl_tick(pc),d5
         add.w   af_ship_dx,d5           ; obrot tunelu (U)
         move.w  #40959,d7               ; 320x128 klatek LUT (dublowane w FULL_RES)
         ifd FULL_RES
@@ -239,11 +246,19 @@ render_3d_terrain_flyover:
 .yb_cl: move.w  d0,(a0)+
         move.w  d0,(a0)+
         dbf     d1,.yb_cl
-        move.l  vbl_tick(pc),d0
-        lsr.l   #1,d0
+        moveq   #2,d1                   ; bazowa predkosc przelotu
+        tst.b   joy_up
+        beq.s   .no_acc
+        moveq   #5,d1                   ; dopalacz / przyspieszenie do przodu!
+.no_acc:tst.b   joy_down
+        beq.s   .no_brk
+        moveq   #1,d1                   ; hamulec aerodynamiczny!
+.no_brk:add.w   d1,vox_z_accum
+        move.w  vox_z_accum(pc),d0
+        lsr.w   #2,d0
         move.w  d0,vox_cam_z
         move.w  af_ship_dx,d0
-        asr.w   #3,d0
+        asr.w   #4,d0
         add.w   #64,d0
         move.w  d0,vox_cam_x
         lea     af_vox_hmap,a3
@@ -284,7 +299,10 @@ render_3d_terrain_flyover:
         add.w   vox_row_off(pc),d2
         moveq   #0,d3
         move.b  (a3,d2.w),d3
-        move.w  #44,d4
+        move.w  af_ship_dy,d4
+        asr.w   #3,d4
+        neg.w   d4
+        add.w   #46,d4
         sub.w   d3,d4
         ext.l   d4
         muls.l  d6,d4
@@ -292,18 +310,18 @@ render_3d_terrain_flyover:
         asr.l   #1,d4
         ifd FULL_RES
         add.l   #142,d4
-        cmp.l   #48,d4
+        cmp.l   #104,d4
         bge.s   .sy_hi
-        move.w  #48,d4
+        move.w  #104,d4
 .sy_hi: cmp.l   #255,d4
         ble.s   .sy_ok
         move.w  #255,d4
         else
         asr.l   #1,d4
         add.l   #71,d4
-        cmp.l   #24,d4
+        cmp.l   #52,d4
         bge.s   .sy_hi
-        moveq   #24,d4
+        moveq   #52,d4
 .sy_hi: cmp.l   #127,d4
         ble.s   .sy_ok
         moveq   #127,d4
@@ -435,6 +453,7 @@ render_3d_terrain_flyover:
 vox_last_mission: dc.w -1
 vox_cam_x:      dc.w 32
 vox_cam_z:      dc.w 0
+vox_z_accum:    dc.w 0
 vox_row_off:    dc.w 0
 vox_dx_step:    dc.l 0
 vox_ybuf:       ds.w 160
