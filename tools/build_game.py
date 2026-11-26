@@ -9,7 +9,7 @@ AURA_DEMO = os.path.join(ROOT, "refs", "aura3d", "demo_v1")
 
 PROFILES = {
     "standard": ("-m68020", list(), ["-kick1hunks"], "_020"),
-    "thea1200": ("-m68020", ["-DFULL_RES", "-DWIDESCREEN_16_9"], list(), "_THEA1200"),
+    "thea1200": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9"], list(), "_THEA1200"),
     "060": ("-m68060", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DM68060"], list(), "_060"),
 }
 

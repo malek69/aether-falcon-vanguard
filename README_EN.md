@@ -3,7 +3,7 @@
 <p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.1.3.1</h1>
+  <h1>AETHER FALCON: VANGUARD v0.2.0.0</h1>
   <p><strong>Bare-metal 3D combat flight simulator for Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Download .LHA</a> &bull;
@@ -14,23 +14,29 @@
 
 ---
 
-## Downloads (v0.1.3.1 — 2 Hardware Profiles)
+## Gallery v0.2.0.0 — Dedicated 68040 THEA1200 Engine (Open-World Skeleton)
+
+| ![1. Title Menu: 3 Roles & Load Colony](docs/screenshots/v020_01_menu.png) | ![2. 360° Voxel Space 3D Flight: Ship, Radar & FPS](docs/screenshots/v020_02_flight.png) |
+|:---:|:---:|
+| **1. Title Menu: 3 Roles (`1–3`) & Load Colony (`4`)** | **2. 360° Voxel Space 3D Flight: 3D Ship, 256×256 Radar & HUD** |
+
+## Downloads (v0.2.0.0 — 2 Hardware Profiles)
 
 | Profile (`--profile`) | Target Platform | Download Packages |
 | :--- | :--- | :--- |
 | **1. Standard `020` (`--profile standard`)** | Stock **Amiga 1200 (`68EC020`)** + Fast RAM — **`320×128`** mode | [.LHA](docs/) · [.ZIP (FS-UAE/WinUAE)](docs/) |
 | **2. THEA1200 (`--profile thea1200`)** | **THEA1200**, **Amiberry (PC)**, **FS-UAE** — full PAL **`320×256`** **16:9 Widescreen** (`-DFULL_RES -DWIDESCREEN_16_9`) | [.LHA](docs/) · [.ZIP (FS-UAE/WinUAE)](docs/) |
-| **3. Turbo 060 (`--profile 060`)** | **Amiga 1200 + Blizzard/Apollo 1260** (`MC68060`) — Full PAL **320×256** **16:9** (`-m68060 -DM68060`) | [.LHA](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/AetherFalcon_AGA_060.lha) · [.ZIP](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/AetherFalcon_AGA_060_FSUAE.zip) |
+| **3. Turbo 060 (`--profile 060`)** | **Amiga 1200 + Blizzard/Apollo 1260** (`MC68060`) — Full PAL **320×256** **16:9** (`-m68060 -DM68060`) | [.LHA](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/AetherFalcon_AGA_060.lha) · [.ZIP](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/AetherFalcon_AGA_060_FSUAE.zip) |
 
 ---
 
-## Gameplay & 3D Engine Video (v0.1.3.1)
+## Gameplay & 3D Engine Video (v0.2.0.0)
 
-[![▶ Click to watch / download 3D Gameplay & Engine Video (H.264 MP4, 1080p)](docs/screenshots/v010_02_hud_score_clouds.png)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4)
+[![▶ Click to watch / download 3D Gameplay & Engine Video (H.264 MP4, 1080p)](docs/screenshots/v010_02_hud_score_clouds.png)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/demo_silnik.mp4)
 
-**[▶ Click to watch / download 3D Gameplay & Engine Video (H.264 MP4, 1080p)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4)**
+**[▶ Click to watch / download 3D Gameplay & Engine Video (H.264 MP4, 1080p)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/demo_silnik.mp4)**
 
-## Rotoscoped *Eon* (TBL) Vector Engine Cinematics Gallery (v0.1.3.1)
+## Rotoscoped *Eon* (TBL) Vector Engine Cinematics Gallery (v0.2.0.0)
 
 | ![1. Act I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Act II: Solis Airbase (Eon Style)](docs/screenshots/v013_eon_02.png) | ![3. Act III: XF-14 Cockpit](docs/screenshots/v013_eon_03.png) |
 |:---:|:---:|:---:|
@@ -39,13 +45,13 @@
 |:---:|:---:|:---:|
 | **4. Act IV: 3D XF-14 Launch** | **5. Briefing: Squadron Commander** | **6. Debriefing: 3/4 Pilot Portrait** |
 
-## Gallery v0.1.3.1 — Tactical Briefing Board, 3D Clouds & Live SCORE HUD
+## Gallery v0.2.0.0 — Tactical Briefing Board, 3D Clouds & Live SCORE HUD
 
 | ![1. Tactical Mission Briefing Board](docs/screenshots/v010_01_briefing_board.png) | ![2. 3D Flight: Volumetric Clouds, Voxels & Live SCORE](docs/screenshots/v010_02_hud_score_clouds.png) |
 |:---:|:---:|
 | **1. Tactical Mission Briefing Board** | **2. Volumetric 3D Clouds, Voxels & SCORE: 002350** |
 
-## 3D Voxel Terrain Gallery (v0.1.3.1 — Amiga 1200 AGA / THEA1200)
+## 3D Voxel Terrain Gallery (v0.2.0.0 — Amiga 1200 AGA / THEA1200)
 
 | ![1. Voxel Ocean & Islands (Mission 01)](docs/screenshots/v009_01_voxel_archipelago.png) | ![2. 360° Flight & 3D Lock-On](docs/screenshots/v009_02_voxel_canyon.png) | ![3. Voxel Mountains, Land & 3D Meshes](docs/screenshots/v009_03_voxel_citadel.png) |
 |:---:|:---:|:---:|

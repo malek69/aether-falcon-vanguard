@@ -6,6 +6,18 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.2.0.0] - 2026-11-26
+
+| <img src="docs/screenshots/v020_01_menu.png" width="260"> | <img src="docs/screenshots/v020_02_flight.png" width="260"> |
+|:---:|:---:|
+| **1. Title Menu: Role & Save Selection** | **2. 360° Voxel Space 3D Flight & Radar** |
+
+- **Dedicated 68040 Engine for THEA1200 (`src/aether_falcon.s`, `tools/build_game.py`):** switched target build to `-m68040` in full `320×256 AGA` (256 colors) and synced all new engine modules into `refs/aura3d/engine/`.
+- **360° Voxel Space 3D Terrain with Depth Buffer (`vx_ybuf`) & Distance Fog (`Z-Fog`):** full 360° flight over exoplanet mountain ranges and lakes (`data/exo_voxel.bin`, `data/exo_pal256.bin`).
+- **Gameplay Skeleton, Role Menu & Disk Save (`exo_menu.i`, `exo_world_objs.i`, `exo_save_load.i`, `exo_victory.i`):** New Campaign selection (`1: PIONEER`, `2: GUARDIAN`, `3: ENGINEER`), Load Saved Colony (`4: LOAD SAVED COLONY`), auto-save & manual save (`S`) to `data/colony.sav`, `256×256` radar, live `FPS` counter, clean `.MOD` soundtrack (`data/exo_theme.mod`), and Paula DMA SFX (`exo_sound.i`).
+
+---
+
 ## [v0.1.3] - 2026-11-25
 
 | <img src="docs/screenshots/v013_eon_01.png" width="220"> | <img src="docs/screenshots/v013_eon_02.png" width="220"> | <img src="docs/screenshots/v013_eon_03.png" width="220"> |

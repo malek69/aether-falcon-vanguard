@@ -6,6 +6,18 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.2.0.0] - 2026-11-26
+
+| <img src="docs/screenshots/v020_01_menu.png" width="260"> | <img src="docs/screenshots/v020_02_flight.png" width="260"> |
+|:---:|:---:|
+| **1. Menu startowe i wybór roli / zapisu** | **2. Lot 360° Voxel Space 3D i radar** |
+
+- **Dedykowany silnik 68040 pod THEA1200 (`src/aether_falcon.s`, `tools/build_game.py`):** przełączenie kompilacji na `-m68040` w pełnej rozdzielczości `320×256 AGA` (256 kolorów) oraz synchronizacja nowych modułów z `refs/aura3d/engine/`.
+- **Silnik terenu Voxel Space 3D 360° z buforem głębokości (`vx_ybuf`) i mgłą odległości (`Z-Fog`):** swobodny obrót 360° nad pasmami górskimi i jeziorami egzoplanety (`data/exo_voxel.bin`, `data/exo_pal256.bin`).
+- **Szkielet rozgrywki, menu ról i zapis na dysk (`exo_menu.i`, `exo_world_objs.i`, `exo_save_load.i`, `exo_victory.i`):** wybór Nowej Kampanii (`1: PIONEER`, `2: GUARDIAN`, `3: ENGINEER`), wczytanie zapisanej kolonii (`4: LOAD SAVED COLONY`), auto-zapis i ręczny zapis (`S`) do `data/colony.sav`, radar `256×256`, licznik `FPS` oraz czysta ścieżka `.MOD` (`data/exo_theme.mod`) i efekty SFX (`exo_sound.i`).
+
+---
+
 ## [v0.1.3] - 2026-11-25
 
 | <img src="docs/screenshots/v013_eon_01.png" width="220"> | <img src="docs/screenshots/v013_eon_02.png" width="220"> | <img src="docs/screenshots/v013_eon_03.png" width="220"> |

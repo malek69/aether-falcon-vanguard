@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD v0.1.3.1</h1>
+  <h1>AETHER FALCON: VANGUARD v0.2.0.0</h1>
   <p><strong>Bare-metalowy symulator walki powietrznej 3D dla Commodore Amiga 1200 (M68020+ / AGA / 256 Colors) &amp; THEA1200</strong></p>
   <p>
     <a href="docs/">Pobierz .LHA</a> &bull;
@@ -14,23 +14,29 @@
 
 ---
 
-## Pobieranie (v0.1.3.1 — 3 Profile Sprzętowe)
+## Galeria v0.2.0.0 — Dedykowany Silnik 68040 THEA1200 (Szkielet Otwartego Świata)
+
+| ![1. Menu startowe: Wybór 3 ról i wczytanie kolonii](docs/screenshots/v020_01_menu.png) | ![2. Lot 360° Voxel Space 3D: Statek, radar i FPS](docs/screenshots/v020_02_flight.png) |
+|:---:|:---:|
+| **1. Menu startowe: Wybór 3 ról (`1–3`) i wczytanie zapisu (`4`)** | **2. Lot 360° Voxel Space 3D: Statek 3D, radar 256×256 i HUD** |
+
+## Pobieranie (v0.2.0.0 — 3 Profile Sprzętowe)
 
 | Obóz / Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
 | **1. Standard `020` (`--profile standard`)** | Bazowa **Amiga 1200 (`68EC020`)** + Fast RAM — tryb **`320×128`** | [.LHA](docs/) · [.ZIP (FS-UAE/WinUAE)](docs/) |
 | **2. THEA1200 (`--profile thea1200`)** | Konsola **THEA1200**, **Amiberry (PC)**, **FS-UAE** — pełny PAL **`320×256`** **16:9 Widescreen** (`-DFULL_RES -DWIDESCREEN_16_9`) | [.LHA](docs/) · [.ZIP (FS-UAE/WinUAE)](docs/) |
-| **3. Turbo 060 (`--profile 060`)** | **Amiga 1200 + Blizzard/Apollo 1260** (`MC68060`) — pełny PAL **320×256** **16:9** (`-m68060 -DM68060`) | [.LHA](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/AetherFalcon_AGA_060.lha) · [.ZIP](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/AetherFalcon_AGA_060_FSUAE.zip) |
+| **3. Turbo 060 (`--profile 060`)** | **Amiga 1200 + Blizzard/Apollo 1260** (`MC68060`) — pełny PAL **320×256** **16:9** (`-m68060 -DM68060`) | [.LHA](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/AetherFalcon_AGA_060.lha) · [.ZIP](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/AetherFalcon_AGA_060_FSUAE.zip) |
 
 ---
 
-## Wideo z Rozgrywki (v0.1.3.1 — Gameplay & Silnik 3D)
+## Wideo z Rozgrywki (v0.2.0.0 — Gameplay & Silnik 3D)
 
-[![▶ Kliknij, aby odtworzyć / pobrać wideo z rozgrywki 3D (H.264 MP4, 1080p)](docs/screenshots/v010_02_hud_score_clouds.png)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4)
+[![▶ Kliknij, aby odtworzyć / pobrać wideo z rozgrywki 3D (H.264 MP4, 1080p)](docs/screenshots/v010_02_hud_score_clouds.png)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/demo_silnik.mp4)
 
-**[▶ Kliknij, aby odtworzyć / pobrać wideo z rozgrywki 3D (H.264 MP4, 1080p)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.1.3.1/demo_silnik.mp4)**
+**[▶ Kliknij, aby odtworzyć / pobrać wideo z rozgrywki 3D (H.264 MP4, 1080p)](https://github.com/malek69/aether-falcon-vanguard/releases/download/v0.2.0.0/demo_silnik.mp4)**
 
-## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.1.3.1)
+## Galeria Animacji Rotoskopowych *Eon* (TBL) — Silnik Wektorowy (v0.2.0.0)
 
 | ![1. Akt I: Salute to the Sky](docs/screenshots/v013_eon_01.png) | ![2. Akt II: Baza Solis (Styl Eon)](docs/screenshots/v013_eon_02.png) | ![3. Akt III: Kokpit XF-14](docs/screenshots/v013_eon_03.png) |
 |:---:|:---:|:---:|
@@ -39,7 +45,7 @@
 |:---:|:---:|:---:|
 | **4. Akt IV: Start 3D XF-14** | **5. Briefing: Dowódca Eskadry** | **6. Debriefing: Portret Pilota 3/4** |
 
-## Galeria v0.1.3.1 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
+## Galeria v0.2.0.0 — Tablica Odpraw, Chmury 3D i Licznik SCORE w HUD
 
 | ![1. Tablica Odpraw Taktycznych (Briefing)](docs/screenshots/v010_01_briefing_board.png) | ![2. Lot 3D: Chmury 3D, Woksele i SCORE w HUD](docs/screenshots/v010_02_hud_score_clouds.png) |
 |:---:|:---:|
