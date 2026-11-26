@@ -99,6 +99,15 @@ af_disk_load_all:
         move.l  #4096,d0
         bsr.w   af_read_file_to_buf
 
+        lea     fn_scn_intro(pc),a0
+        lea     af_scene_intro_buf,a1
+        move.l  #16384,d0
+        bsr.w   af_read_file_to_buf
+        tst.l   d0
+        ble.s   .no_scn
+        move.b  #1,af_has_scene_intro
+.no_scn:
+
 .close_dos:
         move.l  4.w,a6
         move.l  af_dos_base,a1
@@ -219,6 +228,7 @@ fn_map_m2:      dc.b    "data/map_m2.bin",0
 fn_map_m3:      dc.b    "data/map_m3.bin",0
 fn_tun_lut:     dc.b    "data/polar_tunnel.lut",0
 fn_tun_tex:     dc.b    "data/tunnel_tex.bin",0
+fn_scn_intro:   dc.b    "data/scene_intro.bin",0
         even
 
 af_dos_base:        dc.l    0
@@ -226,6 +236,7 @@ af_hiscore:         dc.l    0
 af_intro_pcm_len:   dc.l    0
 af_has_disk_title:  dc.b    0
 af_has_disk_maps:   dc.b    0
+af_has_scene_intro: dc.b    0
         even
 
 ; Domyslna tablica 3 misji (nadpisywana z data/missions.dat jesli plik istnieje)
@@ -243,6 +254,8 @@ af_disk_title_chk:  ds.b    81920
         even
 af_polar_tun_lut:   ds.b    81920
 af_polar_tun_tex:   ds.b    4096
+        even
+af_scene_intro_buf: ds.b    16384
 
         section sfx_chip,data_c
         even

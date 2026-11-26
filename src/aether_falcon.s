@@ -83,6 +83,7 @@ mainloop:
 
         ; --- TRYB WEKTOROWY: INTRO / BRIEFING / DEBRIEFING ---
         jsr     af_render_vector_screen
+        jsr     af_update_reactive_world
         jsr     hud_fps_tick
 
         ; Przejscie dalej: Joy2 Fire, RMB, Spacja lub Enter
@@ -144,6 +145,7 @@ mainloop:
         bsr.w   af_update_flight
         bsr.w   af_update_entities
         jsr     af_render_gameplay_3d
+        jsr     af_update_reactive_world
         jsr     hud_fps_tick
 
         move.l  af_pos_z,d0
@@ -412,6 +414,8 @@ af_update_entities:
         section code,code
         include "af_disk_loader.i"
         include "af_audio_sfx.i"
+        include "af_cutscene_player.i"
+        include "af_reactive_world.i"
         include "af_campaigns.i"
         include "af_fighter_mesh.i"
         include "af_enemy_meshes.i"

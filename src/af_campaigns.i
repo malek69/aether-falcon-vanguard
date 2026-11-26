@@ -128,6 +128,11 @@ af_render_vector_screen:
         endif
         bra.s   .intro_txt
 .fb_vec_intro:
+        tst.b   af_has_scene_intro
+        beq.s   .fb_old_aw
+        jsr     af_play_scripted_intro
+        bra.s   .intro_txt
+.fb_old_aw:
         jsr     af_draw_aw_intro
 .intro_txt:
         bsr.w   af_draw_intro_live_flyby
@@ -147,6 +152,24 @@ af_render_vector_screen:
         bra.w   .vec_blit
 
 .draw_briefing:
+        ; Reaktywny raport dowodztwa w zaleznosci od dokonan pilota
+        lea     str_mood_norm(pc),a0
+        cmp.w   #1,af_world_mood
+        bne.s   .mb_c2
+        lea     str_mood_ace(pc),a0
+        bra.s   .mb_pr
+.mb_c2: cmp.w   #2,af_world_mood
+        bne.s   .mb_pr
+        lea     str_mood_crit(pc),a0
+.mb_pr: moveq   #16,d0
+        ifd FULL_RES
+        move.w  #176,d1
+        else
+        moveq   #84,d1
+        endif
+        move.b  #$FD,d6
+        bsr.w   af_print_chunky_str
+
         ; --- EKRAN 1: BRIEFING (Tablica Odpraw Taktycznych z Fabula Kampanii) ---
         jsr     af_draw_aw_briefing
 
@@ -517,4 +540,9 @@ str_m3_l2:      dc.b "FLY OVER VOLCANIC CITADEL TOWERS",0
 str_m3_l3:      dc.b "3D FLYING FORTRESS IN TUNNEL CENTER",0
 str_m3_l4:      dc.b "POWERED BY 4 ORBITING REACTOR CORES",0
 str_m3_l5:      dc.b "DESTROY ALL 4 REACTORS (2 HITS EACH)!",0
+        even
+
+str_mood_norm:  dc.b    "STATUS: FLEET PERIMETER HOLDING",0
+str_mood_ace:   dc.b    "ACE REPORT: SOLIS MORALE HIGH!",0
+str_mood_crit:  dc.b    "ALERT: HEAVY LOSSES - HOLD LINE!",0
         even

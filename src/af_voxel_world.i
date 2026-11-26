@@ -319,6 +319,18 @@ render_3d_terrain_flyover:
         neg.w   d4
         add.w   #46,d4
         sub.w   d3,d4
+        ; Przechylenie horyzontu 3D przy skrecie skrzydel (After Burner Roll)
+        move.w  d5,d1
+        ifd FULL_RES
+        sub.w   #80,d1
+        else
+        sub.w   #20,d1
+        lsl.w   #2,d1
+        endif
+        muls.w  af_ship_dx,d1
+        asr.l   #8,d1
+        asr.l   #2,d1
+        add.w   d1,d4
         ext.l   d4
         muls.l  d6,d4
         asr.l   #8,d4
