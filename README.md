@@ -34,3 +34,27 @@
 - **Menu startowe i wybór kampanii (`src/exo_menu.i`):** Nowa Kampania z wyborem roli (**`1: PIONEER`**, **`2: GUARDIAN`**, **`3: ENGINEER`**) lub wczytanie zapisanej kolonii (**`4: LOAD SAVED COLONY`**).
 - **Trwały zapis i odczyt na dysk (`src/exo_save_load.i`):** zapis stanu świata do `data/colony.sav` (auto-save przy aktywacji bazy oraz ręcznie pod klawiszem `S`).
 - **HUD, radar i audio (`src/exo_ship_hud.i`, `src/exo_world_objs.i`, `src/exo_sound.i`, `src/exo_victory.i`):** minimapa `256×256`, pasek postępu, licznik `FPS`, ścieżka `.MOD` (`data/exo_theme.mod`) oraz efekty SFX na układzie Paula.
+
+---
+
+## Architektura Silników i Moduły (`MC68040` / AGA)
+
+Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchronizowane w `refs/aura3d/engine/`:
+
+| Moduł / Silnik | Pliki źródłowe | Rola w silniku |
+| :--- | :--- | :--- |
+| **Silnik Terenu Voxel Space 3D** | `src/aether_falcon.s`, `data/exo_voxel.bin` | Rzutowanie 360° w pełnym `320×256 AGA`, mgła odległości (`Z-Fog`) oraz 320-kolumnowy bufor głębokości (`vx_ybuf`). |
+| **Silnik 3D Gouraud / EnvMap & Wektorowy** | `refs/aura3d/engine/aura3d_v2.i`, `vec3d_engine.i`, `src/exo_ship_hud.i` | Renderowanie bryły statku z przechyłem skrzydeł, cieniowaniem metalicznym i testem głębokości `zbuf_3d`. |
+| **Potok Sprzętowy AGA & Audio Paula** | `gfx_engine.i`, `c2p_chunky.i`, `pt_player.i`, `src/exo_sound.i` | Przejęcie systemu AmigaOS, 8 bitplanów AGA (`256` kolorów), konwersja `c2p`, odtwarzacz `.MOD` oraz kanał SFX DMA. |
+| **Rozgrywka, Menu Ról & Zapis na Dysk** | `src/exo_menu.i`, `exo_world_objs.i`, `exo_save_load.i`, `exo_victory.i` | Wybór specjalizacji (`1–3`), radar `256×256`, aktywacja baz wiązką oraz zapis/odczyt `data/colony.sav` przez `dos.library`. |
+
+---
+
+## Narzędzia (`tools/`) i Budowanie Paczki THEA1200
+
+- **`tools/build_game.py --profile thea1200`:** automatycznie kompiluje kod główny oraz slave WHDLoad (`vasmm68k_mot -m68040 -DFULL_RES -DWIDESCREEN_16_9`), pakuje archiwum **WHDLoad (`.lha`)** oraz gotowy dysk pod **FS-UAE (`.zip`)**.
+- **Struktura katalogów:** `src/` (kod gry), `refs/aura3d/engine/` (rdzeń silników), `data/` (paleta AGA, mapa wysokości, `.MOD`, zapis `colony.sav`), `tools/` (skrypty budujące), `docs/archive/` (archiwalne wersje `v0.1.x`).
+
+### Sterowanie (`THEA1200` / Klawiatura / Joystick)
+- **Menu startowe:** `1` (`PIONEER`), `2` (`GUARDIAN`), `3` (`ENGINEER`) — Nowa Kampania; `4` — Wczytaj zapisaną kolonię (`data/colony.sav`).
+- **Lot 360°:** `Strzałki` / `Joystick` (obrót 360° i wysokość), `Spacja` / `Fire` (aktywacja bazy wiązką / dopalacz), `S` (zapis stanu gry na dysk), `ESC` / `LPM` (wyjście do systemu).

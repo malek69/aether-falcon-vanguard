@@ -34,3 +34,27 @@
 - **Title Menu & Campaign Flow (`src/exo_menu.i`):** New Campaign with 3 roles (**`1: PIONEER`**, **`2: GUARDIAN`**, **`3: ENGINEER`**) or Load Saved Colony (**`4: LOAD SAVED COLONY`**).
 - **Persistent Disk Save/Load (`src/exo_save_load.i`):** saves world state to `data/colony.sav` (auto-save on base activation + manual save via `S`).
 - **HUD, Radar & Audio (`src/exo_ship_hud.i`, `src/exo_world_objs.i`, `src/exo_sound.i`, `src/exo_victory.i`):** `256×256` minimap, progress bar, live `FPS` counter, clean `.MOD` soundtrack (`data/exo_theme.mod`), and Paula DMA SFX.
+
+---
+
+## Engine Architecture & Modules (`MC68040` / AGA)
+
+The project combines two actively extended **MC68040** assembly engines synced inside `refs/aura3d/engine/`:
+
+| Engine / Module | Source Files | Responsibility |
+| :--- | :--- | :--- |
+| **Voxel Space 3D Terrain Engine** | `src/aether_falcon.s`, `data/exo_voxel.bin` | Full `320×256 AGA` 360° raycasting, distance fog (`Z-Fog`), and 320-column terrain depth buffer (`vx_ybuf`). |
+| **Gouraud / EnvMap & Vector 3D Engine** | `refs/aura3d/engine/aura3d_v2.i`, `vec3d_engine.i`, `src/exo_ship_hud.i` | Renders the player ship with wing banking, metallic shading, and `zbuf_3d` depth testing. |
+| **AGA Hardware & Paula Audio Pipeline** | `gfx_engine.i`, `c2p_chunky.i`, `pt_player.i`, `src/exo_sound.i` | Bare-metal AmigaOS takeover, 8 AGA bitplanes (`256` colors), `c2p`, `.MOD` replayer, and Paula DMA SFX. |
+| **Gameplay, Role Menu & Disk Save** | `src/exo_menu.i`, `exo_world_objs.i`, `exo_save_load.i`, `exo_victory.i` | Role selection (`1–3`), `256×256` radar, energy beam base activation, and `data/colony.sav` persistence via `dos.library`. |
+
+---
+
+## Build Tools (`tools/`) & THEA1200 Packaging
+
+- **`tools/build_game.py --profile thea1200`:** compiles the game executable and WHDLoad slave (`vasmm68k_mot -m68040 -DFULL_RES -DWIDESCREEN_16_9`), packaging both **WHDLoad (`.lha`)** and **FS-UAE (`.zip`)** releases.
+- **Directory Layout:** `src/` (game modules), `refs/aura3d/engine/` (core engines), `data/` (AGA palette, heightmap, `.MOD`, `colony.sav`), `tools/` (build scripts), `docs/archive/` (archived `v0.1.x` builds).
+
+### Controls (`THEA1200` / Keyboard / Joystick)
+- **Title Menu:** `1` (`PIONEER`), `2` (`GUARDIAN`), `3` (`ENGINEER`) — New Campaign; `4` — Load Saved Colony (`data/colony.sav`).
+- **360° Flight:** `Arrows` / `Joystick` (360° yaw & altitude), `Space` / `Fire` (activate base beam / boost), `S` (save colony to disk), `ESC` / `LMB` (exit to OS).
