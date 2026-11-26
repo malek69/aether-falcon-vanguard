@@ -243,8 +243,6 @@ af_voxel_init_mission:
         movem.l (sp)+,d0-d7/a0-a3
         rts
 render_3d_terrain_flyover:
-        cmp.w   #2,af_mission
-        beq.w   af_draw_nahkolor_polar_tunnel
         movem.l d0-d7/a0-a6,-(sp)
         move.w  af_mission,d0
         cmp.w   vox_last_mission(pc),d0

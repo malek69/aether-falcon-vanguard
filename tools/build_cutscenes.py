@@ -114,5 +114,37 @@ def build_intro_scene():
     ]
     pack_scene("data/scene_intro.bin", PAL_EON_SUNSET, acts)
 
+def build_reactive_cutscenes():
+    # Scena Zwyciestwa Asa (odtwarzana gdy pilot osiaga wysoka skutecznosc / pokonuje Lewiatana)
+    vic_polys = [
+        (241, [(0,165),(65,112),(145,148),(220,108),(319,135),(319,175),(0,175)],
+              [(0,175),(65,122),(145,158),(220,118),(319,145),(319,185),(0,185)]),
+        (254, [(40,150),(155,115),(150,126)],
+              [(110,110),(255,68),(248,82)]),
+        (251, [(145,112),(225,94),(268,108),(205,126)],
+              [(225,66),(298,48),(318,62),(268,80)]),
+        (247, [(145,112),(225,94),(268,108),(258,111),(224,99)],
+              [(225,66),(298,48),(318,62),(310,65),(296,53)]),
+    ]
+    pack_scene("data/scene_victory.bin", PAL_EON_SUNSET, [
+        (180, 240, 246, "ACE VICTORY - VESPERA FLEET RETREATING FROM SOLIS!", vic_polys),
+    ])
+
+    # Scena Kryzysu / Red Alert (odtwarzana przy ciezkich uszkodzeniach kadluba)
+    cri_polys = [
+        (248, [(0,175),(319,175),(319,255),(0,255)],
+              [(0,175),(319,175),(319,255),(0,255)]),
+        (252, [(85,175),(125,115),(165,175)],
+              [(70,175),(130,92),(185,175)]),
+        (254, [(105,175),(128,132),(148,175)],
+              [(95,175),(130,114),(165,175)]),
+        (249, [(185,148),(265,134),(305,152),(240,168)],
+              [(155,156),(245,144),(292,162),(220,176)]),
+    ]
+    pack_scene("data/scene_crisis.bin", PAL_EON_SUNSET, [
+        (180, 240, 252, "RED ALERT - HEAVY HULL DAMAGE! EMERGENCY SCRAMBLE!", cri_polys),
+    ])
+
 if __name__ == "__main__":
     build_intro_scene()
+    build_reactive_cutscenes()
