@@ -50,53 +50,63 @@ af_voxel_init_mission:
         bra.w   .vi_nx
 .m1_p:  move.b  #4,(a1)+
         bra.w   .vi_nx
-.gen_m2:move.w  d4,d0
-        sub.w   #32,d0
+.gen_m2:; --- MISJA 02: KRELL STORM CANYON (kreta rzeka + strome sciany kanionu) ---
+        move.w  d5,d0
+        lsl.w   #3,d0
+        and.w   #255,d0
+        move.w  (a2,d0.w*2),d2          ; sinus meandra rzeki
+        asr.w   #8,d2
+        asr.w   #1,d2
+        add.w   #32,d2                  ; srodek koryta rzeki (24..40)
+        move.w  d4,d0
+        sub.w   d2,d0
         bpl.s   .m2_a
         neg.w   d0
 .m2_a:  asr.w   #5,d1
-        cmp.w   #6,d0
+        cmp.w   #5,d0
         bgt.s   .m2_c
-        move.b  #6,(a0)+
-        move.b  #1,(a1)+
+        move.b  #6,(a0)+                ; dno rzeki w kanionie
+        move.b  #1,(a1)+                ; woda kanionu
         bra.w   .vi_nx
 .m2_c:  move.w  d0,d2
-        lsl.w   #1,d2
+        mulu.w  #3,d2
+        asr.w   #1,d2
         add.w   d1,d2
-        cmp.w   #32,d2
+        cmp.w   #38,d2
         ble.s   .m2_h
-        moveq   #32,d2
+        moveq   #38,d2
 .m2_h:  move.b  d2,(a0)+
-        cmp.w   #34,d2
+        cmp.w   #24,d2
         bgt.s   .m2_t
-        move.b  #5,(a1)+
+        move.b  #8,(a1)+                ; warstwowe zbocza kanionu (ochra / skala)
         bra.w   .vi_nx
-.m2_t:  move.b  #4,(a1)+
+.m2_t:  move.b  #4,(a1)+                ; burzowe szczyty kanionu
         bra.w   .vi_nx
-.gen_m3:asr.w   #5,d1
-        add.w   #16,d1
+.gen_m3:; --- MISJA 03: LEVIATHAN CITADEL (wulkaniczny lad, lawa i bastiony cytadeli) ---
+        asr.w   #5,d1
+        add.w   #15,d1
         move.w  d4,d0
         and.w   #15,d0
-        cmp.w   #4,d0
+        cmp.w   #5,d0
         blo.s   .m3_g
-        cmp.w   #7,d0
+        cmp.w   #9,d0
         bhi.s   .m3_g
         move.w  d5,d2
         and.w   #15,d2
-        cmp.w   #4,d2
+        cmp.w   #5,d2
         blo.s   .m3_g
-        cmp.w   #7,d2
+        cmp.w   #9,d2
         bhi.s   .m3_g
-        move.b  #30,(a0)+
+        move.b  #34,(a0)+               ; wysokie bastiony / wieze Cytadeli
         move.b  #6,(a1)+
         bra.s   .vi_nx
-.m3_g:  cmp.w   #9,d1
+.m3_g:  cmp.w   #10,d1
         bgt.s   .m3_r
-        move.b  #9,(a0)+
-        move.b  #7,(a1)+
+        move.b  #8,(a0)+                ; rozpadliny z lawa
+        move.b  #7,(a1)+                ; zarzaca sie magma
         bra.s   .vi_nx
 .m3_r:  move.b  d1,(a0)+
-        move.b  #5,(a1)+
+        move.b  #5,(a1)+                ; czarny obsydian i bazalt wulkaniczny
 .vi_nx: addq.w  #1,d4
         cmp.w   #64,d4
         blo.w   .vi_x
@@ -272,9 +282,16 @@ render_3d_terrain_flyover:
         move.w  #24,d1
 .vpr:   rts
 .vp7:   cmp.b   #7,d1
+        bne.s   .vp8
+        move.w  #255,d1                 ; ognista lawa wulkaniczna ($FF)
+        btst    #1,d2
+        beq.s   .vp7r
+        move.w  #252,d1                 ; ciemniejszy zar magmy ($FC)
+.vp7r:  rts
+.vp8:   cmp.b   #8,d1
         bne.s   .vp5
-        move.b  #254,d1
-        rts
+        move.w  #120,d1                 ; skaliste zbocza kanionu Krell
+        bra.s   .vps
 .vp5:   move.w  #23,d1                  ; ciemny bazalt / skala wulkaniczna (czysta skala szarosci)
 .vps:   move.w  d2,d4
         addq.w  #1,d4
