@@ -141,6 +141,132 @@ af_play_scripted_intro:
         movem.l (sp)+,d0-d7/a0-a5
         rts
 
+
+        cnop    0,4
+af_aw_fill_ngon:
+        movem.l d0-d7/a0-a1,-(sp)
+        move.w  (a0)+,d7
+        subq.w  #3,d7
+        blt.s   .ng_done
+        move.w  (a0)+,d0
+        move.w  (a0)+,d1
+        move.l  a0,a1
+.ng_lp: move.w  (a1),d2
+        move.w  2(a1),d3
+        move.w  4(a1),d4
+        move.w  6(a1),d5
+        bsr.s   af_aw_fill_tri
+        addq.l  #4,a1
+        dbf     d7,.ng_lp
+.ng_done:
+        movem.l (sp)+,d0-d7/a0-a1
+        rts
+
+af_aw_fill_tri:
+        move.b  d6,af_tri_col
+        movem.l d0-d7/a0-a4,-(sp)
+        cmp.w   d1,d3
+        bge.s   .s01
+        exg     d0,d2
+        exg     d1,d3
+.s01:   cmp.w   d3,d5
+        bge.s   .s12
+        exg     d2,d4
+        exg     d3,d5
+        cmp.w   d1,d3
+        bge.s   .s12
+        exg     d0,d2
+        exg     d1,d3
+.s12:   move.w  d5,d7
+        sub.w   d1,d7
+        ble.w   .tr_end
+        ; Prosty i bezpieczny rasteryzer trojkata scanline
+        move.w  d1,d6
+        ifd FULL_RES
+        move.w  #255,a3
+        else
+        move.w  #127,a3
+        endif
+.ylp:   cmp.w   d5,d6
+        bgt.w   .tr_end
+        tst.w   d6
+        blt.s   .nxt_y
+        cmp.w   a3,d6
+        bgt.w   .tr_end
+        ; Oblicz x_long na krawedzi (x0,y0)->(x2,y2)
+        move.w  d4,d7
+        sub.w   d0,d7
+        move.w  d6,a0
+        sub.w   d1,a0
+        move.w  a0,a1
+        muls.w  a1,d7
+        move.w  d5,a1
+        sub.w   d1,a1
+        divs.w  a1,d7
+        add.w   d0,d7                   ; d7 = xa
+        ; Oblicz x_short na gornej lub dolnej polowce
+        cmp.w   d3,d6
+        bge.s   .bot_h
+        move.w  d3,a1
+        sub.w   d1,a1
+        beq.s   .eq_x
+        move.w  d2,a2
+        sub.w   d0,a2
+        move.w  a2,a4
+        move.w  d6,a2
+        sub.w   d1,a2
+        exg     d0,a4
+        muls.w  a2,d0
+        divs.w  a1,d0
+        exg     d0,a4
+        add.w   d0,a4
+        move.w  a4,a1
+        bra.s   .span
+.eq_x:  move.w  d0,a1
+        bra.s   .span
+.bot_h: move.w  d5,a1
+        sub.w   d3,a1
+        beq.s   .eq_x2
+        move.w  d4,a2
+        sub.w   d2,a2
+        move.w  a2,a4
+        move.w  d6,a2
+        sub.w   d3,a2
+        exg     d0,a4
+        muls.w  a2,d0
+        divs.w  a1,d0
+        exg     d0,a4
+        add.w   d2,a4
+        move.w  a4,a1
+        bra.s   .span
+.eq_x2: move.w  d2,a1
+.span:  move.w  a1,a2
+        cmp.w   a2,d7
+        ble.s   .ord
+        exg     d7,a2
+.ord:   tst.w   d7
+        bge.s   .cl_l
+        moveq   #0,d7
+.cl_l:  cmp.w   #319,a2
+        ble.s   .cl_r
+        move.w  #319,a2
+.cl_r:  sub.w   d7,a2
+        blt.s   .nxt_y
+        move.w  d6,a0
+        mulu.w  #320,a0
+        add.w   d7,a0
+        add.l   #chunky_buf,a0
+        move.w  a2,d7
+.hlp:   move.b  af_tri_col(pc),(a0)+
+        dbf     d7,.hlp
+.nxt_y: addq.w  #1,d6
+        bra.w   .ylp
+.tr_end:movem.l (sp)+,d0-d7/a0-a4
+        rts
+
+af_tri_col: dc.b 0
+        even
+
         section fastram_bss,bss
         even
 af_scn_cur_dur:  ds.w 1
