@@ -10,7 +10,7 @@ af_render_vector_screen:
         cmp.w   #STATE_BRIEFING,d0
         beq.s   .scr_briefing
         cmp.w   #STATE_DEBRIEF,d0
-        beq.s   .scr_debrief
+        beq.w   .scr_debrief
 
         ; --- EKRAN 0: INTRO (3-aktowa animacja Cel-Shaded scene_intro.bin) ---
         jsr     af_play_scripted_intro
