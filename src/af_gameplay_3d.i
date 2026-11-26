@@ -66,17 +66,17 @@ af_render_gameplay_3d:
 .pt_ok:
         ; Sztywna orientacja 360 st. (Gyruss/Tempest):
         ; dziob w srodek ekranu, brzuch na zewnatrz, skrzydla stycznie wzdluz okregu
-        bsr.w   af_build_xf14_gyruss_matrix
+        bsr.w   af_build_xf14_afterburner_matrix
 
         ; Pozycja XF-14 na okregu unikow (Lewo/Prawo = kat, Gora/Dol = promien)
         move.w  af_ship_dx,d4
         move.w  af_ship_dy,d5
         ifd FULL_RES
-        subq.w  #4,d5
-        moveq   #22,d6
+        add.w   #26,d5                  ; optymalna kamera zza ogona nad terenem 3D
+        moveq   #20,d6
         else
-        subq.w  #2,d5
-        moveq   #24,d6
+        add.w   #13,d5
+        moveq   #22,d6
         endif
         lea     xf14_verts,a0
         lea     v2_proj_buf,a1
@@ -1333,6 +1333,63 @@ af_draw_cannon_beams:
 ; Klawisze Gora/Dol zmieniaja tylko promien bez obracania kadlubem.
 ;------------------------------------------------------------------------------
         cnop    0,4
+; ============================================================================
+; af_build_xf14_afterburner_matrix - Prawdziwy lot 3D zza ogona (Roll + Pitch)
+; ============================================================================
+        cnop    0,4
+af_build_xf14_afterburner_matrix:
+        movem.l d0-d7/a0-a1,-(sp)
+        lea     sin_tab,a1
+        ; Kat przechylenia skrzydel (Roll) proporcjonalny do skretu af_ship_dx
+        move.w  af_ship_dx,d0
+        neg.w   d0
+        asr.w   #1,d0
+        and.w   #255,d0
+        add.w   d0,d0
+        move.w  (a1,d0.w),d4            ; sin(roll)
+        add.w   #128,d0
+        and.w   #510,d0
+        move.w  (a1,d0.w),d5            ; cos(roll)
+        ; Kat pochylenia dziobu (Pitch) proporcjonalny do wznoszenia af_ship_dy
+        move.w  af_ship_dy,d1
+        neg.w   d1
+        asr.w   #1,d1
+        and.w   #255,d1
+        add.w   d1,d1
+        move.w  (a1,d1.w),d6            ; sin(pitch)
+        add.w   #128,d1
+        and.w   #510,d1
+        move.w  (a1,d1.w),d7            ; cos(pitch)
+        ; Wypelnij macierz rotacji 3x3 (v2_rot_mat): Roll(Z) * Pitch(X)
+        lea     v2_rot_mat,a0
+        move.w  d5,(a0)+                ; m00 = cos(roll)
+        move.w  d4,d0
+        neg.w   d0
+        move.w  d0,(a0)+                ; m01 = -sin(roll)
+        clr.w   (a0)+                   ; m02 = 0
+        move.w  d4,d0
+        muls.w  d7,d0
+        asr.l   #8,d0
+        move.w  d0,(a0)+                ; m10 = sin(roll)*cos(pitch)
+        move.w  d5,d0
+        muls.w  d7,d0
+        asr.l   #8,d0
+        move.w  d0,(a0)+                ; m11 = cos(roll)*cos(pitch)
+        move.w  d6,d0
+        neg.w   d0
+        move.w  d0,(a0)+                ; m12 = -sin(pitch)
+        move.w  d4,d0
+        muls.w  d6,d0
+        asr.l   #8,d0
+        move.w  d0,(a0)+                ; m20 = sin(roll)*sin(pitch)
+        move.w  d5,d0
+        muls.w  d6,d0
+        asr.l   #8,d0
+        move.w  d0,(a0)+                ; m21 = cos(roll)*sin(pitch)
+        move.w  d7,(a0)+                ; m22 = cos(pitch)
+        movem.l (sp)+,d0-d7/a0-a1
+        rts
+
 af_build_xf14_gyruss_matrix:
         movem.l d0-d5/a0-a1,-(sp)
         lea     sin_tab,a0

@@ -7,6 +7,10 @@
 af_play_scripted_intro:
         movem.l d0-d7/a0-a5,-(sp)
         lea     af_scene_intro_buf,a4
+        tst.b   af_has_scene_intro
+        bne.s   .sc_hdr
+        lea     af_builtin_scene_intro(pc),a4
+.sc_hdr:
         cmp.l   #$41465343,(a4)+        ; sprawdz naglowek "AFSC"
         bne.w   .sc_exit
         move.w  (a4)+,d7                ; num_acts
@@ -22,8 +26,13 @@ af_play_scripted_intro:
         lea     aga_pal256,a0
         jsr     load_aga_256_palette
 .sp_ok:
-        ; Wybierz aktualny akt na podstawie af_state_timer
+        ; Wybierz aktualny akt na podstawie af_state_timer (zapetlone co 450 klatek)
         move.l  af_state_timer,d5
+.mod_t: cmp.l   #450,d5
+        blo.s   .mod_ok
+        sub.l   #450,d5
+        bra.s   .mod_t
+.mod_ok:
 .act_lp:
         move.w  (a4)+,d6                ; duration_frames
         move.w  d6,af_scn_cur_dur
@@ -137,3 +146,7 @@ af_play_scripted_intro:
 af_scn_cur_dur:  ds.w 1
         even
 af_scn_poly_tmp: ds.w 40
+
+        section fastram_data,data
+        even
+af_builtin_scene_intro: incbin "../data/scene_intro.bin"

@@ -102,52 +102,19 @@ af_render_vector_screen:
         cmp.w   #STATE_DEBRIEF,d0
         beq.w   .draw_debriefing
 
-        ; --- EKRAN 0: INTRO (Najpierw 4-aktowa animacja Top Gun / Another World / Eon, potem Tytul) ---
-        cmp.l   #480,af_state_timer
-        blo.s   .fb_vec_intro
-        tst.b   af_has_disk_title
-        beq.s   .fb_vec_intro
-        cmp.b   #3,pal_loaded
-        beq.s   .tpal_ok
-        move.b  #3,pal_loaded
-        lea     af_disk_title_pal,a0
-        jsr     load_aga_256_palette
-.tpal_ok:lea     af_disk_title_chk,a0
-        lea     chunky_buf,a1
-        ifd FULL_RES
-        move.w  #20479,d2
-.tcp_f: move.l  (a0)+,(a1)+
-        dbf     d2,.tcp_f
-        else
-        moveq   #127,d2
-.tcp_y: moveq   #79,d3
-.tcp_x: move.l  (a0)+,(a1)+
-        dbf     d3,.tcp_x
-        lea     320(a0),a0
-        dbf     d2,.tcp_y
-        endif
-        bra.s   .intro_txt
-.fb_vec_intro:
-        tst.b   af_has_scene_intro
-        beq.s   .fb_old_aw
+        ; --- EKRAN 0: INTRO (Czysty odtwarzacz scen fabularnych Cel-Shaded v0.2.0) ---
         jsr     af_play_scripted_intro
-        bra.s   .intro_txt
-.fb_old_aw:
-        jsr     af_draw_aw_intro
-.intro_txt:
-        bsr.w   af_draw_intro_live_flyby
-        ; Migajacy napis startowy od pierwszej sekundy
         move.l  vbl_tick(pc),d0
         btst    #4,d0
         bne.w   .vec_blit
         lea     str_intro_2(pc),a0
         moveq   #76,d0
         ifd FULL_RES
-        move.w  #234,d1
+        move.w  #236,d1
         else
-        moveq   #114,d1
+        moveq   #115,d1
         endif
-        move.b  #$FF,d6
+        move.b  #255,d6
         bsr.w   af_print_chunky_str
         bra.w   .vec_blit
 
@@ -529,7 +496,7 @@ str_m1_l1:      dc.b "VESPERA DOMINION INVADES SOLIS!",0
 str_m1_l2:      dc.b "LAUNCHED XF-14 FROM SOLIS AIRBASE.",0
 str_m1_l3:      dc.b "PATROL SARGAS OCEAN & VOXEL ISLANDS",0
 str_m1_l4:      dc.b "COLLECT BLUE ETHER CORES (+40 SHIELD)",0
-str_m1_l5:      dc.b "INTERCEPT 360 SPIRAL VESPERA SCOUTS!",0
+str_m1_l5:      dc.b "ENGAGE VESPERA WING - AFTER BURNER 3D!",0
 str_m2_l1:      dc.b "ENEMY FLEET ENTERS KRELL CANYON!",0
 str_m2_l2:      dc.b "HIGH-SPEED RUN BETWEEN CANYON PEAKS",0
 str_m2_l3:      dc.b "VESPERA ATTACKS IN 360 DOUBLE-HELIX",0
