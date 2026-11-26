@@ -1,515 +1,137 @@
-; ============================================================================
-; AETHER FALCON: VANGUARD - Wektorowe Intro / Briefing / Debriefing w 256 kol.
-; ============================================================================
-
         section code,code
+; ============================================================================
+; AETHER FALCON: VANGUARD v0.2.0 - Tabula Rasa Ekrany Fabularne (AFSC)
+; ============================================================================
+
         cnop    0,4
-; --- Zywy przelot mysliwca + pulsujace swiatla bazy Solis na ekranie Intro ---
-af_draw_intro_live_flyby:
-        movem.l d0-d6/a0-a1,-(sp)
-        move.l  vbl_tick(pc),d0
-        lsl.w   #1,d0
-        and.w   #511,d0
-        sub.w   #96,d0                  ; d0 = X przelatujacego mysliwca (-96..415)
-        cmp.w   #12,d0
-        blt.s   .fb_done
-        cmp.w   #276,d0
-        bgt.s   .fb_done
-        ifd FULL_RES
-        moveq   #68,d1
-        else
-        moveq   #34,d1
-        endif
-        ; Smuga dopalacza za mysliwcem
-        move.w  d0,d2
-        sub.w   #18,d2
-        moveq   #16,d3
-        moveq   #2,d4
-        move.b  #$FE,d5                 ; zloty ogien dopalacza
-        bsr.w   af_intro_rect
-        ; Kadlub eskortowego mysliwca XF-14 na niebie
-        move.w  d0,d2
-        moveq   #22,d3
-        moveq   #3,d4
-        move.b  #$FF,d5                 ; jasny kadlub
-        bsr.w   af_intro_rect
-        ; Skrzydlo + kabina
-        move.w  d0,d2
-        addq.w  #6,d2
-        subq.w  #3,d1
-        moveq   #8,d3
-        moveq   #3,d4
-        move.b  #$FD,d5                 ; cyjanowy kokpit
-        bsr.w   af_intro_rect
-.fb_done:
-        movem.l (sp)+,d0-d6/a0-a1
-        rts
-
-af_intro_rect:
-        movem.l d0-d5/a0-a1,-(sp)
-        mulu.w  #320,d1
-        ext.l   d2
-        add.l   d2,d1
-        lea     chunky_buf,a0
-        add.l   d1,a0
-        subq.w  #1,d4
-.ir_y:  move.l  a0,a1
-        move.w  d3,d0
-        subq.w  #1,d0
-.ir_x:  move.b  d5,(a1)+
-        dbf     d0,.ir_x
-        lea     320(a0),a0
-        dbf     d4,.ir_y
-        movem.l (sp)+,d0-d5/a0-a1
-        rts
-
 af_render_vector_screen:
         movem.l d0-d7/a0-a5,-(sp)
-        cmp.w   #STATE_INTRO,af_state
-        bne.s   .chk_p2
-        cmp.l   #480,af_state_timer
-        bge.s   .pal_cached
-.chk_p2:
-        cmp.b   #2,pal_loaded
-        beq.s   .pal_cached
-        move.b  #2,pal_loaded
-        lea     aga_pal256,a0
-        move.l  #$00FF3040,252*4(a0)
-        move.l  #$0020E8FF,253*4(a0)
-        move.l  #$00FFD020,254*4(a0)
-        move.l  #$00FFFFFF,255*4(a0)
-        jsr     load_aga_256_palette
-.pal_cached:
-                ; Ultraszybkie 32-bitowe czyszczenie tla ekranu fabularnego
-        lea     chunky_buf,a0
-        move.l  #16843009,d1
-        cmp.w   #STATE_BRIEFING,af_state
-        bne.s   .bg_c_ok
-        move.l  #33686018,d1
-.bg_c_ok:
-        ifd FULL_RES
-        move.w  #20479,d2
-        else
-        move.w  #10239,d2
-        endif
-.bg_f_lp:
-        move.l  d1,(a0)+
-        dbf     d2,.bg_f_lp
-.bg_stars:
         move.w  af_state,d0
         cmp.w   #STATE_BRIEFING,d0
-        beq.w   .draw_briefing
+        beq.s   .scr_briefing
         cmp.w   #STATE_DEBRIEF,d0
-        beq.w   .draw_debriefing
+        beq.s   .scr_debrief
 
-        ; --- EKRAN 0: INTRO (Czysty odtwarzacz scen fabularnych Cel-Shaded v0.2.0) ---
+        ; --- EKRAN 0: INTRO (3-aktowa animacja Cel-Shaded scene_intro.bin) ---
         jsr     af_play_scripted_intro
-        move.l  vbl_tick(pc),d0
-        btst    #4,d0
-        bne.w   .vec_blit
-        lea     str_intro_2(pc),a0
-        moveq   #76,d0
+        lea     str_title_hdr(pc),a0
+        moveq   #68,d0
         ifd FULL_RES
-        move.w  #236,d1
-        else
-        moveq   #115,d1
-        endif
-        move.b  #255,d6
-        bsr.w   af_print_chunky_str
-        bra.w   .vec_blit
-
-.draw_briefing:
-        ; Reaktywny raport dowodztwa w zaleznosci od dokonan pilota
-        lea     str_mood_norm(pc),a0
-        cmp.w   #1,af_world_mood
-        bne.s   .mb_c2
-        lea     str_mood_ace(pc),a0
-        bra.s   .mb_pr
-.mb_c2: cmp.w   #2,af_world_mood
-        bne.s   .mb_pr
-        lea     str_mood_crit(pc),a0
-.mb_pr: moveq   #16,d0
-        ifd FULL_RES
-        move.w  #176,d1
-        else
-        moveq   #84,d1
-        endif
-        move.b  #$FD,d6
-        bsr.w   af_print_chunky_str
-
-        ; --- EKRAN 1: BRIEFING (Tablica Odpraw Taktycznych z Fabula Kampanii) ---
-        jsr     af_draw_aw_briefing
-
-        ; Rysuj lewy panel tekstowy odprawy (x=10..185), po prawej portret Dowodcy Eon!
-        lea     chunky_buf,a0
-        ifd FULL_RES
-        adda.l  #14*320+10,a0
-        move.w  #202,d7
-        else
-        adda.l  #6*320+10,a0
-        move.w  #96,d7
-        endif
-        move.l  #269488144,d1
-.brd_row:
-        move.l  a0,a1
-        moveq   #43,d6                  ; 44 * 4 = 176 px szerokosci (x=10..185)
-.brd_col:
-        move.l  d1,(a1)+
-        dbf     d6,.brd_col
-        lea     320(a0),a0
-        dbf     d7,.brd_row
-
-        ; Gorna i dolna belka ramki tablicy odpraw (x=14..305)
-        lea     chunky_buf+14,a0
-        move.l  #4261281277,d1          ; $FDFDFDFD (turkus)
-        ifd FULL_RES
-        adda.l  #14*320,a0
-        lea     202*320(a0),a1
-        else
-        adda.l  #6*320,a0
-        lea     96*320(a0),a1
-        endif
-        moveq   #72,d6
-.brd_bar:
-        move.l  d1,(a0)+
-        move.l  d1,(a1)+
-        dbf     d6,.brd_bar
-
-        ; Mini-radar taktyczny w prawym gornym rogu tablicy (x=268)
-        move.w  #282,d0
-        ifd FULL_RES
-        move.w  #66,d1
-        moveq   #14,d3
-        else
-        move.w  #32,d1
-        moveq   #11,d3
-        endif
-        move.b  #254,d6
-        jsr     af_draw_chunky_rect
-        move.w  #277,d0
-        ifd FULL_RES
-        move.w  #60,d1
-        else
-        move.w  #29,d1
-        endif
-        moveq   #4,d3
-        move.b  #252,d6
-        jsr     af_fill_chunky_diamond
-        move.w  #287,d0
-        ifd FULL_RES
-        move.w  #73,d1
-        else
-        move.w  #35,d1
-        endif
-        moveq   #4,d3
-        move.b  #253,d6
-        jsr     af_fill_chunky_diamond
-
-        ; Naglowek tablicy odpraw
-        lea     str_brd_hdr(pc),a0
-        moveq   #14,d0
-        ifd FULL_RES
-        moveq   #22,d1
+        moveq   #18,d1
         else
         moveq   #10,d1
         endif
-        move.b  #254,d6
-        bsr.w   af_print_chunky_str
-
-        ; Wybierz tablice 6 wskaznikow tekstowych dla aktualnej misji
-        move.w  af_mission,d2
-        cmp.w   #1,d2
-        beq.s   .b_sel2
-        cmp.w   #2,d2
-        beq.s   .b_sel3
-        lea     brd_m1_ptrs(pc),a4
-        bra.s   .b_draw_lines
-.b_sel2: lea     brd_m2_ptrs(pc),a4
-        bra.s   .b_draw_lines
-.b_sel3: lea     brd_m3_ptrs(pc),a4
-
-.b_draw_lines:
-        ; 1. Tytul misji (bialy $FF)
-        move.l  (a4)+,a0
-        moveq   #14,d0
-        ifd FULL_RES
-        moveq   #38,d1
-        else
-        moveq   #20,d1
-        endif
         move.b  #255,d6
         bsr.w   af_print_chunky_str
+        bra.s   .scr_prompt
 
-        ; 2. Linia fabuly 1 (turkus $FD)
-        move.l  (a4)+,a0
-        moveq   #14,d0
+.scr_briefing:
+        ; --- EKRAN 1: REAKTYWNA ODPRAWA TAKTYCZNA ---
+        jsr     af_play_scripted_intro
+        lea     str_brf_hdr(pc),a0
+        moveq   #20,d0
         ifd FULL_RES
-        moveq   #62,d1
+        moveq   #22,d1
         else
-        moveq   #33,d1
-        endif
-        move.b  #253,d6
-        bsr.w   af_print_chunky_str
-
-        ; 3. Linia fabuly 2 (bialy $FF)
-        move.l  (a4)+,a0
-        moveq   #14,d0
-        ifd FULL_RES
-        moveq   #84,d1
-        else
-        moveq   #45,d1
-        endif
-        move.b  #255,d6
-        bsr.w   af_print_chunky_str
-
-        ; 4. Linia fabuly 3 (zloto $FE)
-        move.l  (a4)+,a0
-        moveq   #14,d0
-        ifd FULL_RES
-        moveq   #112,d1
-        else
-        moveq   #59,d1
+        moveq   #12,d1
         endif
         move.b  #254,d6
         bsr.w   af_print_chunky_str
 
-        ; 5. Linia fabuly 4 (turkus $FD)
-        move.l  (a4)+,a0
-        moveq   #14,d0
+        ; Meldunek misji + status reaktywnego swiata
+        lea     str_m1_brf(pc),a0
+        cmp.w   #1,af_mission
+        bne.s   .b_m3
+        lea     str_m2_brf(pc),a0
+        bra.s   .b_pr
+.b_m3:  cmp.w   #2,af_mission
+        bne.s   .b_pr
+        lea     str_m3_brf(pc),a0
+.b_pr:  moveq   #20,d0
         ifd FULL_RES
-        move.w  #136,d1
+        moveq   #44,d1
         else
-        moveq   #71,d1
-        endif
-        move.b  #253,d6
-        bsr.w   af_print_chunky_str
-
-        ; 6. Linia fabuly 5 (czerwony/zloto celu)
-        move.l  (a4)+,a0
-        moveq   #14,d0
-        ifd FULL_RES
-        move.w  #160,d1
-        else
-        moveq   #83,d1
+        moveq   #24,d1
         endif
         move.b  #255,d6
         bsr.w   af_print_chunky_str
 
-.b_keys_hint:
-        lea     str_brief_keys1(pc),a0
-        moveq   #46,d0
+        lea     str_mood_norm(pc),a0
+        cmp.w   #1,af_world_mood
+        bne.s   .m_c2
+        lea     str_mood_ace(pc),a0
+        bra.s   .m_pr
+.m_c2:  cmp.w   #2,af_world_mood
+        bne.s   .m_pr
+        lea     str_mood_crit(pc),a0
+.m_pr:  moveq   #20,d0
         ifd FULL_RES
-        move.w  #226,d1
+        moveq   #66,d1
         else
-        moveq   #106,d1
+        moveq   #36,d1
         endif
-        move.b  #$FF,d6
+        move.b  #253,d6
         bsr.w   af_print_chunky_str
-        lea     str_brief_keys2(pc),a0
-        moveq   #36,d0
+        bra.s   .scr_prompt
+
+.scr_debrief:
+        ; --- EKRAN 3: REAKTYWNE PODSUMOWANIE MISJI ---
+        jsr     af_play_scripted_intro
+        lea     str_deb_hdr(pc),a0
+        moveq   #20,d0
+        ifd FULL_RES
+        moveq   #26,d1
+        else
+        moveq   #14,d1
+        endif
+        move.b  #254,d6
+        bsr.w   af_print_chunky_str
+
+.scr_prompt:
+        move.l  vbl_tick(pc),d0
+        btst    #4,d0
+        bne.s   .scr_blit
+        lea     str_press_fire(pc),a0
+        moveq   #76,d0
         ifd FULL_RES
         move.w  #238,d1
         else
         moveq   #116,d1
         endif
-        move.b  #$FD,d6
-        bsr.w   af_print_chunky_str
-        bra.w   .vec_blit
-
-.draw_debriefing:
-        jsr     af_draw_aw_debrief
-        tst.b   af_game_over
-        bne.s   .deb_gameover
-
-        ; --- EKRAN 2A: DEBRIEFING (Misja Zaliczona / Awans Pilota) ---
-        lea     str_deb_1(pc),a0
-        cmp.w   #2,af_mission
-        blo.s   .deb_hdr_ok
-        lea     str_deb_win(pc),a0
-.deb_hdr_ok:
-        moveq   #52,d0
-        ifd FULL_RES
-        moveq   #28,d1
-        else
-        moveq   #16,d1
-        endif
-        move.b  #$FF,d6
-        bsr.w   af_print_chunky_str
-        bra.s   .deb_rank_eval
-
-.deb_gameover:
-        ; --- EKRAN 2B: GAME OVER / DEBRIEFING PO UTRACIE TARCZY ---
-        lea     str_go_title(pc),a0
-        moveq   #76,d0
-        ifd FULL_RES
-        moveq   #24,d1
-        else
-        moveq   #12,d1
-        endif
-        move.b  #$FC,d6
+        move.b  #255,d6
         bsr.w   af_print_chunky_str
 
-        lea     str_go_sub(pc),a0
-        moveq   #64,d0
-        ifd FULL_RES
-        moveq   #40,d1
-        else
-        moveq   #24,d1
-        endif
-        move.b  #$FF,d6
-        bsr.w   af_print_chunky_str
-
-        lea     str_go_retry(pc),a0
-        moveq   #70,d0
-        ifd FULL_RES
-        move.w  #222,d1
-        else
-        moveq   #106,d1
-        endif
-        move.b  #$FE,d6
-        bsr.w   af_print_chunky_str
-
-.deb_rank_eval:
-
-        move.l  af_score,d2
-        cmp.l   #2500,d2
-        bge.s   .rk3
-        cmp.l   #1000,d2
-        bge.s   .rk2
-        lea     str_rank_1(pc),a0
-        bra.s   .rk_pr
-.rk2:   lea     str_rank_2(pc),a0
-        bra.s   .rk_pr
-.rk3:   lea     str_rank_3(pc),a0
-.rk_pr: moveq   #78,d0
-        ifd FULL_RES
-        move.w  #198,d1
-        else
-        moveq   #92,d1
-        endif
-        move.b  #$FE,d6
-        bsr.w   af_print_chunky_str
-
-.vec_blit:
-        jsr     c2p_160x128_to_aga
-        jsr     ground_fill_screen_margins
-        jsr     hud_draw_overlay
+.scr_blit:
+        jsr     c2p_convert_320x256
         movem.l (sp)+,d0-d7/a0-a5
         rts
 
-; Rysowanie tekstu ASCII 5x7 bezposrednio do chunky_buf (320 px szerokosci)
-; Wejscie: a0 = tekst, d0.w = X (0..319), d1.w = Y (0..127/255), d6.b = kolor
         cnop    0,4
 af_print_chunky_str:
-        movem.l d0-d7/a0-a4,-(sp)
-        lea     chunky_buf,a1
-        mulu.w  #320,d1
-        add.l   d1,a1
-        lea     hud_ascii_5x7,a2
-
-.c_lp:  moveq   #0,d2
-        move.b  (a0)+,d2
-        beq.s   .c_done
-        sub.w   #32,d2
-        blt.s   .c_adv
-        cmp.w   #63,d2
-        bgt.s   .c_adv
-
-        lsl.w   #3,d2                   ; 8 bajtow na znak w hud_ascii_5x7
-        lea     (a2,d2.w),a3
-        lea     (a1,d0.w),a4
-        moveq   #6,d5
-.r_lp:  move.b  (a3)+,d3
-        btst    #4,d3
-        beq.s   .b3
-        move.b  d6,(a4)
-.b3:    btst    #3,d3
-        beq.s   .b2
-        move.b  d6,1(a4)
-.b2:    btst    #2,d3
-        beq.s   .b1
-        move.b  d6,2(a4)
-.b1:    btst    #1,d3
-        beq.s   .b0
-        move.b  d6,3(a4)
-.b0:    btst    #0,d3
-        beq.s   .nr
-        move.b  d6,4(a4)
-.nr:    lea     320(a4),a4
-        dbf     d5,.r_lp
-
-.c_adv: addq.w  #6,d0
-        cmp.w   #312,d0
-        blt.s   .c_lp
-.c_done:
-        movem.l (sp)+,d0-d7/a0-a4
+        movem.l d0-d7/a0-a2,-(sp)
+        move.w  d0,d4
+        move.w  d1,d5
+.ps_lp: moveq   #0,d0
+        move.b  (a0)+,d0
+        beq.s   .ps_done
+        move.w  d4,d1
+        move.w  d5,d2
+        move.b  d6,d3
+        jsr     hud_draw_char_5x7
+        addq.w  #6,d4
+        bra.s   .ps_lp
+.ps_done:
+        movem.l (sp)+,d0-d7/a0-a2
         rts
 
-poly_bg_full:
-        ifd FULL_RES
-        dc.w    4, 0,0, 319,0, 319,255, 0,255
-        else
-        dc.w    4, 0,0, 319,0, 319,127, 0,127
-        endif
-poly_bg_horiz:
-        ifd FULL_RES
-        dc.w    4, 0,104, 319,104, 319,164, 0,164
-        else
-        dc.w    4, 0,56, 319,56, 319,96, 0,96
-        endif
-
-str_game_title: dc.b    "AETHER FALCON: VANGUARD",0
-str_intro_1:    dc.b    "SOLIS CONFEDERATION - VANGUARD WING",0
-str_intro_2:    dc.b    "PRESS FIRE OR SPACE TO LAUNCH",0
-str_m1_title:   dc.b    "MISSION 01: SARGAS ARCHIPELAGO",0
-str_m1_obj:     dc.b    "COLLECT ETHER CORES & LOCK VESPERA SCOUTS",0
-str_m2_title:   dc.b    "MISSION 02: KRELL STORM CANYON",0
-str_m2_obj:     dc.b    "HIGH SPEED INTERCEPT - MULTI-LOCK BARRAGE",0
-str_m3_title:   dc.b    "MISSION 03: LEVIATHAN CITADEL",0
-str_m1_desc2:   dc.b    "PATROL OVER VOXEL OCEAN & ISLAND PEAKS",0
-str_m1_desc3:   dc.b    "GATHER ETHER CORES (+40 SHIELD ENERGY)",0
-str_m2_desc2:   dc.b    "DOUBLE-HELIX 360 VESPERA INTERCEPTORS",0
-str_m2_desc3:   dc.b    "USE MULTI-LOCK MISSILES IN STORM CANYON",0
-str_m3_obj:     dc.b    "LEVIATHAN 3D FORTRESS IN TUNNEL CENTER",0
-str_m3_desc2:   dc.b    "ASSAULT OVER VOLCANIC CITADEL TOWERS",0
-str_m3_desc3:   dc.b    "DESTROY ALL 4 ORBITING REACTOR CORES!",0
-str_brief_keys1:dc.b    "ARROWS / JOY2 : FLY & AIM LOCK-ON",0
-str_brief_keys2:dc.b    "SPACE / FIRE / ALT : CANNON & MISSILES",0
-str_deb_1:      dc.b    "MISSION ACCOMPLISHED - SORTIE REPORT",0
-str_deb_win:    dc.b    "CAMPAIGN VICTORY - LEVIATHAN DESTROYED",0
-str_rank_1:     dc.b    "PILOT RANK: SOLAR CADET",0
-str_rank_2:     dc.b    "PILOT RANK: VANGUARD WINGMAN",0
-str_rank_3:     dc.b    "PILOT RANK: ACE OF SOLIS",0
-        even
-
-str_go_title:   dc.b    "GAME OVER - XF-14 DESTROYED",0
-str_go_sub:     dc.b    "SHIELD DEPLETED - MISSION FAILED",0
-str_go_retry:   dc.b    "PRESS FIRE OR SPACE TO RESTART",0
-        even
-
-        even
-brd_m1_ptrs:    dc.l str_m1_title, str_m1_l1, str_m1_l2, str_m1_l3, str_m1_l4, str_m1_l5
-brd_m2_ptrs:    dc.l str_m2_title, str_m2_l1, str_m2_l2, str_m2_l3, str_m2_l4, str_m2_l5
-brd_m3_ptrs:    dc.l str_m3_title, str_m3_l1, str_m3_l2, str_m3_l3, str_m3_l4, str_m3_l5
-str_brd_hdr:    dc.b "SOLIS AIRBASE - VANGUARD BRIEFING",0
-str_m1_l1:      dc.b "VESPERA DOMINION INVADES SOLIS!",0
-str_m1_l2:      dc.b "LAUNCHED XF-14 FROM SOLIS AIRBASE.",0
-str_m1_l3:      dc.b "PATROL SARGAS OCEAN & VOXEL ISLANDS",0
-str_m1_l4:      dc.b "COLLECT BLUE ETHER CORES (+40 SHIELD)",0
-str_m1_l5:      dc.b "ENGAGE VESPERA WING - AFTER BURNER 3D!",0
-str_m2_l1:      dc.b "ENEMY FLEET ENTERS KRELL CANYON!",0
-str_m2_l2:      dc.b "HIGH-SPEED RUN BETWEEN CANYON PEAKS",0
-str_m2_l3:      dc.b "VESPERA ATTACKS IN 360 DOUBLE-HELIX",0
-str_m2_l4:      dc.b "FIRE MULTI-LOCK SALVOS TO CLEAR PATH",0
-str_m2_l5:      dc.b "EVADE PLASMA BOLTS & GATHER CORES!",0
-str_m3_l1:      dc.b "FINAL ASSAULT ON LEVIATHAN CITADEL!",0
-str_m3_l2:      dc.b "FLY OVER VOLCANIC CITADEL TOWERS",0
-str_m3_l3:      dc.b "3D FLYING FORTRESS IN TUNNEL CENTER",0
-str_m3_l4:      dc.b "POWERED BY 4 ORBITING REACTOR CORES",0
-str_m3_l5:      dc.b "DESTROY ALL 4 REACTORS (2 HITS EACH)!",0
-        even
-
-str_mood_norm:  dc.b    "STATUS: FLEET PERIMETER HOLDING",0
-str_mood_ace:   dc.b    "ACE REPORT: SOLIS MORALE HIGH!",0
-str_mood_crit:  dc.b    "ALERT: HEAVY LOSSES - HOLD LINE!",0
+str_title_hdr:  dc.b    "AETHER FALCON: VANGUARD V0.2.0",0
+str_brf_hdr:    dc.b    "VANGUARD TACTICAL BRIEFING",0
+str_m1_brf:     dc.b    "SECTOR 01: SARGAS OCEAN PATROL",0
+str_m2_brf:     dc.b    "SECTOR 02: KRELL CANYON ASSAULT",0
+str_m3_brf:     dc.b    "SECTOR 03: LEVIATHAN CITADEL",0
+str_deb_hdr:    dc.b    "SORTIE COMPLETE - DEBRIEFING",0
+str_press_fire: dc.b    "PRESS FIRE OR SPACE TO LAUNCH",0
+str_mood_norm:  dc.b    "STATUS: PERIMETER HOLDING",0
+str_mood_ace:   dc.b    "ACE REPORT: HIGH MORALE BONUS!",0
+str_mood_crit:  dc.b    "RED ALERT: HULL DAMAGE CRITICAL!",0
         even

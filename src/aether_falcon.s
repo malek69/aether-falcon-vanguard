@@ -408,8 +408,8 @@ af_update_entities:
         include "ground_grid.i"
         include "mirror_reflect.i"
         include "lens_flare.i"
-        include "af_voxel_world.i"
-        include "af_vector_scenes.i"
+        include "af_terrain_3d.i"
+        ; clean v0.2.0
         section code,code
         include "af_disk_loader.i"
         include "af_audio_sfx.i"

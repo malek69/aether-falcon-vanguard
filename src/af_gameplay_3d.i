@@ -27,7 +27,7 @@ af_render_gameplay_3d:
         ifd FULL_RES
         jsr     draw_256_starfield
         endif
-        jsr     af_draw_3d_clouds
+        nop
 
         move.l  af_pos_x,d0
         swap    d0
