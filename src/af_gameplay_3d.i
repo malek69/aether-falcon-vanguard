@@ -1361,7 +1361,7 @@ af_build_xf14_afterburner_matrix:
         and.w   #510,d1
         move.w  (a1,d1.w),d7            ; cos(pitch)
         ; Wypelnij macierz rotacji 3x3 (v2_rot_mat): Roll(Z) * Pitch(X)
-        lea     v2_rot_mat,a0
+        lea     rot_m00,a0
         move.w  d5,(a0)+                ; m00 = cos(roll)
         move.w  d4,d0
         neg.w   d0

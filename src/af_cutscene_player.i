@@ -9,7 +9,7 @@ af_play_scripted_intro:
         lea     af_scene_intro_buf,a4
         tst.b   af_has_scene_intro
         bne.s   .sc_hdr
-        lea     af_builtin_scene_intro(pc),a4
+        lea     af_builtin_scene_intro,a4
 .sc_hdr:
         cmp.l   #$41465343,(a4)+        ; sprawdz naglowek "AFSC"
         bne.w   .sc_exit
