@@ -46,8 +46,8 @@ af_draw_nahkolor_polar_tunnel:
         cmp.w   #-10,af_ship_dy
         bge.s   .t_na
         moveq   #5,d1
-.t_na:  tst.b   joy_down
-        beq.s   .t_nb
+.t_na:  cmp.w   #10,af_ship_dy
+        ble.s   .t_nb
         moveq   #1,d1
 .t_nb:  add.w   d1,vox_z_accum
         move.w  vox_z_accum(pc),d6
@@ -250,8 +250,8 @@ render_3d_terrain_flyover:
         cmp.w   #-10,af_ship_dy
         bge.s   .no_acc
         moveq   #5,d1                   ; dopalacz / przyspieszenie do przodu!
-.no_acc:tst.b   joy_down
-        beq.s   .no_brk
+.no_acc:cmp.w   #10,af_ship_dy
+        ble.s   .no_brk
         moveq   #1,d1                   ; hamulec aerodynamiczny!
 .no_brk:add.w   d1,vox_z_accum
         move.w  vox_z_accum(pc),d0
