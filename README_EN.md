@@ -53,6 +53,6 @@ All engine modules are compiled with **0 errors and 0 warnings** (`vasmm68k_mot 
 
 ## Build Tools (`tools/`) & Controls
 
-- **Build Command:** `python3 tools/build_game.py --profile thea1200` compiles the main executable and WHDLoad slave, generating `.lha` and `.zip` packages.
+- **Build Command:** `python3 tools/gen_open_world.py --seed 8842 & tools/build_game.py --profile thea1200_pl / thea1200_en` compiles the main executable and WHDLoad slave, generating `.lha` and `.zip` packages.
 - **Start Menu:** `1` (**PIONEER**), `2` (**GUARDIAN**), `3` (**ENGINEER**) or left-click with the mouse; `4` — Load saved colony (`data/colony.sav`).
 - **360° Flight & Dialogues:** **Mouse** / **Arrow Keys** / **Joystick** (360° turn, wing bank & altitude), **Space / Fire** (beam / boost), **`1`–`3` / LMB** (dialogue choices), **`E`** (AGA 24-bit mood lighting test), **`S`** (save game), **`ESC`** (quit to OS).
