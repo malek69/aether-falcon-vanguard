@@ -28,7 +28,7 @@ The current `v0.2.x` generation is developed **exclusively for the THEA1200 arch
 
 ## Gallery `v0.2.0.4` (Frozen 68040 THEA1200 Engine)
 
-| ![1. Start Menu with Letterbox](docs/screenshots/v020_01_menu.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v020_02_dialogue.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v020_03_flight.png) |
+| ![1. Start Menu with Letterbox](docs/screenshots/v0204_01.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v0204_02.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v0204_03.png) |
 |:---:|:---:|:---:|
 | **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
 

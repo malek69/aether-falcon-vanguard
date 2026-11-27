@@ -35,7 +35,7 @@ Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architektu
 
 ## Galeria `v0.2.0.4` (Szkielet Silnika 68040 THEA1200)
 
-| ![1](docs/screenshots/v020_01_menu.png) | ![2](docs/screenshots/v020_02_dialogue.png) | ![3](docs/screenshots/v020_03_flight.png) |
+| ![1](docs/screenshots/v0204_01.png) | ![2](docs/screenshots/v0204_02.png) | ![3](docs/screenshots/v0204_03.png) |
 |:---:|:---:|:---:|
 | **1. Menu startowe z letterboxem** | **2. Okno dialogowe z portretem** | **3. Lot 360° i odbicia wody** |
 
