@@ -8,6 +8,10 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ## [v0.2.0.2] - 2026-11-27
 
+| <img src="docs/screenshots/v020_01_menu.png" width="240"> | <img src="docs/screenshots/v020_02_dialogue.png" width="240"> | <img src="docs/screenshots/v020_03_flight.png" width="240"> |
+|:---:|:---:|:---:|
+| **1. Menu startowe z kinowym letterboxem** | **2. Okno dialogowe z animowanym portretem** | **3. Lot 360° z odbiciami wody i bryłami 3D** |
+
 - **Zamrożenie warstwy silnikowej 68040 / THEA1200 (`0 błędów, 0 ostrzeżeń`):** wszystkie moduły silnika przetestowane w praktyce i zsynchronizowane w `src/` oraz `refs/aura3d/engine/`.
 - **Odbicia na wodzie, cienie 3D na terenie i kontroler lotu (`terrain_3d.i`, `vec3d_engine.i`, `flight_ctrl.i`):** falujące odbicia nieba na tafli wody, rzutowanie cieni pod obiektami 3D na powierzchnię gór (`vx_ybuf`), płynne sterowanie 360° z przechyłem skrzydeł, pochyleniem horyzontu `cam_pitch` i ochroną przed kolizją z gruntem.
 - **Silnik filmowy i obsługa myszy THEA1200 (`cinematic_fx.i`, `thea1200_hw.i`):** animowane pasy letterbox (wysuwanie i chowanie), okno dialogowe z portretem i efektem maszyny do pisania, 24-bitowy fader i oświetlenie nastroju AGA oraz pełna obsługa myszy (`$DFF00A` + LPM) w menu, dialogach i locie.

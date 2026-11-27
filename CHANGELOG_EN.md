@@ -8,6 +8,10 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ## [v0.2.0.2] - 2026-11-27
 
+| <img src="docs/screenshots/v020_01_menu.png" width="240"> | <img src="docs/screenshots/v020_02_dialogue.png" width="240"> | <img src="docs/screenshots/v020_03_flight.png" width="240"> |
+|:---:|:---:|:---:|
+| **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
+
 - **Frozen 68040 / THEA1200 Engine Layer (`0 errors, 0 warnings`):** all engine modules verified in practice and synced across `src/` and `refs/aura3d/engine/`.
 - **Water Reflections, 3D Ground Shadows & Flight Controller (`terrain_3d.i`, `vec3d_engine.i`, `flight_ctrl.i`):** animated sky reflections on water surfaces, terrain-projected shadows underneath 3D meshes (`vx_ybuf`), smooth 360° yaw/bank, horizon pitch (`cam_pitch`), and terrain collision floor protection.
 - **Cinematic Engine & THEA1200 Mouse Support (`cinematic_fx.i`, `thea1200_hw.i`):** smooth letterbox bar open/retract, dialogue box with animated portrait and typewriter effect, 24-bit AGA palette fader & mood tinting, and full mouse support (`$DFF00A` + LMB) across menus, dialogues, and flight.
