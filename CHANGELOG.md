@@ -1,3 +1,13 @@
+# Changelog
+
+## [v0.2.0.3] - 2026-11-27
+### Naprawiono i zmieniono
+* Naprawiono 8-bajtowy stride trójkątów w siatkach 3D (`exo_ship_hud.i`, `exo_world_objs.i`), usuwając rozjechanie bryły myśliwca i dronów po wcześniejszych zmianach.
+* Skompensowano przesunięcie tablicy `sin_tab` (`192` = 0°) w `build_rot_matrix_3d`, przywracając symetryczny widok myśliwca od tyłu i z góry.
+* Wyrównano wektor lotu i prędkość przelotu 360° w `flight_ctrl.i` oraz `exo_menu.i` (spójny lot w głąb terenu od pierwszej klatki menu i misji).
+* Dodano dedykowany kontroler wejścia `src/game_input.i` (klawiatura CIA-A, joystick Port 2, mysz THEA1200) bez skrótów demowych AURA-3D.
+* Zaktualizowano panoramiczne niebo 360° AGA (`data/exo_sky360.bin`) oraz portret oficera (`data/exo_portrait.bin`).
+
 <p align="right"><strong>Polski</strong> | <a href="CHANGELOG_EN.md">English</a> | <a href="README.md">README</a></p>
 
 # Changelog — AETHER FALCON: VANGUARD

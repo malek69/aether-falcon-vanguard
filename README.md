@@ -68,12 +68,13 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 - **Menu startowe:** `1` (`PIONEER`), `2` (`GUARDIAN`), `3` (`ENGINEER`) — Nowa Kampania; `4` — Wczytaj zapisaną kolonię (`data/colony.sav`).
 - **Lot 360°:** `Strzałki` / `Joystick` (obrót 360° i wysokość), `Spacja` / `Fire` (aktywacja bazy wiązką / dopalacz), `S` (zapis stanu gry na dysk), `ESC` / `LPM` (wyjście do systemu).
 
-### v0.2.0.3 (łatka poprawkowa)
-* Naprawiono 8-bajtowy format trójkątów siatki 3D (`[i0, i1, i2, tex_id]`) po wcześniejszym rozjechaniu bufora wierzchołków.
-* Wyrównano przesunięcie kątów `sin_tab` (`192`), kierunek lotu 360° oraz prędkość przelotu w menu i podczas misji.
-* Dodano panoramiczne niebo 360° AGA (`exo_sky360.bin`), portret oficera (`exo_portrait.bin`) oraz dedykowany kontroler wejścia `game_input.i`.
+### Aktualne wydanie: v0.2.0.3 (THEA1200 / Amiga 1200 AGA)
 
-### Zrzuty ekranu (v0.2.0.3 — THEA1200 / FS-UAE)
+* Naprawiono 8-bajtowy format trójkątów siatki 3D (`[i0, i1, i2, tex_id]`) dla myśliwca i dronów.
+* Wyrównano kąty macierzy obrotu `sin_tab` (`192`), sterowanie 360° (`game_input.i`) oraz prędkość lotu w menu i podczas misji.
+* Dodano panoramiczne niebo 360° AGA (`exo_sky360.bin`) i portret oficera (`exo_portrait.bin`) w oknie dialogowym.
+
+### Zrzuty ekranu (v0.2.0.3 — FS-UAE / THEA1200)
 
 ![v0203_menu.png](docs/screenshots/v0203_menu.png)
 
