@@ -23,9 +23,10 @@
 
 ## Gallery `v0.2.0.2` (68040 THEA1200 Engine Skeleton)
 
-| ![1. Title Menu: 3 Roles & Load Colony](docs/screenshots/v020_01_menu.png) | ![2. 360° Voxel Space 3D Flight: Ship, Radar & FPS](docs/screenshots/v020_02_flight.png) |
+![1. Start Menu with Letterbox](docs/screenshots/v020_01_menu.png)![2. Dialogue Box with Portrait](docs/screenshots/v020_02_dialogue.png)![3. 360° Flight & Water Reflections](docs/screenshots/v020_03_flight.png)
+
+**1. Start Menu with Cinema Letterbox** · **2. Dialogue Box with Animated Portrait** · **3. 360° Flight with Water Reflections & 3D Meshes**
 |:---:|:---:|
-| **1. Title Menu: Role Selection (`1–3`) & Load Save (`4`)** | **2. 360° Voxel Space 3D Flight: Ship, 256×256 Radar & HUD** |
 
 ---
 
