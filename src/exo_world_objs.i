@@ -261,6 +261,7 @@ exo_update_drones:
         lea     exo_drone_mesh_n(pc),a2
         lea     exo_drone_mesh_t(pc),a3
         jsr     vec3d_draw_ground_shadow
+        moveq   #6,d7
         jsr     vec3d_draw_mesh_3d
 .dl_nx: addq.l  #6,a4
         dbf     d7,.dl_lp
@@ -337,8 +338,8 @@ exo_drone_mesh_n:
         dc.w  0,-250,0, 0,250,0, -250,0,0, 250,0,0, 0,0,250, 0,0,-250
 exo_drone_mesh_t:
         dc.w 8
-        dc.w 0,4,2, 0,3,4, 0,2,5, 0,5,3
-        dc.w 1,2,4, 1,4,3, 1,5,2, 1,3,5
+        dc.w 0,4,2,0, 0,3,4,0, 0,2,5,0, 0,5,3,0
+        dc.w 1,2,4,0, 1,4,3,0, 1,5,2,0, 1,3,5,0
 
         even
 exo_dome_mesh_v:
@@ -349,5 +350,5 @@ exo_dome_mesh_n:
         dc.w  0,-250,0, -180,-120,-180, 180,-120,-180, 180,-120,180, -180,-120,180, 0,250,0
 exo_dome_mesh_t:
         dc.w 8
-        dc.w 0,2,1, 0,3,2, 0,4,3, 0,1,4
-        dc.w 5,1,2, 5,2,3, 5,3,4, 5,4,1
+        dc.w 0,2,1,0, 0,3,2,0, 0,4,3,0, 0,1,4,0
+        dc.w 5,1,2,0, 5,2,3,0, 5,3,4,0, 5,4,1,0

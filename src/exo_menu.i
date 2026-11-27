@@ -2,11 +2,12 @@
 exo_run_title_menu:
         movem.l d0-d7/a0-a6,-(sp)
         clr.w   aga_fade_lvl
-        clr.w   aga_fade_lvl
+        move.w  #64,cam_yaw
+        move.w  #64,user_yaw
 .tm_lp: jsr     wait_vbl
         jsr     input_update_controls
         jsr     thea1200_read_peripherals
-        add.l   #256,cam_y
+        sub.l   #128,cam_y
         clr.w   ship_bank
         jsr     render_voxel_3d
         jsr     exo_draw_ship_and_hud
@@ -63,6 +64,10 @@ exo_run_title_menu:
         beq.w   .tm_lp
         move.b  #1,player_role
 .tm_ok: clr.b   fire_held
+        clr.w   ship_bank
+        move.w  #96,user_yaw
+        move.w  #96,cam_yaw
+        move.b  #1,intro_turn_done
         movem.l (sp)+,d0-d7/a0-a6
         rts
 exo_draw_menu_bars:

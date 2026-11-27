@@ -10,25 +10,28 @@ init_terrain_lut_68040:
 render_voxel_3d:
         movem.l d0-d7/a0-a6,-(sp)
         lea     chunky_buf,a1
+        lea     exo_sky_360,a2
+        move.w  cam_yaw(pc),d6
+        asr.w   #1,d6
+        and.w   #511,d6
+        move.w  cam_pitch(pc),d4
+        sub.w   #110,d4
         moveq   #0,d7
 .sk_y:  move.w  d7,d0
-        lsr.w   #3,d0
-        cmp.w   #31,d0
-        ble.s   .sk_c
-        moveq   #31,d0
-.sk_c:  add.w   #128,d0
-        move.b  d0,d1
-        lsl.w   #8,d1
-        move.b  d0,d1
-        move.w  d1,d0
-        swap    d1
-        move.w  d0,d1
-        move.l  d1,d2
-        move.l  d1,d3
-        move.l  d1,d4
-        moveq   #19,d5
-.sk_x:  movem.l d1-d4,(a1)
-        lea     16(a1),a1
+        sub.w   d4,d0
+        bpl.s   .sy_ok
+        moveq   #0,d0
+.sy_ok: cmp.w   #159,d0
+        ble.s   .sy_c
+        move.w  #159,d0
+.sy_c:  mulu.w  #512,d0
+        lea     (a2,d0.l),a3
+        move.w  d6,d0
+        moveq   #79,d5
+.sk_x:  move.w  d0,d1
+        and.w   #511,d1
+        move.l  (a3,d1.w),(a1)+
+        addq.w  #4,d0
         dbf     d5,.sk_x
         addq.w  #1,d7
         cmp.w   #256,d7

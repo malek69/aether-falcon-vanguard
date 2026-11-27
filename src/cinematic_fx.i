@@ -46,80 +46,27 @@ cine_move_camera_smooth:
         movem.l (sp)+,d0-d1
         rts
 cine_draw_portrait_anim:
-        movem.l d0-d7/a0-a1,-(sp)
-        lea     chunky_buf+182*320+22,a0
-        moveq   #57,d7
-.pt_bg: moveq   #47,d6
-.pt_bx: move.b  #134,(a0,d6.w)
-        dbf     d6,.pt_bx
-        adda.w  #320,a0
-        dbf     d7,.pt_bg
-        lea     chunky_buf+187*320+33,a0
-        moveq   #10,d7
-.hm_lp: move.w  #21,d6
-.hm_x:  move.b  #122,d0
-        cmp.w   #11,d6
-        blt.s   .hm_c
-        move.b  #116,d0
-.hm_c:  move.b  d0,(a0,d6.w)
-        dbf     d6,.hm_x
-        adda.w  #320,a0
-        dbf     d7,.hm_lp
-        lea     chunky_buf+198*320+35,a0
-        moveq   #24,d7
-.fc_lp: move.w  d7,d5
-        asr.w   #2,d5
-        moveq   #17,d6
-        sub.w   d5,d6
-        move.w  d5,d4
-        cmp.w   #9,d7
-        blt.s   .ns_no
-        cmp.w   #15,d7
-        bgt.s   .ns_no
-        addq.w  #2,d6
-.ns_no: move.w  d5,d4
-.fc_x:  move.b  #61,d0
-        cmp.w   #11,d4
-        blt.s   .fc_c2
-        move.b  #56,d0
-.fc_c2: move.b  d0,(a0,d4.w)
-        addq.w  #1,d4
-        dbf     d6,.fc_x
-        adda.w  #320,a0
-        dbf     d7,.fc_lp
-        lea     chunky_buf+203*320+37,a0
-        moveq   #2,d7
-.vs_lp: moveq   #15,d6
-.vs_x:  move.b  #158,(a0,d6.w)
-        dbf     d6,.vs_x
-        adda.w  #320,a0
-        dbf     d7,.vs_lp
-        lea     chunky_buf+216*320+40,a0
-        move.w  cine_talking(pc),d0
-        beq.s   .m_cls
-        btst    #2,vbl_tick+3
-        beq.s   .m_cls
-        moveq   #7,d6
-.mo_x:  move.b  #128,(a0,d6.w)
-        move.b  #255,320(a0,d6.w)
-        dbf     d6,.mo_x
-        bra.s   .pt_end
-.m_cls: moveq   #7,d6
-.mc_x:  move.b  #48,(a0,d6.w)
-        dbf     d6,.mc_x
-.pt_end:lea     chunky_buf+224*320+27,a0
-        moveq   #14,d7
-.sh_lp: moveq   #37,d6
-.sh_x:  move.b  #152,d0
-        cmp.w   #18,d6
-        blt.s   .sh_c
-        move.b  #146,d0
-.sh_c:  move.b  d0,(a0,d6.w)
-        dbf     d6,.sh_x
-        adda.w  #320,a0
-        dbf     d7,.sh_lp
-        movem.l (sp)+,d0-d7/a0-a1
+        movem.l d0-d2/a0-a2,-(sp)
+        lea     exo_portrait_gfx,a2
+        lea     chunky_buf+182*320+22,a1
+        moveq   #57,d1
+.pr_y:  moveq   #11,d0
+        move.l  a1,a0
+.pr_x:  move.l  (a2)+,(a0)+
+        dbf     d0,.pr_x
+        adda.w  #320,a1
+        dbf     d1,.pr_y
+        tst.w   cine_talking
+        beq.s   .pr_dn
+        move.w  vbl_tick+2(pc),d0
+        and.w   #8,d0
+        beq.s   .pr_dn
+        lea     chunky_buf+212*320+42,a1
+        clr.l   (a1)
+        clr.w   4(a1)
+.pr_dn: movem.l (sp)+,d0-d2/a0-a2
         rts
+
 cine_draw_dialogue_panel:
         movem.l d0-d7/a0-a4,-(sp)
         lea     chunky_buf+178*320+16,a0
@@ -147,9 +94,7 @@ cine_draw_dialogue_panel:
         move.l  cine_line2_ptr(pc),a2
         lea     chunky_buf+198*320+78,a3
         bsr.s   cine_print_n_5x7
-.dp_no2:tst.w   d7
-        bgt.s   .dp_no3
-        tst.l   cine_line3_ptr
+.dp_no2:        tst.l   cine_line3_ptr
         beq.s   .dp_no3
         move.l  cine_line3_ptr(pc),a2
         lea     chunky_buf+216*320+78,a3

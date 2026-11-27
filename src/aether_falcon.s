@@ -30,15 +30,13 @@ mainloop:
     bsr.w   wait_vbl
     jsr     input_update_controls
     jsr     thea1200_read_peripherals
-    cmp.b   #$21,kbd_held_raw
+    cmp.b   #$54,kbd_held_raw
     bne.s   .no_sv
     jsr     exo_play_sfx_ping
     jsr     exo_save_game
 .no_sv:
     jsr     flight_update_360
     bsr.w   render_voxel_3d
-    jsr     vec3d_draw_sun_halo
-    jsr     vec3d_draw_clouds_360
     jsr     exo_update_and_draw_world
     jsr     vec3d_update_particles
     jsr     exo_draw_ship_and_hud
@@ -139,7 +137,7 @@ grid_enabled: dc.b 0
 mirror_enabled: dc.b 0
 shadows_enabled: dc.b 0
 flare_enabled: dc.b 0
-    include "input_ctrl.i"
+    include "game_input.i"
 
 STATE_GAMEPLAY equ 2
 af_state: dc.w 2
@@ -176,6 +174,10 @@ sin_tab:
 aga_pal256:     incbin "../data/exo_pal256.bin"
     even
 exo_voxel_data: incbin "../data/exo_voxel.bin"
+exo_sky_360:
+    incbin  "../data/exo_sky360.bin"
+exo_portrait_gfx:
+    incbin  "../data/exo_portrait.bin"
     section fastram_bss,bss
     even
 chunky_buf:     ds.b 320*256
