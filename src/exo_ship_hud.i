@@ -8,12 +8,16 @@ exo_draw_ship_and_hud:
         clr.w   cam_sin
         move.w  #256,cam_cos
         clr.b   cam_3d_active
+        move.w  user_yaw(pc),-(sp)
+        move.w  user_pitch(pc),-(sp)
         clr.w   user_yaw
         clr.w   user_pitch
         moveq   #0,d0
         move.w  #240,d1
         move.w  ship_bank,d2
         jsr     build_rot_matrix_3d
+        move.w  (sp)+,user_pitch
+        move.w  (sp)+,user_yaw
         moveq   #0,d4
         moveq   #36,d5
         moveq   #64,d6

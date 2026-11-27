@@ -35,7 +35,7 @@ mainloop:
     jsr     exo_play_sfx_ping
     jsr     exo_save_game
 .no_sv:
-    bsr.w   update_flight_360
+    jsr     flight_update_360
     bsr.w   render_voxel_3d
     jsr     vec3d_draw_sun_halo
     jsr     vec3d_draw_clouds_360
@@ -46,11 +46,40 @@ mainloop:
     move.w  #319,bbox_x2
     clr.w   bbox_y1
     move.w  #255,bbox_y2
+    jsr     cine_update_and_draw
+    tst.w   cine_bar_h
+    ble.s   .no_lb
+    subq.w  #1,cine_bar_h
+    jsr     cine_draw_letterbox
+.no_lb:
+    cmp.b   #$12,kbd_held_raw
+    bne.w   .no_md
+    clr.b   kbd_held_raw
+    addq.b  #1,aga_mood
+    cmp.b   #3,aga_mood
+    blt.s   .md_ok
+    clr.b   aga_mood
+.md_ok: move.b  aga_mood(pc),d0
+    bne.s   .md1
+    move.w  #256,aga_tint_r
+    move.w  #256,aga_tint_g
+    move.w  #256,aga_tint_b
+    bra.s   .md_ap
+.md1:   cmp.b   #1,d0
+    bne.s   .md2
+    move.w  #310,aga_tint_r
+    move.w  #210,aga_tint_g
+    move.w  #160,aga_tint_b
+    bra.s   .md_ap
+.md2:   move.w  #340,aga_tint_r
+    move.w  #130,aga_tint_g
+    move.w  #130,aga_tint_b
+.md_ap: lea     aga_pal256,a0
+    jsr     aga_apply_24bit_tint
+.no_md:
     jsr     c2p_160x128_to_aga
     jsr     hud_fps_tick
     jsr     hud_draw_overlay
-    btst    #6,CIAAPRA
-    beq.s   shutdown
     cmp.b   #$75,$bfec01
     bne.w   mainloop
 shutdown:
@@ -59,45 +88,7 @@ exit_program:
     movem.l (sp)+,d0-a6
     moveq   #0,d0
     rts
-update_flight_360:
-    move.w  user_yaw,d0
-    and.w   #255,d0
-    move.w  d0,d1
-    sub.w   cam_yaw(pc),d1
-    ext.w   d1
-    asl.w   #2,d1
-    move.w  d1,ship_bank
-    move.w  d0,cam_yaw
-    lea     sin_tab,a0
-    add.w   d0,d0
-    move.w  (a0,d0.w),d1
-    sub.w   #128,d0
-    and.w   #510,d0
-    move.w  (a0,d0.w),d2
-    moveq   #1,d3
-    cmp.b   #1,player_role
-    bne.s   .r_sp
-    moveq   #2,d3
-.r_sp:  tst.b   fire_held
-    beq.s   .sp_ok
-    addq.w  #2,d3
-.sp_ok:
-    muls.w  d3,d1
-    muls.w  d3,d2
-    add.l   d1,cam_x
-    add.l   d2,cam_y
-    move.w  #135,d0
-    sub.w   user_pitch,d0
-    cmp.w   #75,d0
-    bge.s   .al_lo
-    moveq   #75,d0
-.al_lo:
-    cmp.w   #220,d0
-    ble.s   .al_hi
-    move.w  #220,d0
-.al_hi:
-    move.w  d0,cam_alt
-    rts
+    include "flight_ctrl.i"
 af_fill_lut_ptr: dc.l 0
     include "vec3d_engine.i"
     include "terrain_3d.i"

@@ -554,6 +554,42 @@ vec3d_draw_mesh_3d:
         movem.l (sp)+,d0-d7/a0-a1-a4
         rts
 
+
+vec3d_draw_ground_shadow:
+        movem.l d0-d5/a0-a1,-(sp)
+        cmp.w   #8,d1
+        blt.s   .sh_end
+        cmp.w   #311,d1
+        bgt.s   .sh_end
+        lea     vx_ybuf,a0
+        move.w  d1,d0
+        add.w   d0,d0
+        move.w  (a0,d0.w),d3
+        cmp.w   #20,d3
+        blt.s   .sh_end
+        cmp.w   #252,d3
+        bgt.s   .sh_end
+        lea     chunky_buf,a1
+        mulu.w  #320,d3
+        add.l   d3,a1
+        cmp.w   #10,d4
+        ble.s   .sr_ok
+        moveq   #10,d4
+.sr_ok: move.w  d1,d2
+        sub.w   d4,d2
+        move.w  d4,d5
+        add.w   d5,d5
+.sh_lp: cmp.w   #4,d2
+        blt.s   .sh_nx
+        cmp.w   #315,d2
+        bgt.s   .sh_nx
+        move.b  #128,(a1,d2.w)
+        move.b  #128,320(a1,d2.w)
+.sh_nx: addq.w  #1,d2
+        dbf     d5,.sh_lp
+.sh_end:movem.l (sp)+,d0-d5/a0-a1
+        rts
+
         section fastram_bss,bss
 pt_pool: ds.b 32*8
         section code,code

@@ -1,13 +1,20 @@
         section code,code
 exo_run_title_menu:
         movem.l d0-d7/a0-a6,-(sp)
+        clr.w   aga_fade_lvl
+        clr.w   aga_fade_lvl
 .tm_lp: jsr     wait_vbl
         jsr     input_update_controls
+        jsr     thea1200_read_peripherals
         add.l   #256,cam_y
         clr.w   ship_bank
         jsr     render_voxel_3d
         jsr     exo_draw_ship_and_hud
-        bsr.s   exo_draw_menu_bars
+        bsr.w   exo_draw_menu_bars
+        cmp.w   #22,cine_bar_h
+        bge.s   .lb_ok
+        addq.w  #1,cine_bar_h
+.lb_ok: jsr     cine_draw_letterbox
         clr.w   bbox_x1
         move.w  #319,bbox_x2
         clr.w   bbox_y1
@@ -17,20 +24,42 @@ exo_run_title_menu:
         cmp.b   #$01,d0
         bne.s   .c2
         move.b  #1,player_role
-        bra.s   .tm_ok
+        bra.w   .tm_ok
 .c2:    cmp.b   #$02,d0
         bne.s   .c3
         move.b  #2,player_role
-        bra.s   .tm_ok
+        bra.w   .tm_ok
 .c3:    cmp.b   #$03,d0
         bne.s   .c4
         move.b  #3,player_role
-        bra.s   .tm_ok
+        bra.w   .tm_ok
 .c4:    cmp.b   #$04,d0
         bne.s   .cf
         jsr     exo_load_game
-        bra.s   .tm_ok
-.cf:    tst.b   fire_held
+        bra.w   .tm_ok
+.cf:    tst.b   mouse_lmb_click
+        beq.s   .cf_key
+        move.w  mouse_y(pc),d1
+        cmp.w   #56,d1
+        blt.s   .cf_key
+        cmp.w   #74,d1
+        bgt.s   .m_ld
+        move.w  mouse_x(pc),d0
+        cmp.w   #130,d0
+        bge.s   .mr2
+        move.b  #1,player_role
+        bra.w   .tm_ok
+.mr2:   cmp.w   #215,d0
+        bge.s   .mr3
+        move.b  #2,player_role
+        bra.w   .tm_ok
+.mr3:   move.b  #3,player_role
+        bra.w   .tm_ok
+.m_ld:  cmp.w   #92,d1
+        bgt.s   .cf_key
+        jsr     exo_load_game
+        bra.w   .tm_ok
+.cf_key:tst.b   fire_held
         beq.w   .tm_lp
         move.b  #1,player_role
 .tm_ok: clr.b   fire_held

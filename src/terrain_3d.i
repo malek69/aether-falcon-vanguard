@@ -108,6 +108,18 @@ render_voxel_3d:
         moveq   #0,d0
         move.b  (a2,d1.l),d0
         move.b  (a3,d1.l),d2
+        cmp.b   #136,d2
+        blt.s   .nw_fx
+        cmp.b   #143,d2
+        bgt.s   .nw_fx
+        move.w  vbl_tick+2(pc),d0
+        lsr.w   #2,d0
+        add.w   d5,d0
+        add.w   d7,d0
+        and.w   #7,d0
+        bne.s   .nw_fx
+        move.b  #156,d2
+.nw_fx:
         move.w  cam_alt(pc),d1
         sub.w   d0,d1
         ext.l   d1

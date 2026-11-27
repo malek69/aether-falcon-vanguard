@@ -260,6 +260,7 @@ exo_update_drones:
         lea     exo_drone_mesh_v(pc),a0
         lea     exo_drone_mesh_n(pc),a2
         lea     exo_drone_mesh_t(pc),a3
+        jsr     vec3d_draw_ground_shadow
         jsr     vec3d_draw_mesh_3d
 .dl_nx: addq.l  #6,a4
         dbf     d7,.dl_lp

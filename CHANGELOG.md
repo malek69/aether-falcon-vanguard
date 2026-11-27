@@ -6,6 +6,15 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.2.0.2] - 2026-11-27
+
+- **Zamrożenie warstwy silnikowej 68040 / THEA1200 (`0 błędów, 0 ostrzeżeń`):** wszystkie moduły silnika przetestowane w praktyce i zsynchronizowane w `src/` oraz `refs/aura3d/engine/`.
+- **Odbicia na wodzie, cienie 3D na terenie i kontroler lotu (`terrain_3d.i`, `vec3d_engine.i`, `flight_ctrl.i`):** falujące odbicia nieba na tafli wody, rzutowanie cieni pod obiektami 3D na powierzchnię gór (`vx_ybuf`), płynne sterowanie 360° z przechyłem skrzydeł, pochyleniem horyzontu `cam_pitch` i ochroną przed kolizją z gruntem.
+- **Silnik filmowy i obsługa myszy THEA1200 (`cinematic_fx.i`, `thea1200_hw.i`):** animowane pasy letterbox (wysuwanie i chowanie), okno dialogowe z portretem i efektem maszyny do pisania, 24-bitowy fader i oświetlenie nastroju AGA oraz pełna obsługa myszy (`$DFF00A` + LPM) w menu, dialogach i locie.
+- **32-bitowy C2P 68040 (`c2p_chunky.i`):** aktywacja pełnego potoku 32-bitowego dla profilu `FULL_RES` (`320×256 AGA`).
+
+---
+
 ## [v0.2.0.1] - 2026-11-27
 
 - **Kamień Milowy Kompletnego Silnika 68040 / THEA1200 (`0 błędów, 0 ostrzeżeń`):** zamknięcie warstwy silnikowej z pełną synchronizacją modułów w `src/` oraz `refs/aura3d/engine/`.
