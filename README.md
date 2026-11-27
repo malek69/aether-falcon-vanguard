@@ -65,9 +65,11 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 - **`tools/build_game.py --profile thea1200`:** automatycznie kompiluje kod główny oraz slave WHDLoad (`vasmm68k_mot -m68040 -DFULL_RES -DWIDESCREEN_16_9`), pakuje archiwum **WHDLoad (`.lha`)** oraz gotowy dysk pod **FS-UAE (`.zip`)**.
 - **Struktura katalogów:** `src/` (kod gry), `refs/aura3d/engine/` (rdzeń silników), `data/` (paleta AGA, mapa wysokości, `.MOD`, zapis `colony.sav`), `tools/` (skrypty budujące), `docs/archive/` (archiwalne wersje `v0.1.x`).
 
-### Sterowanie (`THEA1200` / Klawiatura / Joystick)
-- **Menu startowe:** `1` (`PIONEER`), `2` (`GUARDIAN`), `3` (`ENGINEER`) — Nowa Kampania; `4` — Wczytaj zapisaną kolonię (`data/colony.sav`).
-- **Lot 360°:** `Strzałki` / `Joystick` (obrót 360° i wysokość), `Spacja` / `Fire` (aktywacja bazy wiązką / dopalacz), `S` (zapis stanu gry na dysk), `ESC` / `LPM` (wyjście do systemu).
+### Sterowanie (`THEA1200` / Klawiatura / Mysz / Pad)
+
+- **Prolog, Menu i Epilog:** `Spacja` / `Enter` / `LMB` (przejście dalej), `1` (**Pionier**), `2` (**Strażnik**), `3` (**Inżynier**), `4` (**Wczytaj zapis kolonii** z `data/colony.sav`).
+- **Sterowanie poduszkowcem 360°:** `W A S D` / `Strzałki` / `Mysz` / `Pad` (skręt 360° i pochylenie), `E` (zwiększenie ciągu), `Q` / `Z` / `C` (zmniejszenie ciągu), `X` (natychmiastowy zawis w miejscu `Throttle = 0`), `Spacja` / `Alt` (dopalacz).
+- **Interakcja, Dziennik i System:** `F` / `R` / `LMB` / `Fire` (wiązka robocza / skaner / łączność z bazą), `J` / `L` / `Tab` (Dziennik Pokładowy i Mapa Topograficzna), `1`–`3` / `Enter` / `LMB` (wybór opcji w dialogach), `M` (oświetlenie atmosfery AGA), `F5` (zapis gry na dysk), `ESC` (wyjście do systemu).
 
 ### Aktualne wydanie: v0.2.0.4 (THEA1200 / Amiga 1200 AGA)
 
