@@ -2,13 +2,13 @@
 
 ![AETHER FALCON: VANGUARD](docs/logo_vanguard_v3.png)
 
-# AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.4
+# AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.5
 
 **Dedicated MC68040 Assembly 3D Engine for THEA1200 (320×256 AGA / 256 Colors)**
 
-> **Project Reboot Note (`v0.1.x` → `v0.2.0.4`):** The previous `v0.1.x` build (based on a rigid 68020 demo setup) hit an architectural ceiling. We started fresh from the ground up targeting **THEA1200 (MC68040 + Fast RAM + AGA)** with a clean, modular engine. Legacy files and screenshots were moved to `docs/archive/`.
+> **Project Reboot Note (`v0.1.x` → `v0.2.0.5`):** The previous `v0.1.x` build (based on a rigid 68020 demo setup) hit an architectural ceiling. We started fresh from the ground up targeting **THEA1200 (MC68040 + Fast RAM + AGA)** with a clean, modular engine. Legacy files and screenshots were moved to `docs/archive/`.
 
-## Downloads (`v0.2.0.4` — THEA1200)
+## Downloads (`v0.2.0.5` — THEA1200)
 
 | Profile (`--profile`) | Target Hardware | Download Packages |
 |---|---|---|
@@ -26,13 +26,13 @@ The current `v0.2.x` generation is developed **exclusively for the THEA1200 arch
   - **Amiberry**, **FS-UAE**, and **WinUAE** configured as `A1200 + 68040 + Fast RAM + AGA` (ready-to-boot `_FSUAE.zip` package).
 - **Unsupported platforms:** stock Amiga 1200 (`68EC020` without Fast RAM), Amiga 500/600 (`OCS/ECS`), and the cut-down `320×128` mode from `v0.1.x` are discontinued (archived builds remain in `docs/archive/`).
 
-## Gallery `v0.2.0.4` (Frozen 68040 THEA1200 Engine)
+## Gallery `v0.2.0.5` (Frozen 68040 THEA1200 Engine)
 
-| ![1. Start Menu with Letterbox](docs/screenshots/v0204_01.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v0204_02.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v0204_03.png) |
+| ![1. Start Menu with Letterbox](docs/screenshots/v0205_01.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v0205_02.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v0205_03.png) |
 |:---:|:---:|:---:|
 | **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
 
-## Frozen Engine Capabilities (`v0.2.0.4`)
+## Frozen Engine Capabilities (`v0.2.0.5`)
 
 - **360° Voxel Space 3D Terrain (`src/terrain_3d.i`):** incremental `MC68040` raymarching (zero `muls.w` in the inner ray loop), `vx_row_lut` row LUT, dynamic horizon pitch (`cam_pitch`), 320-column depth buffer (`vx_ybuf`), animated water reflections, distance fog (`Z-Fog`), and biosphere palette shift.
 - **Gouraud 3D Meshes, Shadows & Particles (`src/vec3d_engine.i`, `refs/aura3d/engine/aura3d_v2.i`):** 3D polygon rendering with `movem.l` Z-buffer clear, terrain-projected shadows underneath 3D objects, 360° sun with atmospheric corona, 360° clouds, 32-slot 3D particle system, and Bresenham 2D lines.

@@ -1,3 +1,9 @@
+## v0.2.0.5 (2026-11-28)
+- 100% wokselowe bazy kolonii (ladowiska, kopuly, wieze) i krysztaly Aetheru w terenie.
+- Generator swiata z dowolnego 6-cyfrowego ziarna SEED bezposrednio w menu gry na MC68040.
+- 3 profesje (Pionier, Straznik, Inzynier) z osobnymi portretami AGA, 3 statkami 3D, 3 sciezkami .MOD i fabulami doczytywanymi z dysku.
+- Filmowy Prolog na tle przelotu 360 oraz rozszerzone efekty SFX na ukladzie Paula.
+
 ## v0.2.0.4 (2026-11-27)
 - Generator otwartego świata (`SEED`), 8 baz, 8 kryształów anomalii, obrotowy radar 360° i mapa topograficzna pod `J`.
 - Pełna dwujęzyczna kampania (`PL` z polskimi znakami i `EN`) ładowana z dysku twardego (`story_pl.bin` / `story_en.bin`), Prolog i Epilog Aktu III.

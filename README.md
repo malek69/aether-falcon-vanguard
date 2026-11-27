@@ -3,17 +3,17 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a> | <a href="docs/archive/">Archiwum v0.1.x</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.4</h1>
+  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.5</h1>
   <p><strong>Dedykowany silnik 3D w asemblerze MC68040 dla konsoli THEA1200 (320×256 AGA / 256 kolorów)</strong></p>
 </div>
 
 ---
 
-> **Uwaga o restarcie projektu (`v0.1.x` → `v0.2.0.4`):** Poprzednia wersja `v0.1.x` (oparta na sztywnym trybie `68020` i połatanych modułach z dema) osiągnęła ścianę — nie dało się z niej wycisnąć oczekiwanej jakości ani stabilności, dlatego wyczyściliśmy kod i **zaczęliśmy od zera** pod jedną, docelową architekturę **THEA1200 (MC68040 + Fast RAM + AGA)**. Starsze pliki i zrzuty zostały przeniesione do [docs/archive/](docs/archive/).
+> **Uwaga o restarcie projektu (`v0.1.x` → `v0.2.0.5`):** Poprzednia wersja `v0.1.x` (oparta na sztywnym trybie `68020` i połatanych modułach z dema) osiągnęła ścianę — nie dało się z niej wycisnąć oczekiwanej jakości ani stabilności, dlatego wyczyściliśmy kod i **zaczęliśmy od zera** pod jedną, docelową architekturę **THEA1200 (MC68040 + Fast RAM + AGA)**. Starsze pliki i zrzuty zostały przeniesione do [docs/archive/](docs/archive/).
 
 ---
 
-## Pobieranie (`v0.2.0.4` — THEA1200)
+## Pobieranie (`v0.2.0.5` — THEA1200)
 
 | Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -33,13 +33,13 @@ Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architektu
   - **Amiberry**, **FS-UAE** oraz **WinUAE** skonfigurowane jako `A1200 + 68040 + Fast RAM + AGA` (gotowa paczka `_FSUAE.zip`).
 - **Platformy niewspierane:** bazowa Amiga 1200 (`68EC020` bez Fast RAM), Amiga 500/600 (`OCS/ECS`) oraz okrojony tryb `320×128` z linii `v0.1.x` nie są już rozwijane (archiwalne wydania znajdują się w `docs/archive/`).
 
-## Galeria `v0.2.0.4` (Szkielet Silnika 68040 THEA1200)
+## Galeria `v0.2.0.5` (Szkielet Silnika 68040 THEA1200)
 
-| ![1](docs/screenshots/v0204_01.png) | ![2](docs/screenshots/v0204_02.png) | ![3](docs/screenshots/v0204_03.png) |
+| ![1](docs/screenshots/v0205_01.png) | ![2](docs/screenshots/v0205_02.png) | ![3](docs/screenshots/v0205_03.png) |
 |:---:|:---:|:---:|
 | **1. Menu startowe z letterboxem** | **2. Okno dialogowe z portretem** | **3. Lot 360° i odbicia wody** |
 
-## Co działa w `v0.2.0.4` (obecny szkielet)
+## Co działa w `v0.2.0.5` (obecny szkielet)
 - **Silnik terenu Voxel Space 3D 360° (`MC68040`):** pełna rozdzielczość `320×256 AGA`, mgła odległości (`Z-Fog`) oraz bufor głębokości terenu (`vx_ybuf`).
 - **Menu startowe i wybór kampanii (`src/exo_menu.i`):** Nowa Kampania z wyborem roli (**`1: PIONEER`**, **`2: GUARDIAN`**, **`3: ENGINEER`**) lub wczytanie zapisanej kolonii (**`4: LOAD SAVED COLONY`**).
 - **Trwały zapis i odczyt na dysk (`src/exo_save_load.i`):** zapis stanu świata do `data/colony.sav` (auto-save przy aktywacji bazy oraz ręcznie pod klawiszem `S`).
@@ -71,7 +71,7 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 - **Sterowanie poduszkowcem 360°:** `W A S D` / `Strzałki` / `Mysz` / `Pad` (skręt 360° i pochylenie), `E` (zwiększenie ciągu), `Q` / `Z` / `C` (zmniejszenie ciągu), `X` (natychmiastowy zawis w miejscu `Throttle = 0`), `Spacja` / `Alt` (dopalacz).
 - **Interakcja, Dziennik i System:** `F` / `R` / `LMB` / `Fire` (wiązka robocza / skaner / łączność z bazą), `J` / `L` / `Tab` (Dziennik Pokładowy i Mapa Topograficzna), `1`–`3` / `Enter` / `LMB` (wybór opcji w dialogach), `M` (oświetlenie atmosfery AGA), `F5` (zapis gry na dysk), `ESC` (wyjście do systemu).
 
-### Aktualne wydanie: v0.2.0.4 (THEA1200 / Amiga 1200 AGA)
+### Aktualne wydanie: v0.2.0.5 (THEA1200 / Amiga 1200 AGA)
 
 * Naprawiono 8-bajtowy format trójkątów siatki 3D (`[i0, i1, i2, tex_id]`) dla myśliwca i dronów.
 * Wyrównano kąty macierzy obrotu `sin_tab` (`192`), sterowanie 360° (`game_input.i`) oraz prędkość lotu w menu i podczas misji.

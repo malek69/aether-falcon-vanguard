@@ -1,3 +1,9 @@
+## v0.2.0.5 (2026-11-28)
+- 100% voxel-integrated colony bases (landing pads, domes, towers) and Aether crystals.
+- On-Amiga MC68040 world generator from any 6-digit SEED in the title menu.
+- 3 classes (Pioneer, Guardian, Engineer) with dedicated AGA portraits, 3D crafts, 3 .MOD soundtracks, and disk-loaded stories.
+- Cinematic 360 Prologue and expanded Paula hardware DMA SFX.
+
 ## v0.2.0.4 (2026-11-27)
 - Open-world terrain & seed generator (`SEED`), 8 colony bases, 8 anomaly crystals, rotating 360° radar, and topographic map (`J`).
 - Bilingual HDD-loaded campaign (`PL` with Polish diacritics & `EN`), cinematic Prologue and Act III Epilogue.
