@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/logo_vanguard.png?v=2" alt="AETHER FALCON: VANGUARD"></p>
+<p align="center"><img src="docs/logo_vanguard_v2.png" alt="AETHER FALCON: VANGUARD"></p>
 
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a> | <a href="docs/archive/">Archiwum v0.1.x</a></p>
 
