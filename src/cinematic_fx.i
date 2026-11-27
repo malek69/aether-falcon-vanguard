@@ -104,17 +104,25 @@ cine_draw_dialogue_panel:
         rts
 cine_print_n_5x7:
         tst.w   d7
-        ble.s   .cp_end
+        ble.w   .cp_end
         moveq   #0,d0
         move.b  (a2)+,d0
         beq.s   .cp_end
         subq.w  #1,d7
         bne.s   .ch_ok
         move.w  #1,cine_talking
-.ch_ok: sub.w   #32,d0
+.ch_ok: cmp.b   #10,d0
+        bge.s   .cp_asc
+        subq.w  #1,d0
+        lsl.w   #3,d0
+        lea     pl_glyphs_5x7(pc),a4
+        add.l   d0,a4
+        bra.s   .cp_gl
+.cp_asc:sub.w   #32,d0
         lsl.w   #3,d0
         lea     hud_ascii_5x7,a4
         add.l   d0,a4
+.cp_gl:
         move.l  a3,a5
         moveq   #6,d3
 .py_lp: move.b  (a4)+,d4
@@ -136,7 +144,7 @@ cine_print_n_5x7:
 .nx:    adda.w  #320,a5
         dbf     d3,.py_lp
         addq.l  #6,a3
-        bra.s   cine_print_n_5x7
+        bra.w   cine_print_n_5x7
 .cp_end:rts
 cine_update_and_draw:
         cmp.b   #$14,kbd_held_raw
@@ -179,7 +187,13 @@ cine_target_pitch: dc.w 110
 cine_line1_ptr:    dc.l cine_demo_l1
 cine_line2_ptr:    dc.l cine_demo_l2
 cine_line3_ptr:    dc.l cine_demo_l3
+        IFD LANG_PL
+cine_demo_l1:      dc.b "DOW",6,"DZTWO: WITAJ NA AETHER-IV.",0
+cine_demo_l2:      dc.b "BAZY W SEKTORZE CZEKAJ",1," NA SYGNA",4,".",0
+cine_demo_l3:      dc.b "[1] PRZYJMUJ",3,"   [2] SKAN SEKTORA",0
+        ELSE
 cine_demo_l1:      dc.b "ORBITAL CMD: WELCOME TO SECTOR 01.",0
 cine_demo_l2:      dc.b "DOMES IN SECTOR 01 AWAIT ORDERS.",0
 cine_demo_l3:      dc.b "[1] ACKNOWLEDGE   [2] SCAN SECTOR",0
+        ENDC
         even

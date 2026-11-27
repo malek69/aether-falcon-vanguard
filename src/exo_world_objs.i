@@ -80,43 +80,7 @@ exo_update_and_draw_world:
         move.b  #158,1(a2)
         suba.w  #320,a2
         dbf     d0,.bm_l
-.no_act:lea     vx_ybuf,a1
-        move.w  d1,d2
-        add.w   d2,d2
-        move.w  (a1,d2.w),d3
-        move.w  2(a4),d0
-        and.w   #255,d0
-        lsl.w   #8,d0
-        move.w  (a4),d2
-        and.w   #255,d2
-        or.w    d2,d0
-        and.l   #$ffff,d0
-        lea     exo_voxel_data,a2
-        moveq   #0,d2
-        move.b  (a2,d0.l),d2
-        move.w  cam_alt(pc),d0
-        sub.w   d2,d0
-        ext.l   d0
-        asl.l   #6,d0
-        divs.w  d5,d0
-        add.w   #110,d0
-        cmp.w   d3,d0
-        bgt.s   .b_nx
-        move.w  d0,d3
-        move.w  #180,d4
-        divs.w  d5,d4
-        cmp.w   #18,d4
-        ble.s   .sz_m
-        moveq   #18,d4
-.sz_m:
-        cmp.w   #3,d4
-        bge.s   .sz_ok
-        moveq   #3,d4
-.sz_ok: move.b  #122,d6
-        tst.b   4(a4)
-        beq.s   .dr_bm
-        move.b  #156,d6
-.dr_bm: jsr     vec3d_draw_colony_structure
+.no_act:
 .b_nx:  addq.l  #6,a4
         dbf     d7,.b_lp
         bsr.w   exo_update_drones

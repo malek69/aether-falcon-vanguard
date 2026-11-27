@@ -24,6 +24,7 @@ start:
     move.w  #135,cam_alt
     jsr     init_terrain_lut_68040
     jsr     thea1200_init_hw
+    jsr     exo_run_prologue
     jsr     exo_run_title_menu
     jsr     hud_fps_init
 mainloop:
@@ -178,6 +179,8 @@ exo_sky_360:
     incbin  "../data/exo_sky360.bin"
 exo_portrait_gfx:
     incbin  "../data/exo_portrait.bin"
+exo_role_portraits:
+    incbin  "../data/exo_role_portraits.bin"
     section fastram_bss,bss
     even
 chunky_buf:     ds.b 320*256
@@ -187,3 +190,4 @@ edge_buf:       ds.b 256*8
     section chip_mod,data_c
     even
 mod_data: incbin "../data/exo_theme.mod"
+    ds.b 4096

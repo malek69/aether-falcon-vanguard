@@ -30,6 +30,14 @@ exo_draw_ship_and_hud:
         beq.s   .no_ab
         moveq   #76,d6
 .no_ab: lea     exo_ship_verts(pc),a0
+        cmp.b   #2,player_role
+        bne.s   .vs3
+        lea     exo_guard_verts(pc),a0
+        bra.s   .vsok
+.vs3:   cmp.b   #3,player_role
+        bne.s   .vsok
+        lea     exo_eng_verts(pc),a0
+.vsok:
         lea     v2_proj_buf,a1
         move.w  #18,d7
         jsr     transform_and_project_verts
@@ -40,6 +48,14 @@ exo_draw_ship_and_hud:
         move.b  #1,phong_enabled
         clr.b   zfog_enabled
         lea     exo_ship_tris(pc),a0
+        cmp.b   #2,player_role
+        bne.s   .ts3
+        lea     exo_guard_tris(pc),a0
+        bra.s   .tsok
+.ts3:   cmp.b   #3,player_role
+        bne.s   .tsok
+        lea     exo_eng_tris(pc),a0
+.tsok:
         lea     v2_proj_buf,a1
         lea     exo_tex_solid(pc),a2
         lea     v2_env_buf,a3
@@ -100,6 +116,44 @@ exo_ship_verts:
         dc.w   12, -12, -25
         dc.w   -8,   1, -25
         dc.w    8,   1, -25
+exo_guard_verts:
+        dc.w    0,  -2,  16
+        dc.w    0,  -3,  24
+        dc.w  -18,   1,  44
+        dc.w   18,   1,  44
+        dc.w    0,  -8,  10
+        dc.w  -11,  -1,   4
+        dc.w    1,  -1,  28
+        dc.w  -32,   2,  14
+        dc.w   42,   2, -10
+        dc.w  -22,  -2,   8
+        dc.w   22,  -2,   8
+        dc.w    0,  -3, -22
+        dc.w  -24,   1, -26
+        dc.w   24,   1, -26
+        dc.w  -12, -12, -25
+        dc.w   12, -12, -25
+        dc.w  -18,   1,  -1
+        dc.w   18,   1,  -1
+exo_eng_verts:
+        dc.w    0,   2,  42
+        dc.w    0,  -3,  24
+        dc.w  -25,   4,  40
+        dc.w   25,   4,  40
+        dc.w    0,   4,  40
+        dc.w  -11,  -8,   4
+        dc.w   11,  -1,   4
+        dc.w  -42,   2, -10
+        dc.w   42,  -5, -10
+        dc.w  -25,   5, -16
+        dc.w   25,   5, -16
+        dc.w    0,  -3, -22
+        dc.w  -24,  -6, -26
+        dc.w   50,   5, -26
+        dc.w  -25,   5, -25
+        dc.w   12, -12, -25
+        dc.w  -30,  -3,  12
+        dc.w   30,  -3,  12
 exo_ship_norms:
         dc.w    0,   0, 245
         dc.w    0, -30, 243
@@ -120,6 +174,82 @@ exo_ship_norms:
         dc.w  -75,   9,-233
         dc.w   75,   9,-233
 exo_ship_tris:
+        dc.w 36
+        dc.w 0,2,1,0
+        dc.w 0,1,2,0
+        dc.w 0,1,3,0
+        dc.w 0,3,1,0
+        dc.w 1,2,4,0
+        dc.w 1,4,2,0
+        dc.w 1,4,3,0
+        dc.w 1,3,4,0
+        dc.w 2,5,4,0
+        dc.w 2,4,5,0
+        dc.w 3,4,6,0
+        dc.w 3,6,4,0
+        dc.w 4,5,9,0
+        dc.w 4,9,5,0
+        dc.w 4,6,10,0
+        dc.w 4,10,6,0
+        dc.w 4,9,11,0
+        dc.w 4,11,9,0
+        dc.w 4,11,10,0
+        dc.w 4,10,11,0
+        dc.w 5,7,9,0
+        dc.w 5,9,7,0
+        dc.w 6,10,8,0
+        dc.w 6,8,10,0
+        dc.w 9,12,11,0
+        dc.w 9,11,12,0
+        dc.w 10,11,13,0
+        dc.w 10,13,11,0
+        dc.w 9,14,11,0
+        dc.w 9,11,14,0
+        dc.w 10,11,15,0
+        dc.w 10,15,11,0
+        dc.w 9,16,11,0
+        dc.w 9,11,16,0
+        dc.w 10,11,17,0
+        dc.w 10,17,11,0
+exo_guard_tris:
+        dc.w 36
+        dc.w 0,2,1,0
+        dc.w 0,1,2,0
+        dc.w 0,1,3,0
+        dc.w 0,3,1,0
+        dc.w 1,2,4,0
+        dc.w 1,4,2,0
+        dc.w 1,4,3,0
+        dc.w 1,3,4,0
+        dc.w 2,5,4,0
+        dc.w 2,4,5,0
+        dc.w 3,4,6,0
+        dc.w 3,6,4,0
+        dc.w 4,5,9,0
+        dc.w 4,9,5,0
+        dc.w 4,6,10,0
+        dc.w 4,10,6,0
+        dc.w 4,9,11,0
+        dc.w 4,11,9,0
+        dc.w 4,11,10,0
+        dc.w 4,10,11,0
+        dc.w 5,7,9,0
+        dc.w 5,9,7,0
+        dc.w 6,10,8,0
+        dc.w 6,8,10,0
+        dc.w 9,12,11,0
+        dc.w 9,11,12,0
+        dc.w 10,11,13,0
+        dc.w 10,13,11,0
+        dc.w 9,14,11,0
+        dc.w 9,11,14,0
+        dc.w 10,11,15,0
+        dc.w 10,15,11,0
+        dc.w 9,16,11,0
+        dc.w 9,11,16,0
+        dc.w 10,11,17,0
+        dc.w 10,17,11,0
+exo_eng_tris:
         dc.w 36
         dc.w 0,2,1,0
         dc.w 0,1,2,0

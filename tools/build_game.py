@@ -10,6 +10,8 @@ AURA_DEMO = os.path.join(ROOT, "refs", "aura3d", "demo_v1")
 PROFILES = {
     "standard": ("-m68020", list(), ["-kick1hunks"], "_020"),
     "thea1200": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9"], list(), "_THEA1200"),
+    "thea1200_pl": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DLANG_PL"], list(), "_THEA1200_PL"),
+    "thea1200_en": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9"], list(), "_THEA1200_EN"),
     "060": ("-m68060", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DM68060"], list(), "_060"),
 }
 
@@ -63,7 +65,7 @@ def build_profile(profile):
 
     with open(os.path.join(pkg_dir, "README.txt"), "w", newline=chr(10)) as rf:
         rf.write(
-            f"AETHER FALCON: VANGUARD v0.1.3.1 [{profile}] (2026)" + chr(10) +
+            f"AETHER FALCON: VANGUARD v0.2.0.5 [{profile}] (2026)" + chr(10) +
             "Bare-Metal Amiga 1200 AGA / THEA1200 3D Combat Sim" + chr(10) +
             "Controls: Joy2 / THEA1200 Pad / Arrows + Space | Exit: LMB or ESC" + chr(10)
         )
@@ -92,7 +94,7 @@ def build_profile(profile):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--profile", choices=["standard", "thea1200", "060", "all"], default="all")
+    p.add_argument("--profile", choices=["standard", "thea1200", "thea1200_pl", "thea1200_en", "060", "all"], default="all")
     args = p.parse_args()
     for t in (list(PROFILES.keys()) if args.profile == "all" else [args.profile]):
         build_profile(t)
