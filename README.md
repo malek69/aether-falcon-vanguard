@@ -23,12 +23,9 @@
 
 ## Galeria `v0.2.0.2` (Szkielet Silnika 68040 THEA1200)
 
-![1. Menu startowe z letterboxem](docs/screenshots/v020_01_menu.png)![2. Okno dialogowe z portretem](docs/screenshots/v020_02_dialogue.png)![3. Lot 360° i odbicia wody](docs/screenshots/v020_03_flight.png)
-
-**1. Menu startowe z kinowym letterboxem** · **2. Okno dialogowe z animowanym portretem** · **3. Lot 360° z odbiciami wody i bryłami 3D**
-|:---:|:---:|
-
----
+| ![1](docs/screenshots/v020_01_menu.png) | ![2](docs/screenshots/v020_02_dialogue.png) | ![3](docs/screenshots/v020_03_flight.png) |
+|:---:|:---:|:---:|
+| **1. Menu startowe z letterboxem** | **2. Okno dialogowe z portretem** | **3. Lot 360° i odbicia wody** |
 
 ## Co działa w `v0.2.0.2` (obecny szkielet)
 - **Silnik terenu Voxel Space 3D 360° (`MC68040`):** pełna rozdzielczość `320×256 AGA`, mgła odległości (`Z-Fog`) oraz bufor głębokości terenu (`vx_ybuf`).
