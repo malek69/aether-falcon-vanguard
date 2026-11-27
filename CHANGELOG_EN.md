@@ -3,6 +3,10 @@
 - Bilingual HDD-loaded campaign (`PL` with Polish diacritics & `EN`), cinematic Prologue and Act III Epilogue.
 - 3 distinct 3D hovercraft meshes per class (Pioneer, Guardian, Engineer), 6 AGA portraits, and 4 ProTracker `.MOD` soundtrack modules.
 
+| ![1](docs/screenshots/v0204_01.png) | ![2](docs/screenshots/v0204_02.png) | ![3](docs/screenshots/v0204_03.png) |
+|:---:|:---:|:---:|
+| **1. 3D Hovercraft & Colony Domes** | **2. Sector Officer Comms** | **3. Logbook & Topographic Map** |
+
 <p align="right"><a href="CHANGELOG.md">Polski</a> | <strong>English</strong> | <a href="README_EN.md">README</a></p>
 
 # Changelog — AETHER FALCON: VANGUARD

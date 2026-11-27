@@ -3,6 +3,10 @@
 - Pełna dwujęzyczna kampania (`PL` z polskimi znakami i `EN`) ładowana z dysku twardego (`story_pl.bin` / `story_en.bin`), Prolog i Epilog Aktu III.
 - 3 unikalne modele poduszkowców 3D dla klas (Pionier, Strażnik, Inżynier), 6 portretów postaci AGA oraz 4 ścieżki dźwiękowe ProTracker `.MOD`.
 
+| ![1](docs/screenshots/v0204_01.png) | ![2](docs/screenshots/v0204_02.png) | ![3](docs/screenshots/v0204_03.png) |
+|:---:|:---:|:---:|
+| **1. Poduszkowiec i kopuły 3D baz** | **2. Komunikacja z oficerem sektora** | **3. Dziennik i mapa topograficzna** |
+
 # Changelog
 
 ## [v0.2.0.3] - 2026-11-27
