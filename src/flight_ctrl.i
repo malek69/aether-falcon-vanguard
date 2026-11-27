@@ -47,7 +47,7 @@ flight_update_360:
 .dw1:   cmp.w   #128,d1
         ble.s   .dw2
         sub.w   #256,d1
-.dw2:   ; Przechyl skrzydel reaguje plynnie na skret (bez odwracania statku na bok)
+.dw2:   ; Przechyl skrzydel reaguje plynnie na skret
         move.w  d1,d2
         asl.w   #2,d2
         add.w   ship_bank(pc),d2
@@ -63,46 +63,50 @@ flight_update_360:
         ; Plynne podazanie cam_yaw za user_yaw
         move.w  d0,cam_yaw
 
-        ; DOKLADNIE ten sam wektor osi wzroku (X=160) co w terrain_3d.i!
+        ; DOKLADNIE ten sam wektor osi wzroku (X=160) co w terrain_3d.i
         lea     sin_tab,a0
         move.w  cam_yaw(pc),d0
         and.w   #255,d0
         add.w   d0,d0
-        move.w  (a0,d0.w),d1            ; d4 z terrain_3d.i -> vx
+        move.w  (a0,d0.w),d1            ; vx
         sub.w   #128,d0
         and.w   #510,d0
-        move.w  (a0,d0.w),d2            ; d5 z terrain_3d.i -> vy
+        move.w  (a0,d0.w),d2            ; vy
 
-        moveq   #2,d3
+        ; Predkosc zalezy od przepustnicy (0=zawis, 1..4=ciag) + dopalacz
+        moveq   #0,d3
+        move.b  ship_throttle(pc),d3
         cmp.b   #1,player_role
         bne.s   .r_sp
-        moveq   #3,d3
+        tst.w   d3
+        beq.s   .r_sp                   ; Pioneer w zawisie (0) tez stoi w miejscu
+        addq.w  #1,d3                   ; Bonus zwiadowczy Pioneera w locie
 .r_sp:  tst.b   fire_held
         beq.s   .sp_ok
-        addq.w  #3,d3                   ; Dopalacz (Spacja / LPM / Fire)
+        addq.w  #4,d3                   ; Dopalacz (Spacja / Alt / Enter)
+        moveq   #0,d0
+        move.b  ship_upgrade_lvl(pc),d0
+        add.w   d0,d3
 .sp_ok: muls.w  d3,d1
         muls.w  d3,d2
-        asr.l   #2,d1
-        asr.l   #2,d2
+        asr.l   #3,d1
+        asr.l   #3,d2
         add.l   d1,cam_x
         add.l   d2,cam_y
 
-        ; Ograniczenie pochylenia gora/dol
+        ; Fizyka poduszkowca: plynne unoszenie sie na poduszce powietrznej nad terenem i woda
         move.w  user_pitch(pc),d0
-        cmp.w   #-40,d0
+        cmp.w   #-24,d0
         bge.s   .pt1
-        move.w  #-40,d0
-.pt1:   cmp.w   #40,d0
+        move.w  #-24,d0
+.pt1:   cmp.w   #24,d0
         ble.s   .pt2
-        move.w  #40,d0
+        move.w  #24,d0
 .pt2:   move.w  d0,user_pitch
         move.w  #112,d1
         sub.w   d0,d1
         move.w  d1,cam_pitch
 
-        ; Wysokosc nad terenem
-        move.w  #138,d1
-        sub.w   d0,d1
         move.b  cam_y+2(pc),d2
         and.w   #255,d2
         lsl.w   #8,d2
@@ -113,11 +117,11 @@ flight_update_360:
         lea     exo_voxel_data,a0
         moveq   #0,d0
         move.b  (a0,d2.l),d0
-        add.w   #16,d0
-        cmp.w   d0,d1
-        bge.s   .al_ok
-        move.w  d0,d1
-.al_ok: cmp.w   #215,d1
+        add.w   #15,d0                  ; poduszka powietrzna 15 jednostek nad terenem/woda
+        move.w  cam_alt(pc),d1
+        add.w   d0,d1
+        asr.w   #1,d1                   ; plynna amortyzacja zawieszenia poduszkowca
+        cmp.w   #215,d1
         ble.s   .al_hi
         move.w  #215,d1
 .al_hi: move.w  d1,cam_alt

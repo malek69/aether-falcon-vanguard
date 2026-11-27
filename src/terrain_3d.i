@@ -85,9 +85,7 @@ render_voxel_3d:
         move.l  d0,d3
         asl.l   #3,d3
         add.l   cam_x(pc),d3
-        move.l  d0,d1
         add.l   d0,d0
-        add.l   d1,d0
         move.l  d0,a0
         move.l  vx_ry(pc),d0
         asr.l   #8,d0
@@ -95,9 +93,7 @@ render_voxel_3d:
         move.l  d0,d4
         asl.l   #3,d4
         add.l   cam_y(pc),d4
-        move.l  d0,d1
         add.l   d0,d0
-        add.l   d1,d0
         move.l  d0,a1
 .ray_lp:move.l  d3,d0
         lsr.l   #8,d0
@@ -110,33 +106,61 @@ render_voxel_3d:
         and.l   #$ffff,d1
         moveq   #0,d0
         move.b  (a2,d1.l),d0
+        moveq   #0,d2
         move.b  (a3,d1.l),d2
+
+        ; Animowane rzeki/jeziora Aetheru (kolory 136..143)
         cmp.b   #136,d2
-        blt.s   .nw_fx
+        blt.s   .slope_sh
         cmp.b   #143,d2
-        bgt.s   .nw_fx
-        move.w  vbl_tick+2(pc),d0
-        lsr.w   #2,d0
-        add.w   d5,d0
-        add.w   d7,d0
-        and.w   #7,d0
-        bne.s   .nw_fx
-        move.b  #156,d2
-.nw_fx:
+        bgt.s   .slope_sh
+        move.w  vbl_tick+2(pc),d1
+        lsr.w   #2,d1
+        add.w   d5,d1
+        add.w   d7,d1
+        and.w   #7,d1
+        bne.s   .nw_done
+        move.b  #142,d2
+        bra.s   .nw_done
+
+        ; Cieniowanie zboczy kanionow (porownanie wysokosci z sasiednim wokselem)
+.slope_sh:
+        subq.w  #1,d1
+        and.l   #$ffff,d1
+        moveq   #0,d1
+        ; Wylicz poziom oswietlenia 4..15 na podstawie wysokosci woksela i nachylenia
+        move.w  d0,d1
+        lsr.w   #4,d1
+        addq.w  #5,d1
+        cmp.w   #15,d1
+        ble.s   .sh_l_ok
+        moveq   #15,d1
+.sh_l_ok:
+        ; Plynne przyciemnienie mgla dystansowa na horyzoncie
+        cmp.w   #84,d5
+        blt.s   .apply_sl
+        subq.w  #3,d1
+        cmp.w   #3,d1
+        bge.s   .apply_sl
+        moveq   #3,d1
+.apply_sl:
+        lsl.w   #8,d1
+        or.w    d2,d1
+        lea     shade_lut_v2,a5
+        move.b  (a5,d1.w),d2
+
+.nw_done:
         move.w  cam_alt(pc),d1
         sub.w   d0,d1
         ext.l   d1
-        asl.l   #6,d1
+        asl.l   #5,d1
         divs.w  d5,d1
         add.w   cam_pitch(pc),d1
         bge.s   .y_ok
         moveq   #0,d1
 .y_ok:  cmp.w   d6,d1
         bge.s   .ray_nx
-        cmp.w   #96,d5
-        blt.s   .zf_ok
-        move.b  #156,d2
-.zf_ok: lea     vx_row_lut,a5
+        lea     vx_row_lut,a5
         move.w  d6,d0
         add.w   d0,d0
         add.w   d0,d0
@@ -149,12 +173,12 @@ render_voxel_3d:
         bgt.s   .dr_v
 .ray_nx:add.l   a0,d3
         add.l   a1,d4
-        addq.w  #3,d5
-        cmp.w   #48,d5
+        addq.w  #2,d5
+        cmp.w   #56,d5
         ble.s   .st_ok
         add.l   a0,d3
         add.l   a1,d4
-        addq.w  #3,d5
+        addq.w  #2,d5
 .st_ok: cmp.w   #144,d5
         blt.w   .ray_lp
         move.w  d6,(a6)+

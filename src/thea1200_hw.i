@@ -16,6 +16,7 @@ thea1200_read_peripherals:
         ext.w   d2
         move.w  d2,mouse_dx
         beq.s   .nmx
+        clr.b   input_pad_mode
         move.b  #120,mouse_active
         add.w   d2,mouse_x
 .nmx:   lsr.w   #8,d0
@@ -24,6 +25,7 @@ thea1200_read_peripherals:
         ext.w   d0
         move.w  d0,mouse_dy
         beq.s   .nmy
+        clr.b   input_pad_mode
         move.b  #120,mouse_active
         add.w   d0,mouse_y
 .nmy:
@@ -54,6 +56,7 @@ thea1200_read_peripherals:
         bne.s   .rd_end
         move.b  #1,mouse_lmb_prev
         move.b  #1,mouse_lmb_click
+        clr.b   input_pad_mode
         move.b  #120,mouse_active
         bra.s   .rd_end
 .lmb_up:clr.b   mouse_lmb_prev

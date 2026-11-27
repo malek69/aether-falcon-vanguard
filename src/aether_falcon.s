@@ -3,56 +3,61 @@ BPL_SIZE equ 40*256
     section code,code
 start:
     movem.l d0-a6,-(sp)
+    jsr     story_load_from_hdd
+    jsr     open_world_load_seed
+    jsr     audio_load_tracks_hdd
     bsr.w   sys_takeover
     tst.l   d0
     beq.w   exit_program
     lea     aga_pal256,a0
     bsr.w   load_aga_256_palette
-    lea     shade_lut_v2,a0
-    moveq   #0,d0
-.sl_o:
-    moveq   #15,d1
-    sub.w   d0,d1
-    add.w   #98,d1
-    move.w  #255,d2
-.sl_i:
-    move.b  d1,(a0)+
-    dbf     d2,.sl_i
-    addq.w  #1,d0
-    cmp.w   #16,d0
-    blt.s   .sl_o
+    lea     exo_shadelut_data,a0
+    lea     shade_lut_v2,a1
+    move.w  #1023,d0
+.sl_cp:
+    move.l  (a0)+,(a1)+
+    dbf     d0,.sl_cp
     move.w  #135,cam_alt
     jsr     init_terrain_lut_68040
     jsr     thea1200_init_hw
+    moveq   #0,d0
+    jsr     audio_switch_track
+    jsr     story_sync_dynamic_state
     jsr     exo_run_title_menu
     jsr     hud_fps_init
 mainloop:
     bsr.w   wait_vbl
     jsr     input_update_controls
     jsr     thea1200_read_peripherals
-    cmp.b   #$54,kbd_held_raw
-    bne.s   .no_sv
+    lea     kbd_matrix,a0
+    tst.b   $54(a0)
+    beq.s   .no_sv
+    clr.b   $54(a0)
     jsr     exo_play_sfx_ping
     jsr     exo_save_game
 .no_sv:
     jsr     flight_update_360
     bsr.w   render_voxel_3d
+    jsr     vec3d_clear_zbuf_fast
     jsr     exo_update_and_draw_world
     jsr     vec3d_update_particles
     jsr     exo_draw_ship_and_hud
+    jsr     open_world_update_and_hud
     clr.w   bbox_x1
     move.w  #319,bbox_x2
     clr.w   bbox_y1
     move.w  #255,bbox_y2
     jsr     cine_update_and_draw
+    jsr     story_update_logbook
     tst.w   cine_bar_h
     ble.s   .no_lb
     subq.w  #1,cine_bar_h
     jsr     cine_draw_letterbox
 .no_lb:
-    cmp.b   #$12,kbd_held_raw
-    bne.w   .no_md
-    clr.b   kbd_held_raw
+    lea     kbd_matrix,a0
+    tst.b   $37(a0)
+    beq.w   .no_md
+    clr.b   $37(a0)
     addq.b  #1,aga_mood
     cmp.b   #3,aga_mood
     blt.s   .md_ok
@@ -148,6 +153,8 @@ scene_timeline_table: dc.l 0,0,0,0
     include "exo_menu.i"
     include "exo_save_load.i"
     include "exo_sound.i"
+    include "story_engine.i"
+    include "open_world.i"
 sin_tab:
     dc.w 256,256,256,255,255,254,253,252,251,250,248,247,245,243,241,239
     dc.w 237,234,231,229,226,223,220,216,213,209,206,202,198,194,190,185
@@ -172,6 +179,7 @@ sin_tab:
     section fastram_data,data
     even
 aga_pal256:     incbin "../data/exo_pal256.bin"
+exo_shadelut_data: incbin "../data/exo_shadelut.bin"
     even
 exo_voxel_data: incbin "../data/exo_voxel.bin"
 exo_sky_360:
@@ -182,8 +190,8 @@ exo_portrait_gfx:
     even
 chunky_buf:     ds.b 320*256
 vx_ybuf:        ds.w 320
-edge_buf:       ds.b 256*8
+edge_buf:       ds.b 256*40
 
     section chip_mod,data_c
     even
-mod_data: incbin "../data/exo_theme.mod"
+mod_data: dcb.b 32768,0

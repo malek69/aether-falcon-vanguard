@@ -8,9 +8,11 @@ AURA_ENG = os.path.join(ROOT, "refs", "aura3d", "engine")
 AURA_DEMO = os.path.join(ROOT, "refs", "aura3d", "demo_v1")
 
 PROFILES = {
-    "standard": ("-m68020", list(), ["-kick1hunks"], "_020"),
-    "thea1200": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9"], list(), "_THEA1200"),
-    "060": ("-m68060", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DM68060"], list(), "_060"),
+    "standard": ("-m68020", ["-DLANG_PL"], ["-kick1hunks"], "_020"),
+    "thea1200": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DLANG_PL"], list(), "_THEA1200"),
+    "thea1200_pl": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DLANG_PL"], list(), "_THEA1200_PL"),
+    "thea1200_en": ("-m68040", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DLANG_EN"], list(), "_THEA1200_EN"),
+    "060": ("-m68060", ["-DFULL_RES", "-DWIDESCREEN_16_9", "-DM68060", "-DLANG_PL"], list(), "_060"),
 }
 
 def write_whdload_info(path, slave_name):
@@ -38,6 +40,9 @@ def build_profile(profile):
     data_src = os.path.join(ROOT, "data")
     if os.path.isdir(data_src):
         shutil.copytree(data_src, os.path.join(pkg_dir, "data"), dirs_exist_ok=True)
+        lang_src = os.path.join(data_src, "story_en.bin" if profile == "thea1200_en" else "story_pl.bin")
+        if os.path.exists(lang_src):
+            shutil.copy2(lang_src, os.path.join(pkg_dir, "data", "story.bin"))
 
     exe_path = os.path.join(pkg_dir, "AETHER_FALCON")
     slave_path = os.path.join(pkg_dir, "AetherFalcon.slave")
@@ -63,7 +68,7 @@ def build_profile(profile):
 
     with open(os.path.join(pkg_dir, "README.txt"), "w", newline=chr(10)) as rf:
         rf.write(
-            f"AETHER FALCON: VANGUARD v0.1.3.1 [{profile}] (2026)" + chr(10) +
+            f"AETHER FALCON: VANGUARD v0.2.1.0 [{profile}] (2026)" + chr(10) +
             "Bare-Metal Amiga 1200 AGA / THEA1200 3D Combat Sim" + chr(10) +
             "Controls: Joy2 / THEA1200 Pad / Arrows + Space | Exit: LMB or ESC" + chr(10)
         )
@@ -92,7 +97,7 @@ def build_profile(profile):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("--profile", choices=["standard", "thea1200", "060", "all"], default="all")
+    p.add_argument("--profile", choices=["standard", "thea1200", "thea1200_pl", "thea1200_en", "060", "all"], default="all")
     args = p.parse_args()
     for t in (list(PROFILES.keys()) if args.profile == "all" else [args.profile]):
         build_profile(t)
