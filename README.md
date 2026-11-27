@@ -3,17 +3,17 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a> | <a href="docs/archive/">Archiwum v0.1.x</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.2</h1>
+  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.3</h1>
   <p><strong>Dedykowany silnik 3D w asemblerze MC68040 dla konsoli THEA1200 (320×256 AGA / 256 kolorów)</strong></p>
 </div>
 
 ---
 
-> **Uwaga o restarcie projektu (`v0.1.x` → `v0.2.0.2`):** Poprzednia wersja `v0.1.x` (oparta na sztywnym trybie `68020` i połatanych modułach z dema) osiągnęła ścianę — nie dało się z niej wycisnąć oczekiwanej jakości ani stabilności, dlatego wyczyściliśmy kod i **zaczęliśmy od zera** pod jedną, docelową architekturę **THEA1200 (MC68040 + Fast RAM + AGA)**. Starsze pliki i zrzuty zostały przeniesione do [docs/archive/](docs/archive/).
+> **Uwaga o restarcie projektu (`v0.1.x` → `v0.2.0.3`):** Poprzednia wersja `v0.1.x` (oparta na sztywnym trybie `68020` i połatanych modułach z dema) osiągnęła ścianę — nie dało się z niej wycisnąć oczekiwanej jakości ani stabilności, dlatego wyczyściliśmy kod i **zaczęliśmy od zera** pod jedną, docelową architekturę **THEA1200 (MC68040 + Fast RAM + AGA)**. Starsze pliki i zrzuty zostały przeniesione do [docs/archive/](docs/archive/).
 
 ---
 
-## Pobieranie (`v0.2.0.2` — THEA1200)
+## Pobieranie (`v0.2.0.3` — THEA1200)
 
 | Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -32,13 +32,13 @@ Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architektu
   - **Amiberry**, **FS-UAE** oraz **WinUAE** skonfigurowane jako `A1200 + 68040 + Fast RAM + AGA` (gotowa paczka `_FSUAE.zip`).
 - **Platformy niewspierane:** bazowa Amiga 1200 (`68EC020` bez Fast RAM), Amiga 500/600 (`OCS/ECS`) oraz okrojony tryb `320×128` z linii `v0.1.x` nie są już rozwijane (archiwalne wydania znajdują się w `docs/archive/`).
 
-## Galeria `v0.2.0.2` (Szkielet Silnika 68040 THEA1200)
+## Galeria `v0.2.0.3` (Szkielet Silnika 68040 THEA1200)
 
 | ![1](docs/screenshots/v020_01_menu.png) | ![2](docs/screenshots/v020_02_dialogue.png) | ![3](docs/screenshots/v020_03_flight.png) |
 |:---:|:---:|:---:|
 | **1. Menu startowe z letterboxem** | **2. Okno dialogowe z portretem** | **3. Lot 360° i odbicia wody** |
 
-## Co działa w `v0.2.0.2` (obecny szkielet)
+## Co działa w `v0.2.0.3` (obecny szkielet)
 - **Silnik terenu Voxel Space 3D 360° (`MC68040`):** pełna rozdzielczość `320×256 AGA`, mgła odległości (`Z-Fog`) oraz bufor głębokości terenu (`vx_ybuf`).
 - **Menu startowe i wybór kampanii (`src/exo_menu.i`):** Nowa Kampania z wyborem roli (**`1: PIONEER`**, **`2: GUARDIAN`**, **`3: ENGINEER`**) lub wczytanie zapisanej kolonii (**`4: LOAD SAVED COLONY`**).
 - **Trwały zapis i odczyt na dysk (`src/exo_save_load.i`):** zapis stanu świata do `data/colony.sav` (auto-save przy aktywacji bazy oraz ręcznie pod klawiszem `S`).
@@ -67,3 +67,8 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 ### Sterowanie (`THEA1200` / Klawiatura / Joystick)
 - **Menu startowe:** `1` (`PIONEER`), `2` (`GUARDIAN`), `3` (`ENGINEER`) — Nowa Kampania; `4` — Wczytaj zapisaną kolonię (`data/colony.sav`).
 - **Lot 360°:** `Strzałki` / `Joystick` (obrót 360° i wysokość), `Spacja` / `Fire` (aktywacja bazy wiązką / dopalacz), `S` (zapis stanu gry na dysk), `ESC` / `LPM` (wyjście do systemu).
+
+### v0.2.0.3 (łatka poprawkowa)
+* Naprawiono 8-bajtowy format trójkątów siatki 3D (`[i0, i1, i2, tex_id]`) po wcześniejszym rozjechaniu bufora wierzchołków.
+* Wyrównano przesunięcie kątów `sin_tab` (`192`), kierunek lotu 360° oraz prędkość przelotu w menu i podczas misji.
+* Dodano panoramiczne niebo 360° AGA (`exo_sky360.bin`), portret oficera (`exo_portrait.bin`) oraz dedykowany kontroler wejścia `game_input.i`.
