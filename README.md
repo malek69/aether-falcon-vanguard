@@ -72,3 +72,12 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 * Naprawiono 8-bajtowy format trójkątów siatki 3D (`[i0, i1, i2, tex_id]`) po wcześniejszym rozjechaniu bufora wierzchołków.
 * Wyrównano przesunięcie kątów `sin_tab` (`192`), kierunek lotu 360° oraz prędkość przelotu w menu i podczas misji.
 * Dodano panoramiczne niebo 360° AGA (`exo_sky360.bin`), portret oficera (`exo_portrait.bin`) oraz dedykowany kontroler wejścia `game_input.i`.
+
+### Zrzuty ekranu (v0.2.0.3 — THEA1200 / FS-UAE)
+
+![v0203_menu.png](docs/screenshots/v0203_menu.png)
+
+![v0203_briefing.png](docs/screenshots/v0203_briefing.png)
+
+![v0203_gameplay.png](docs/screenshots/v0203_gameplay.png)
+
