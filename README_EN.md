@@ -1,6 +1,6 @@
 <p align="right"><a href="README.md">Polski</a> | <strong>English</strong> | <a href="CHANGELOG_EN.md">Changelog</a> | <a href="docs/archive/">Archive v0.1.x</a></p>
 
-![AETHER FALCON: VANGUARD](docs/logo_vanguard.png)
+![AETHER FALCON: VANGUARD](docs/logo_vanguard.png?v=2)
 
 # AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.2
 
