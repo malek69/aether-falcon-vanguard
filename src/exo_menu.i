@@ -3,7 +3,7 @@ exo_run_title_menu:
         movem.l d0-d7/a0-a6,-(sp)
 .tm_lp: jsr     wait_vbl
         jsr     input_update_controls
-        add.l   #64,cam_y
+        add.l   #256,cam_y
         clr.w   ship_bank
         jsr     render_voxel_3d
         jsr     exo_draw_ship_and_hud
@@ -23,7 +23,7 @@ exo_run_title_menu:
         move.b  #2,player_role
         bra.s   .tm_ok
 .c3:    cmp.b   #$03,d0
-        bne.s   .cf
+        bne.s   .c4
         move.b  #3,player_role
         bra.s   .tm_ok
 .c4:    cmp.b   #$04,d0
@@ -33,7 +33,8 @@ exo_run_title_menu:
 .cf:    tst.b   fire_held
         beq.w   .tm_lp
         move.b  #1,player_role
-.tm_ok: movem.l (sp)+,d0-d7/a0-a6
+.tm_ok: clr.b   fire_held
+        movem.l (sp)+,d0-d7/a0-a6
         rts
 exo_draw_menu_bars:
         lea     chunky_buf+26*320+64,a0

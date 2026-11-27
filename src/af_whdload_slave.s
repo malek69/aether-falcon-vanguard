@@ -15,7 +15,7 @@ ws: moveq #-1,d0
     dc.w _n-ws,_c-ws,_i-ws,0
     dc.l 0
     dc.w 0,0
-_n: dc.b "AETHER FALCON: VANGUARD v0.2.0.0",0
+_n: dc.b "AETHER FALCON: VANGUARD v0.2.1.0",0
 _c: dc.b "malek69 & Gemini AI (2026)",0
 _i: dc.b "Amiga 1200 AGA / THEA1200 3D Combat Sim",0
 _e: dc.b "AETHER_FALCON",0

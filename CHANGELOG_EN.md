@@ -6,6 +6,15 @@ All notable changes to **AETHER FALCON: VANGUARD** are documented in this file.
 
 ---
 
+## [v0.2.1.0] - 2026-11-27
+
+- **Complete 68040 / THEA1200 Engine Milestone (`0 errors, 0 warnings`):** finalized the engine layer with all modules synced across `src/` and `refs/aura3d/engine/`.
+- **Voxel Space 3D Terrain Engine (`terrain_3d.i`):** incremental 68040 raymarching (zero `muls.w` inside the inner ray loop), `vx_row_lut` row address LUT, dynamic horizon pitch (`cam_pitch`), 320-column depth buffer (`vx_ybuf`), and biosphere color shift.
+- **3D Mesh & Particle Engine (`vec3d_engine.i`, `aura3d_v2.i`):** Gouraud-shaded 3D polygon rendering with `movem.l` Z-buffer clear (32B/cycle), 360° sun with atmospheric corona, 360° clouds, 32-slot 3D particle system, and Bresenham 2D line rasterizer.
+- **Cinematic, Narrative & THEA1200 Hardware Engine (`cinematic_fx.i`, `thea1200_hw.i`):** cinema letterbox bars, 2D polygon rasterizer for portraits/cutscenes, portrait dialogue box, smooth camera choreographer, 24-bit AGA 8-bank palette fader, and simultaneous keyboard, Amiga mouse (`$DFF00A`), and multi-button gamepad (`$DFF016`) support.
+
+---
+
 ## [v0.2.0.0] - 2026-11-26
 
 | <img src="docs/screenshots/v020_01_menu.png" width="260"> | <img src="docs/screenshots/v020_02_flight.png" width="260"> |

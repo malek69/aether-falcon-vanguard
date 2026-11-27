@@ -6,6 +6,15 @@ Wszystkie istotne zmiany w projekcie **AETHER FALCON: VANGUARD** są dokumentowa
 
 ---
 
+## [v0.2.1.0] - 2026-11-27
+
+- **Kamień Milowy Kompletnego Silnika 68040 / THEA1200 (`0 błędów, 0 ostrzeżeń`):** zamknięcie warstwy silnikowej z pełną synchronizacją modułów w `src/` oraz `refs/aura3d/engine/`.
+- **Silnik Terenu Voxel Space 3D (`terrain_3d.i`):** przyrostowy raymarching 68040 (bez mnożeń `muls.w` w wewnętrznej pętli promienia), szybka tablica wierszy `vx_row_lut`, pochylenie horyzontu `cam_pitch`, bufor głębokości `vx_ybuf` (320 kolumn) oraz przemiana biosfery.
+- **Silnik Obiektów 3D i Cząsteczek (`vec3d_engine.i`, `aura3d_v2.i`):** rzutowanie wielokątnych brył 3D z cieniowaniem Gouraud i czyszczeniem Z-bufora `movem.l` (32B/cykl), słońce 360° z poświatą atmosferyczną (*Corona*), warstwa chmur 360°, system 32 cząsteczek 3D oraz linie Bresenhama.
+- **Silnik Filmowy, Narracyjny i Obsługa Sprzętu THEA1200 (`cinematic_fx.i`, `thea1200_hw.i`):** kinowe pasy letterbox, rasteryzer wielokątów 2D pod portrety i cutscenki, okno dialogowe z ramką portretu, płynny choreograf kamery, 24-bitowy fader palety AGA oraz jednoczesna obsługa klawiatury, myszy Amigi (`$DFF00A`) i gamepada wieloprzyciskowego (`$DFF016`).
+
+---
+
 ## [v0.2.0.0] - 2026-11-26
 
 | <img src="docs/screenshots/v020_01_menu.png" width="260"> | <img src="docs/screenshots/v020_02_flight.png" width="260"> |

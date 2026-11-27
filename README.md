@@ -3,17 +3,17 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a> | <a href="docs/archive/">Archiwum v0.1.x</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.0</h1>
+  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.1.0</h1>
   <p><strong>Dedykowany silnik 3D w asemblerze MC68040 dla konsoli THEA1200 (320×256 AGA / 256 kolorów)</strong></p>
 </div>
 
 ---
 
-> **Uwaga o restarcie projektu (`v0.1.x` → `v0.2.0.0`):** Poprzednia wersja `v0.1.x` (oparta na sztywnym trybie `68020` i połatanych modułach z dema) osiągnęła ścianę — nie dało się z niej wycisnąć oczekiwanej jakości ani stabilności, dlatego wyczyściliśmy kod i **zaczęliśmy od zera** pod jedną, docelową architekturę **THEA1200 (MC68040 + Fast RAM + AGA)**. Starsze pliki i zrzuty zostały przeniesione do [docs/archive/](docs/archive/).
+> **Uwaga o restarcie projektu (`v0.1.x` → `v0.2.1.0`):** Poprzednia wersja `v0.1.x` (oparta na sztywnym trybie `68020` i połatanych modułach z dema) osiągnęła ścianę — nie dało się z niej wycisnąć oczekiwanej jakości ani stabilności, dlatego wyczyściliśmy kod i **zaczęliśmy od zera** pod jedną, docelową architekturę **THEA1200 (MC68040 + Fast RAM + AGA)**. Starsze pliki i zrzuty zostały przeniesione do [docs/archive/](docs/archive/).
 
 ---
 
-## Pobieranie (`v0.2.0.0` — THEA1200)
+## Pobieranie (`v0.2.1.0` — THEA1200)
 
 | Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -21,7 +21,7 @@
 
 ---
 
-## Galeria `v0.2.0.0` (Szkielet Silnika 68040 THEA1200)
+## Galeria `v0.2.1.0` (Szkielet Silnika 68040 THEA1200)
 
 | ![1. Menu startowe: Wybór 3 ról i wczytanie kolonii](docs/screenshots/v020_01_menu.png) | ![2. Lot 360° Voxel Space 3D: Statek, radar i FPS](docs/screenshots/v020_02_flight.png) |
 |:---:|:---:|
@@ -29,7 +29,7 @@
 
 ---
 
-## Co działa w `v0.2.0.0` (obecny szkielet)
+## Co działa w `v0.2.1.0` (obecny szkielet)
 - **Silnik terenu Voxel Space 3D 360° (`MC68040`):** pełna rozdzielczość `320×256 AGA`, mgła odległości (`Z-Fog`) oraz bufor głębokości terenu (`vx_ybuf`).
 - **Menu startowe i wybór kampanii (`src/exo_menu.i`):** Nowa Kampania z wyborem roli (**`1: PIONEER`**, **`2: GUARDIAN`**, **`3: ENGINEER`**) lub wczytanie zapisanej kolonii (**`4: LOAD SAVED COLONY`**).
 - **Trwały zapis i odczyt na dysk (`src/exo_save_load.i`):** zapis stanu świata do `data/colony.sav` (auto-save przy aktywacji bazy oraz ręcznie pod klawiszem `S`).

@@ -22,11 +22,14 @@ start:
     cmp.w   #16,d0
     blt.s   .sl_o
     move.w  #135,cam_alt
+    jsr     init_terrain_lut_68040
+    jsr     thea1200_init_hw
     jsr     exo_run_title_menu
     jsr     hud_fps_init
 mainloop:
     bsr.w   wait_vbl
     jsr     input_update_controls
+    jsr     thea1200_read_peripherals
     cmp.b   #$21,kbd_held_raw
     bne.s   .no_sv
     jsr     exo_play_sfx_ping
@@ -34,7 +37,10 @@ mainloop:
 .no_sv:
     bsr.w   update_flight_360
     bsr.w   render_voxel_3d
+    jsr     vec3d_draw_sun_halo
+    jsr     vec3d_draw_clouds_360
     jsr     exo_update_and_draw_world
+    jsr     vec3d_update_particles
     jsr     exo_draw_ship_and_hud
     clr.w   bbox_x1
     move.w  #319,bbox_x2
@@ -69,9 +75,12 @@ update_flight_360:
     and.w   #510,d0
     move.w  (a0,d0.w),d2
     moveq   #1,d3
-    tst.b   fire_held
+    cmp.b   #1,player_role
+    bne.s   .r_sp
+    moveq   #2,d3
+.r_sp:  tst.b   fire_held
     beq.s   .sp_ok
-    moveq   #3,d3
+    addq.w  #2,d3
 .sp_ok:
     muls.w  d3,d1
     muls.w  d3,d2
@@ -89,141 +98,11 @@ update_flight_360:
 .al_hi:
     move.w  d0,cam_alt
     rts
-render_voxel_3d:
-    movem.l d0-d7/a0-a6,-(sp)
-    lea     chunky_buf,a1
-    moveq   #0,d7
-.sk_y:
-    move.w  d7,d0
-    lsr.w   #3,d0
-    cmp.w   #31,d0
-    ble.s   .sk_c
-    moveq   #31,d0
-.sk_c:
-    add.w   #128,d0
-    move.b  d0,d1
-    lsl.w   #8,d1
-    move.b  d0,d1
-    move.w  d1,d0
-    swap    d1
-    move.w  d0,d1
-    moveq   #79,d2
-.sk_x:
-    move.l  d1,(a1)+
-    dbf     d2,.sk_x
-    addq.w  #1,d7
-    cmp.w   #256,d7
-    blt.s   .sk_y
-    lea     sin_tab,a0
-    move.w  cam_yaw(pc),d0
-    and.w   #255,d0
-    add.w   d0,d0
-    move.w  (a0,d0.w),d4
-    sub.w   #128,d0
-    and.w   #510,d0
-    move.w  (a0,d0.w),d5
-    move.w  d4,d0
-    sub.w   d5,d0
-    ext.l   d0
-    asl.l   #8,d0
-    asl.l   #4,d0
-    move.l  d0,vx_rx
-    move.w  d5,d1
-    add.w   d4,d1
-    ext.l   d1
-    asl.l   #8,d1
-    asl.l   #4,d1
-    move.l  d1,vx_ry
-    move.w  d4,d2
-    add.w   d5,d2
-    ext.l   d2
-    asl.l   #8,d2
-    asl.l   #4,d2
-    sub.l   d0,d2
-    asr.l   #8,d2
-    move.l  d2,vx_sx
-    move.w  d5,d3
-    sub.w   d4,d3
-    ext.l   d3
-    asl.l   #8,d3
-    asl.l   #4,d3
-    sub.l   d1,d3
-    asr.l   #8,d3
-    move.l  d3,vx_sy
-    lea     exo_voxel_data,a2
-    lea     65536(a2),a3
-    lea     chunky_buf,a4
-    lea     vx_ybuf,a6
-    moveq   #0,d7
-.col_lp:
-    move.w  #255,d6
-    moveq   #8,d5
-.ray_lp:
-    move.l  vx_rx(pc),d0
-    asr.l   #8,d0
-    asr.l   #4,d0
-    muls.w  d5,d0
-    add.l   cam_x(pc),d0
-    lsr.l   #8,d0
-    and.w   #255,d0
-    move.l  vx_ry(pc),d1
-    asr.l   #8,d1
-    asr.l   #4,d1
-    muls.w  d5,d1
-    add.l   cam_y(pc),d1
-    lsr.l   #8,d1
-    and.w   #255,d1
-    lsl.w   #8,d1
-    or.w    d0,d1
-    and.l   #$ffff,d1
-    moveq   #0,d0
-    move.b  (a2,d1.l),d0
-    move.b  (a3,d1.l),d2
-    move.w  cam_alt(pc),d1
-    sub.w   d0,d1
-    ext.l   d1
-    asl.l   #6,d1
-    divs.w  d5,d1
-    add.w   #110,d1
-    bge.s   .y_ok
-    moveq   #0,d1
-.y_ok:
-    cmp.w   d6,d1
-    bge.s   .ray_nx
-    cmp.w   #96,d5
-    blt.s   .zf_ok
-    move.b  #156,d2
-.zf_ok:
-    move.b  d2,d3
-    move.w  d6,d0
-    mulu.w  #320,d0
-    lea     (a4,d0.l),a5
-.dr_v:
-    move.b  d2,(a5)
-    suba.w  #320,a5
-    subq.w  #1,d6
-    cmp.w   d1,d6
-    bgt.s   .dr_v
-.ray_nx:
-    addq.w  #3,d5
-    cmp.w   #48,d5
-    ble.s   .st_ok
-    addq.w  #3,d5
-.st_ok:
-    cmp.w   #144,d5
-    blt.w   .ray_lp
-    move.w  d6,(a6)+
-    addq.l  #1,a4
-    move.l  vx_sx(pc),d0
-    add.l   d0,vx_rx
-    move.l  vx_sy(pc),d0
-    add.l   d0,vx_ry
-    addq.w  #1,d7
-    cmp.w   #320,d7
-    blt.w   .col_lp
-    movem.l (sp)+,d0-d7/a0-a6
-    rts
-
+af_fill_lut_ptr: dc.l 0
+    include "vec3d_engine.i"
+    include "terrain_3d.i"
+    include "cinematic_fx.i"
+    include "thea1200_hw.i"
 cam_x:      dc.l 0
 cam_y:      dc.l 0
 cam_alt:    dc.w 135
@@ -310,6 +189,7 @@ exo_voxel_data: incbin "../data/exo_voxel.bin"
     even
 chunky_buf:     ds.b 320*256
 vx_ybuf:        ds.w 320
+edge_buf:       ds.b 256*8
 
     section chip_mod,data_c
     even
