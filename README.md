@@ -62,8 +62,19 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 
 ## Narzędzia (`tools/`) i Budowanie Paczki THEA1200
 
-- **`tools/build_game.py --profile thea1200`:** (oraz tools/gen_open_world.py --seed) generuje swiat wokselowy i kompiluje profile PL/EN oraz slave WHDLoad (`vasmm68k_mot -m68040 -DFULL_RES -DWIDESCREEN_16_9`), pakuje archiwum **WHDLoad (`.lha`)** oraz gotowy dysk pod **FS-UAE (`.zip`)**.
-- **Struktura katalogów:** `src/` (kod gry), `refs/aura3d/engine/` (rdzeń silników), `data/` (paleta AGA, mapa wysokości, `.MOD`, zapis `colony.sav`), `tools/` (skrypty budujące), `docs/archive/` (archiwalne wersje `v0.1.x`).
+| Skrypt w `tools/` | Zastosowanie i generowane zasoby |
+|---|---|
+| `tools/build_game.py` | Główny skrypt kompilacji (`--profile thea1200_pl`, `thea1200_en`, `thea1200`, `060`, `standard`) — buduje kod gry, slave WHDLoad oraz paczki `.lha` i `_FSUAE.zip`. |
+| `tools/gen_open_world.py` | Generator otwartego świata z ziarna (`--seed 8842`) — wypala w `data/exo_voxel.bin` rzeźbę terenu, ocean, 8 baz (lądowiska, kopuły, wieże) i 8 kryształów Aetheru. |
+| `tools/make_desktop_shortcuts.py` | Tworzy skróty uruchomieniowe na pulpicie Linuxa (`~/Pulpit/AetherFalcon_THEA1200.sh`) dla emulatora FS-UAE. |
+| `tools/png_to_aga.py` | Konwerter grafik PNG na surowy format bitplanów / chunky 256-kolorowej palety AGA (`exo_pal256.bin`, portrety, niebo). |
+| `tools/obj2amiga.py` / `mesh_conv.py` | Konwertery modeli 3D `.OBJ` na tablice wierzchołków, normalnych i trójkątów dla silnika Gouraud / EnvMap MC68040. |
+| `tools/gen_phong_lut.py` / `gen_recip_table.py` | Generatory tablic look-up (`shade_lut`, odwrotności `1/z`) przyspieszających cieniowanie i rzutowanie 3D na procesorze MC68040. |
+| `tools/build_cutscenes.py` / `pack_scenes.py` | Skrypty pakujące sekwencje przerywnikowe oraz sceny kampanii dla silnika filmowego (`cinematic_fx.i`). |
+| `tools/build_demo.py` / `build_aura3d_demo.py` | Narzędzia do kompilacji samodzielnych dem technologicznych rdzenia `refs/aura3d/engine/`. |
+| `tools/make_logo.py` / `make_showcase.py` | Skrypty generujące materiały graficzne, logotypy projektu i plansze prezentacyjne do `docs/`. |
+
+- **Struktura katalogów:** `src/` (kod gry), `refs/aura3d/engine/` (rdzeń silników), `data/` (paleta AGA, mapa wysokości `exo_voxel.bin`, utwory `mod_p1..3.mod`, fabuły `story_p1..3_*.bin`, zapis `colony.sav`), `tools/` (skrypty budujące), `docs/archive/` (archiwalne wersje `v0.1.x`).
 
 ### Sterowanie (`THEA1200` / Klawiatura / Mysz / Pad)
 
