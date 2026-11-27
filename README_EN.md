@@ -14,6 +14,17 @@
 |---|---|---|
 | **THEA1200 (`--profile thea1200`)** | **THEA1200**, **Amiberry**, **FS-UAE** — native PAL **320×256 AGA (256 colors)**, `-m68040` | [.LHA (WHDLoad)](docs/AetherFalcon_AGA_THEA1200.lha) · [.ZIP (FS-UAE / WinUAE)](docs/AetherFalcon_AGA_THEA1200_FSUAE.zip) |
 
+
+## Target Platform & Other Hardware Configurations
+
+The current `v0.2.x` generation is developed **exclusively for the THEA1200 architecture (`MC68040 + Fast RAM + AGA`, full PAL `320×256`, 256 colors)**.
+
+- **Why exclusively this architecture:** the engine combines full-screen **360° Voxel Space 3D terrain**, **Gouraud-shaded 3D meshes**, a 16-bit **Z-Buffer**, a cinematic narrative layer (`letterbox`, portraits, 24-bit AGA palette fader), and a 32-bit **68040 C2P** pipeline. Dropping stock `68EC020` compatibility removes resolution and visual bottlenecks.
+- **Compatible setups beyond THEA1200:**
+  - **Real Amiga 1200 / Amiga 4000 (AGA)** equipped with an **`MC68040` or `MC68060` accelerator** and **Fast RAM** (via the WHDLoad `.LHA` package).
+  - **Amiberry**, **FS-UAE**, and **WinUAE** configured as `A1200 + 68040 + Fast RAM + AGA` (ready-to-boot `_FSUAE.zip` package).
+- **Unsupported platforms:** stock Amiga 1200 (`68EC020` without Fast RAM), Amiga 500/600 (`OCS/ECS`), and the cut-down `320×128` mode from `v0.1.x` are discontinued (archived builds remain in `docs/archive/`).
+
 ## Gallery `v0.2.0.2` (Frozen 68040 THEA1200 Engine)
 
 | ![1. Start Menu with Letterbox](docs/screenshots/v020_01_menu.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v020_02_dialogue.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v020_03_flight.png) |

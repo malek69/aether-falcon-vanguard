@@ -21,6 +21,17 @@
 
 ---
 
+
+## Platforma docelowa i inne konfiguracje sprzętowe
+
+Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architekturę THEA1200 (`MC68040 + Fast RAM + AGA`, pełny PAL `320×256`, 256 kolorów)**.
+
+- **Dlaczego tylko ta architektura:** silnik łączy pełnoekranowy teren **Voxel Space 3D 360°**, bryły **3D Gouraud**, 16-bitowy **Z-Buffer**, moduł filmowy (`letterbox`, portrety, 24-bitowy fader AGA) oraz 32-bitowy **C2P 68040**. Rezygnacja z bazowego procesora `68EC020` pozwala rozwijać pełnoprawną grę bez kompromisów w grafice i płynności.
+- **Kompatybilne środowiska poza THEA1200:**
+  - **Prawdziwa Amiga 1200 / Amiga 4000 (AGA)** z kartą turbo **`MC68040` lub `MC68060`** i pamięcią **Fast RAM** (uruchamiana z paczki `.LHA` przez WHDLoad).
+  - **Amiberry**, **FS-UAE** oraz **WinUAE** skonfigurowane jako `A1200 + 68040 + Fast RAM + AGA` (gotowa paczka `_FSUAE.zip`).
+- **Platformy niewspierane:** bazowa Amiga 1200 (`68EC020` bez Fast RAM), Amiga 500/600 (`OCS/ECS`) oraz okrojony tryb `320×128` z linii `v0.1.x` nie są już rozwijane (archiwalne wydania znajdują się w `docs/archive/`).
+
 ## Galeria `v0.2.0.2` (Szkielet Silnika 68040 THEA1200)
 
 | ![1](docs/screenshots/v020_01_menu.png) | ![2](docs/screenshots/v020_02_dialogue.png) | ![3](docs/screenshots/v020_03_flight.png) |
