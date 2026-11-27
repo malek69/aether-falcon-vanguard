@@ -1,3 +1,8 @@
+## v0.2.0.4 (2026-11-27)
+- Open-world terrain & seed generator (`SEED`), 8 colony bases, 8 anomaly crystals, rotating 360° radar, and topographic map (`J`).
+- Bilingual HDD-loaded campaign (`PL` with Polish diacritics & `EN`), cinematic Prologue and Act III Epilogue.
+- 3 distinct 3D hovercraft meshes per class (Pioneer, Guardian, Engineer), 6 AGA portraits, and 4 ProTracker `.MOD` soundtrack modules.
+
 <p align="right"><a href="CHANGELOG.md">Polski</a> | <strong>English</strong> | <a href="README_EN.md">README</a></p>
 
 # Changelog — AETHER FALCON: VANGUARD

@@ -1,3 +1,8 @@
+## v0.2.0.4 (2026-11-27)
+- Generator otwartego świata (`SEED`), 8 baz, 8 kryształów anomalii, obrotowy radar 360° i mapa topograficzna pod `J`.
+- Pełna dwujęzyczna kampania (`PL` z polskimi znakami i `EN`) ładowana z dysku twardego (`story_pl.bin` / `story_en.bin`), Prolog i Epilog Aktu III.
+- 3 unikalne modele poduszkowców 3D dla klas (Pionier, Strażnik, Inżynier), 6 portretów postaci AGA oraz 4 ścieżki dźwiękowe ProTracker `.MOD`.
+
 # Changelog
 
 ## [v0.2.0.3] - 2026-11-27

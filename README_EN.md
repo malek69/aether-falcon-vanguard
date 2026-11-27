@@ -2,17 +2,18 @@
 
 ![AETHER FALCON: VANGUARD](docs/logo_vanguard_v3.png)
 
-# AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.2
+# AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.4
 
 **Dedicated MC68040 Assembly 3D Engine for THEA1200 (320×256 AGA / 256 Colors)**
 
-> **Project Reboot Note (`v0.1.x` → `v0.2.0.2`):** The previous `v0.1.x` build (based on a rigid 68020 demo setup) hit an architectural ceiling. We started fresh from the ground up targeting **THEA1200 (MC68040 + Fast RAM + AGA)** with a clean, modular engine. Legacy files and screenshots were moved to `docs/archive/`.
+> **Project Reboot Note (`v0.1.x` → `v0.2.0.4`):** The previous `v0.1.x` build (based on a rigid 68020 demo setup) hit an architectural ceiling. We started fresh from the ground up targeting **THEA1200 (MC68040 + Fast RAM + AGA)** with a clean, modular engine. Legacy files and screenshots were moved to `docs/archive/`.
 
-## Downloads (`v0.2.0.2` — THEA1200)
+## Downloads (`v0.2.0.4` — THEA1200)
 
 | Profile (`--profile`) | Target Hardware | Download Packages |
 |---|---|---|
-| **THEA1200 (`--profile thea1200`)** | **THEA1200**, **Amiberry**, **FS-UAE** — native PAL **320×256 AGA (256 colors)**, `-m68040` | [.LHA (WHDLoad)](docs/AetherFalcon_AGA_THEA1200.lha) · [.ZIP (FS-UAE / WinUAE)](docs/AetherFalcon_AGA_THEA1200_FSUAE.zip) |
+| **THEA1200 English (`--profile thea1200_en`)** | **THEA1200**, **Amiberry**, **FS-UAE** — English edition (`320×256` AGA, 256 colors, `-m68040`) | [.LHA (WHDLoad)](docs/AetherFalcon_AGA_THEA1200_EN.lha) · [.ZIP (FS-UAE / WinUAE)](docs/AetherFalcon_AGA_THEA1200_EN_FSUAE.zip) |
+| **THEA1200 Polski (`--profile thea1200_pl`)** | **THEA1200**, **Amiberry**, **FS-UAE** — Polish edition with custom Polish AGA font (`320×256`, `-m68040`) | [.LHA (WHDLoad)](docs/AetherFalcon_AGA_THEA1200_PL.lha) · [.ZIP (FS-UAE / WinUAE)](docs/AetherFalcon_AGA_THEA1200_PL_FSUAE.zip) |
 
 
 ## Target Platform & Other Hardware Configurations
@@ -25,13 +26,13 @@ The current `v0.2.x` generation is developed **exclusively for the THEA1200 arch
   - **Amiberry**, **FS-UAE**, and **WinUAE** configured as `A1200 + 68040 + Fast RAM + AGA` (ready-to-boot `_FSUAE.zip` package).
 - **Unsupported platforms:** stock Amiga 1200 (`68EC020` without Fast RAM), Amiga 500/600 (`OCS/ECS`), and the cut-down `320×128` mode from `v0.1.x` are discontinued (archived builds remain in `docs/archive/`).
 
-## Gallery `v0.2.0.2` (Frozen 68040 THEA1200 Engine)
+## Gallery `v0.2.0.4` (Frozen 68040 THEA1200 Engine)
 
 | ![1. Start Menu with Letterbox](docs/screenshots/v020_01_menu.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v020_02_dialogue.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v020_03_flight.png) |
 |:---:|:---:|:---:|
 | **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
 
-## Frozen Engine Capabilities (`v0.2.0.2`)
+## Frozen Engine Capabilities (`v0.2.0.4`)
 
 - **360° Voxel Space 3D Terrain (`src/terrain_3d.i`):** incremental `MC68040` raymarching (zero `muls.w` in the inner ray loop), `vx_row_lut` row LUT, dynamic horizon pitch (`cam_pitch`), 320-column depth buffer (`vx_ybuf`), animated water reflections, distance fog (`Z-Fog`), and biosphere palette shift.
 - **Gouraud 3D Meshes, Shadows & Particles (`src/vec3d_engine.i`, `refs/aura3d/engine/aura3d_v2.i`):** 3D polygon rendering with `movem.l` Z-buffer clear, terrain-projected shadows underneath 3D objects, 360° sun with atmospheric corona, 360° clouds, 32-slot 3D particle system, and Bresenham 2D lines.
