@@ -1,4 +1,16 @@
 ## v0.2.0.6 (2026-11-28)
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/v0206_01.png" width="420" alt="1. Lot 360°, kompas i radar"><br><b>1. Lot 360°, kompas i radar</b></td>
+    <td align="center"><img src="docs/screenshots/v0206_02.png" width="420" alt="2. Dialog fabularny profesji"><br><b>2. Dialog fabularny profesji</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/v0206_03.png" width="420" alt="3. Wybór klasy i kursor"><br><b>3. Wybór klasy i kursor</b></td>
+    <td align="center"><img src="docs/screenshots/v0206_04.png" width="420" alt="4. Prolog z letterboxem"><br><b>4. Prolog z letterboxem</b></td>
+  </tr>
+</table>
+
 - **3 odrębne rozgrywki dla profesji (dyskowe wczytywanie fabuły i muzyki `.MOD` po wyborze klasy):**
   - **Pionier (`PIO`)** — najszybszy zwiadowca (`±4` skręt, `+1` ciąg); wyszukuje i skanuje wiązką `F / LMB` **8 formacji kryształów Aetheru**.
   - **Strażnik (`GRD`)** — katamaran bojowy (`±3` skręt); patroluje niebo i neutralizuje działkiem **8 wrogich dronów**.
