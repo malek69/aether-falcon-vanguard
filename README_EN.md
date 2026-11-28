@@ -33,9 +33,16 @@ The current `v0.2.x` generation is developed **exclusively for the THEA1200 arch
 
 ## Gallery `v0.2.0.6` (Frozen 68040 THEA1200 Engine)
 
-| ![1. 360° Flight & Compass HUD](docs/screenshots/v0206_01.png) | ![2. Pioneer Story Dialogue](docs/screenshots/v0206_02.png) | ![3. Class Selection & Mouse Cursor](docs/screenshots/v0206_03.png) | ![4. Prologue Letterbox](docs/screenshots/v0206_04.png) |
-|:---:|:---:|:---:|
-| **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/v0206_01.png" width="420" alt="1. 360° Flight, Compass & Radar"><br><b>1. 360° Flight, Compass & Radar</b></td>
+    <td align="center"><img src="docs/screenshots/v0206_02.png" width="420" alt="2. Class Story Dialogue"><br><b>2. Class Story Dialogue</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/v0206_03.png" width="420" alt="3. Class Selection & Mouse Cursor"><br><b>3. Class Selection & Mouse Cursor</b></td>
+    <td align="center"><img src="docs/screenshots/v0206_04.png" width="420" alt="4. Prologue Letterbox"><br><b>4. Prologue Letterbox</b></td>
+  </tr>
+</table>
 
 ## Engine Capabilities (`v0.2.0.6`)
 

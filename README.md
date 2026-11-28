@@ -35,9 +35,16 @@ Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architektu
 
 ## Galeria `v0.2.0.6` (Szkielet Silnika 68040 THEA1200)
 
-| ![1](docs/screenshots/v0206_01.png) | ![2](docs/screenshots/v0206_02.png) | ![3](docs/screenshots/v0206_03.png) | ![4](docs/screenshots/v0206_04.png) |
-|:---:|:---:|:---:|
-| **1. Lot 360°, kompas i radar** | **2. Dialog fabularny profesji** | **3. Wybór klasy i kursor** | **4. Prolog z letterboxem** |
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/v0206_01.png" width="420" alt="1. Lot 360°, kompas i radar"><br><b>1. Lot 360°, kompas i radar</b></td>
+    <td align="center"><img src="docs/screenshots/v0206_02.png" width="420" alt="2. Dialog fabularny profesji"><br><b>2. Dialog fabularny profesji</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/v0206_03.png" width="420" alt="3. Wybór klasy i kursor"><br><b>3. Wybór klasy i kursor</b></td>
+    <td align="center"><img src="docs/screenshots/v0206_04.png" width="420" alt="4. Prolog z letterboxem"><br><b>4. Prolog z letterboxem</b></td>
+  </tr>
+</table>
 
 ## Co działa w `v0.2.0.6`
 - **Silnik terenu Voxel Space 3D 360° (`MC68040`):** pełna rozdzielczość `320×256 AGA`, mgła odległości (`Z-Fog`) oraz bufor głębokości terenu (`vx_ybuf`).
