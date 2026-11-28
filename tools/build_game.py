@@ -65,7 +65,7 @@ def build_profile(profile):
 
     with open(os.path.join(pkg_dir, "README.txt"), "w", newline=chr(10)) as rf:
         rf.write(
-            f"AETHER FALCON: VANGUARD v0.2.0.5 [{profile}] (2026)" + chr(10) +
+            f"AETHER FALCON: VANGUARD v0.2.0.6 [{profile}] (2026)" + chr(10) +
             "Bare-Metal Amiga 1200 AGA / THEA1200 3D Combat Sim" + chr(10) +
             "Controls: Joy2 / THEA1200 Pad / Arrows + Space | Exit: LMB or ESC" + chr(10)
         )

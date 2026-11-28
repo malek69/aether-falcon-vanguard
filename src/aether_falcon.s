@@ -41,6 +41,7 @@ mainloop:
     jsr     exo_update_and_draw_world
     jsr     vec3d_update_particles
     jsr     exo_draw_ship_and_hud
+    jsr     exo_draw_logbook_overlay
     clr.w   bbox_x1
     move.w  #319,bbox_x2
     clr.w   bbox_y1
@@ -51,7 +52,7 @@ mainloop:
     subq.w  #1,cine_bar_h
     jsr     cine_draw_letterbox
 .no_lb:
-    cmp.b   #$12,kbd_held_raw
+    cmp.b   #$37,kbd_held_raw
     bne.w   .no_md
     clr.b   kbd_held_raw
     addq.b  #1,aga_mood
@@ -79,8 +80,8 @@ mainloop:
     jsr     c2p_160x128_to_aga
     jsr     hud_fps_tick
     jsr     hud_draw_overlay
-    cmp.b   #$75,$bfec01
-    bne.w   mainloop
+    tst.b   kbd_matrix+$45
+    beq.w   mainloop
 shutdown:
     bsr.w   sys_restore
 exit_program:
@@ -190,4 +191,4 @@ edge_buf:       ds.b 256*8
     section chip_mod,data_c
     even
 mod_data: incbin "../data/exo_theme.mod"
-    ds.b 4096
+    ds.b 16384

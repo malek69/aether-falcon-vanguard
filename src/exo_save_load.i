@@ -11,7 +11,7 @@ exo_save_game:
         bsr.w   exo_pack_buf
         move.l  d4,d1
         move.l  #sav_buf,d2
-        moveq   #64,d3
+        moveq   #76,d3
         jsr     -48(a6)
         move.l  d4,d1
         jsr     -36(a6)
@@ -29,7 +29,7 @@ exo_load_game:
         beq.s   .ld_cls
         move.l  d4,d1
         move.l  #sav_buf,d2
-        moveq   #64,d3
+        moveq   #76,d3
         jsr     -42(a6)
         move.l  d4,d1
         jsr     -36(a6)
@@ -69,6 +69,9 @@ exo_pack_buf:
         moveq   #11,d0
 .pk_l:  move.l  (a1)+,(a0)+
         dbf     d0,.pk_l
+        move.l  colony_credits,(a0)+
+        move.w  role_contracts_done,(a0)+
+        move.w  story_step_off,(a0)+
         rts
 exo_unpack_buf:
         lea     sav_buf,a0
@@ -84,11 +87,17 @@ exo_unpack_buf:
         moveq   #11,d0
 .up_l:  move.l  (a0)+,(a1)+
         dbf     d0,.up_l
+        move.l  (a0)+,colony_credits
+        move.w  (a0)+,role_contracts_done
+        move.w  (a0)+,story_step_off
 .up_no: rts
 dos_name: dc.b "dos.library",0
 sav_path: dc.b "data/colony.sav",0
         even
-sav_buf:  ds.b 68
+sav_buf:  ds.b 76
+colony_credits:      dc.l 0
+role_contracts_done: dc.w 0
+story_step_off:      dc.w 0
 
 ; Doczytuje z dysku fabule (data/story_pX_pl.bin / _en.bin) oraz muzyke (data/mod_pX.mod) wybranej profesji
 exo_load_role_assets:
@@ -121,19 +130,12 @@ exo_load_role_assets:
         jsr     -42(a6)
         move.l  d4,d1
         jsr     -36(a6)
-        lea     story_buf,a0
-        move.l  (a0),d0
-        add.l   #story_buf,d0
-        move.l  d0,cine_line1_ptr
-        move.l  4(a0),d0
-        add.l   #story_buf,d0
-        move.l  d0,cine_line2_ptr
-        move.l  8(a0),d0
-        add.l   #story_buf,d0
-        move.l  d0,cine_line3_ptr
+        bsr.w   exo_apply_story_step
 
         ; 2. Wczytaj modul .MOD profesji z dysku do mod_data (Chip RAM) i przelacz muzyke!
-.ld_md: move.l  #mod_role_path,d1
+.ld_md: move.w  #30000,pt_speed
+        move.w  #$000f,$dff096
+        move.l  #mod_role_path,d1
         move.l  #1005,d2
         jsr     -30(a6)
         move.l  d0,d4
@@ -150,6 +152,38 @@ exo_load_role_assets:
 .rl_cls:bsr.w   exo_close_dos
         jsr     exo_play_sfx_dock
 .rl_end:movem.l (sp)+,d0-d7/a0-a6
+        rts
+
+
+; Ustawia cine_line1..3_ptr na podstawie story_step_off i otwiera okno lacznosci
+exo_apply_story_step:
+        lea     story_buf,a0
+        move.w  story_step_off(pc),d1
+        and.w   #$003c,d1
+        cmp.w   #48,d1
+        blt.s   .st_ok
+        moveq   #0,d1
+        move.w  d1,story_step_off
+.st_ok: move.l  (a0,d1.w),d0
+        beq.s   .st_end
+        add.l   #story_buf,d0
+        move.l  d0,cine_line1_ptr
+        move.l  4(a0,d1.w),d0
+        add.l   #story_buf,d0
+        move.l  d0,cine_line2_ptr
+        move.l  8(a0,d1.w),d0
+        add.l   #story_buf,d0
+        move.l  d0,cine_line3_ptr
+        move.b  #1,cine_active
+        move.w  #1,cine_type_chars
+.st_end:rts
+
+exo_advance_role_story:
+        add.w   #12,story_step_off
+        cmp.w   #48,story_step_off
+        blt.s   .ad_go
+        clr.w   story_step_off
+.ad_go: bsr.s   exo_apply_story_step
         rts
 
 mod_role_path:   dc.b "data/mod_p1.mod",0

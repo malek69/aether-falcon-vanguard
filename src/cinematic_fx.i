@@ -48,6 +48,19 @@ cine_move_camera_smooth:
 cine_draw_portrait_anim:
         movem.l d0-d2/a0-a2,-(sp)
         lea     exo_portrait_gfx,a2
+        move.b  player_role(pc),d0
+        cmp.b   #1,d0
+        bne.s   .rp2
+        lea     exo_role_portraits,a2
+        bra.s   .rp_ok
+.rp2:   cmp.b   #2,d0
+        bne.s   .rp3
+        lea     exo_role_portraits+2784,a2
+        bra.s   .rp_ok
+.rp3:   cmp.b   #3,d0
+        bne.s   .rp_ok
+        lea     exo_role_portraits+5568,a2
+.rp_ok:
         lea     chunky_buf+182*320+22,a1
         moveq   #57,d1
 .pr_y:  moveq   #11,d0
@@ -175,6 +188,9 @@ cine_update_and_draw:
         tst.b   mouse_lmb_click
         beq.s   .cu_end
 .cu_cls:clr.b   cine_active
+        clr.b   kbd_held_raw
+        move.b  #$ff,kbd_last_press
+        clr.b   mouse_lmb_click
 .cu_end:rts
 cine_bar_h:        dc.w 0
 cine_talking:      dc.w 0

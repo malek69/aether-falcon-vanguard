@@ -25,10 +25,14 @@ exo_draw_ship_and_hud:
         move.w  (sp)+,user_yaw
         move.w  ship_bank(pc),d4
         moveq   #38,d5
-        moveq   #64,d6
-        tst.b   fire_held
+        moveq   #58,d6
+        moveq   #0,d0
+        move.b  ship_throttle(pc),d0
+        add.w   d0,d0
+        add.w   d0,d6
+        tst.b   boost_held
         beq.s   .no_ab
-        moveq   #76,d6
+        addq.w  #8,d6
 .no_ab: lea     exo_ship_verts(pc),a0
         cmp.b   #2,player_role
         bne.s   .vs3
@@ -61,6 +65,10 @@ exo_draw_ship_and_hud:
         lea     v2_env_buf,a3
         jsr     draw_gouraud_env_mesh_v2
         bsr.s   exo_draw_thrusters
+        tst.b   in_title_menu
+        bne.s   .skip_tg
+        bsr.w   exo_draw_throttle_gauge
+.skip_tg:
         movem.l (sp)+,d0-d7/a0-a4
         rts
 exo_draw_thrusters:
@@ -71,13 +79,13 @@ exo_draw_thrusters:
         move.w  102(a1),d0
         move.w  104(a1),d1
 .flame: cmp.w   #8,d0
-        blt.s   .fl_no
+        blt.w   .fl_no
         cmp.w   #310,d0
-        bgt.s   .fl_no
+        bgt.w   .fl_no
         cmp.w   #8,d1
-        blt.s   .fl_no
+        blt.w   .fl_no
         cmp.w   #244,d1
-        bgt.s   .fl_no
+        bgt.w   .fl_no
         lea     chunky_buf,a2
         mulu.w  #320,d1
         add.l   d1,a2
@@ -88,14 +96,73 @@ exo_draw_thrusters:
         move.b  #158,319(a2)
         move.b  #255,320(a2)
         move.b  #158,321(a2)
-        move.b  #156,640(a2)
-        tst.b   fire_held
+        move.b  ship_throttle(pc),d2
+        tst.b   boost_held
+        beq.s   .fl_th
+        moveq   #5,d2
+.fl_th: tst.b   d2
         beq.s   .fl_no
+        move.b  #156,640(a2)
+        cmp.b   #2,d2
+        blt.s   .fl_no
         move.b  #158,639(a2)
         move.b  #158,641(a2)
-        move.b  #155,960(a2)
-        move.b  #153,1280(a2)
+        move.b  #157,960(a2)
+        cmp.b   #4,d2
+        blt.s   .fl_no
+        move.b  #155,1280(a2)
+        cmp.b   #5,d2
+        blt.s   .fl_no
+        move.b  #158,1279(a2)
+        move.b  #158,1281(a2)
+        move.b  #153,1600(a2)
 .fl_no: rts
+exo_draw_throttle_gauge:
+        lea     chunky_buf+184*320+12,a0
+        moveq   #33,d1
+.tg_bg: moveq   #7,d0
+.tg_bx: move.b  #128,(a0,d0.w)
+        dbf     d0,.tg_bx
+        adda.w  #320,a0
+        dbf     d1,.tg_bg
+        moveq   #0,d3
+        move.b  ship_throttle(pc),d3
+        moveq   #1,d2
+        lea     chunky_buf+210*320+14,a0
+.tg_lp: move.b  #132,d4
+        cmp.w   d3,d2
+        bgt.s   .tg_px
+        move.b  #156,d4
+        tst.b   boost_held
+        beq.s   .tg_px
+        move.b  #158,d4
+.tg_px: moveq   #4,d1
+.tg_y:  move.b  d4,(a0)
+        move.b  d4,1(a0)
+        move.b  d4,2(a0)
+        move.b  d4,3(a0)
+        adda.w  #320,a0
+        dbf     d1,.tg_y
+        suba.w  #7*320,a0
+        addq.w  #1,d2
+        cmp.w   #4,d2
+        ble.s   .tg_lp
+        ; Dolna belka zawisu (zielona gdy throttle=0)
+        lea     chunky_buf+213*320+14,a0
+        move.b  #158,d4
+        tst.b   d3
+        beq.s   .tg_hv
+        move.b  #134,d4
+.tg_hv: move.b  d4,(a0)
+        move.b  d4,1(a0)
+        move.b  d4,2(a0)
+        move.b  d4,3(a0)
+        move.b  d4,320(a0)
+        move.b  d4,321(a0)
+        move.b  d4,322(a0)
+        move.b  d4,323(a0)
+        rts
+in_title_menu: dc.b 0,0
         even
 exo_ship_verts:
         dc.w    0,   0,  44

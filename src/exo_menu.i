@@ -118,6 +118,8 @@ exo_run_title_menu:
         move.w  #64,user_yaw
         move.b  #$ff,kbd_last_press
         clr.b   seed_edit_mode
+        move.b  #120,mouse_active
+        move.b  #1,in_title_menu
 .tm_lp: jsr     wait_vbl
         jsr     input_update_controls
         jsr     thea1200_read_peripherals
@@ -147,6 +149,8 @@ exo_run_title_menu:
         bge.s   .lb_ok
         addq.w  #1,cine_bar_h
 .lb_ok: jsr     cine_draw_letterbox
+        move.b  #120,mouse_active
+        jsr     thea1200_draw_mouse_cursor
         clr.w   bbox_x1
         move.w  #319,bbox_x2
         clr.w   bbox_y1
@@ -202,8 +206,8 @@ exo_run_title_menu:
         cmp.b   #$41,d0                 ; Backspace
         bne.s   .sd_dig
         move.l  world_seed_val(pc),d1
-        divu.w  #10,d1
-        and.l   #$ffff,d1
+        moveq   #0,d3
+        divu.l  #10,d3:d1
         move.l  d1,world_seed_val
         tst.w   seed_digits_cnt
         beq.w   .tm_lp
@@ -237,9 +241,9 @@ exo_run_title_menu:
         beq.w   .tm_lp
         clr.b   mouse_lmb_click
         move.w  mouse_y(pc),d1
-        cmp.w   #48,d1
+        cmp.w   #44,d1
         blt.w   .tm_lp
-        cmp.w   #130,d1
+        cmp.w   #131,d1
         bgt.s   .m_ld
         move.w  mouse_x(pc),d0
         cmp.w   #120,d0
@@ -255,7 +259,9 @@ exo_run_title_menu:
 .m_ld:  cmp.w   #154,d1
         bgt.w   .tm_lp
         jsr     exo_load_game
-.tm_ok: jsr     exo_load_role_assets
+.tm_ok: clr.b   in_title_menu
+        clr.b   kbd_matrix+$45
+        jsr     exo_load_role_assets
         clr.b   fire_held
         clr.w   ship_bank
         move.w  #96,user_yaw
@@ -370,6 +376,69 @@ exo_generate_world_from_seed:
         addq.l  #6,a3
         dbf     d7,.gb_lp
 
+        ; Wygeneruj 8 formacji krysztalow Aetheru i wypal iglice w wokselach
+        lea     exo_crystals,a3
+        moveq   #7,d7
+.gc_lp: mulu.w  #25173,d6
+        add.l   #13849,d6
+        move.w  d6,d0
+        lsr.w   #8,d0
+        and.w   #220,d0
+        add.w   #16,d0
+        move.w  d0,(a3)
+        mulu.w  #25173,d6
+        add.l   #13849,d6
+        move.w  d6,d1
+        lsr.w   #8,d1
+        and.w   #220,d1
+        add.w   #16,d1
+        move.w  d1,2(a3)
+        clr.w   4(a3)
+        move.w  d1,d5
+        lsl.w   #8,d5
+        or.w    d0,d5
+        and.l   #$ffff,d5
+        lea     exo_voxel_data,a0
+        moveq   #0,d4
+        move.b  (a0,d5.l),d4
+        moveq   #-4,d3
+.cy_lp: moveq   #-4,d2
+.cx_lp: move.w  d2,d5
+        bpl.s   .ax_p
+        neg.w   d5
+.ax_p:  move.w  d3,d1
+        bpl.s   .ay_p
+        neg.w   d1
+.ay_p:  add.w   d1,d5
+        cmp.w   #4,d5
+        bgt.s   .cn_nx
+        move.w  #5,d1
+        sub.w   d5,d1
+        lsl.w   #2,d1
+        add.w   d4,d1
+        cmp.w   #122,d1
+        ble.s   .ch_ok
+        moveq   #122,d1
+.ch_ok: move.w  2(a3),d5
+        add.w   d3,d5
+        and.w   #255,d5
+        lsl.w   #8,d5
+        move.w  (a3),d0
+        add.w   d2,d0
+        and.w   #255,d0
+        or.w    d0,d5
+        and.l   #$ffff,d5
+        move.b  d1,(a0,d5.l)
+        move.b  #159,65536(a0,d5.l)
+.cn_nx: addq.w  #1,d2
+        cmp.w   #4,d2
+        ble.s   .cx_lp
+        addq.w  #1,d3
+        cmp.w   #4,d3
+        ble.s   .cy_lp
+        addq.l  #6,a3
+        dbf     d7,.gc_lp
+
         jsr     exo_play_sfx_ping
         movem.l (sp)+,d0-d7/a0-a4
         rts
@@ -400,7 +469,7 @@ exo_draw_menu_bars:
         dbf     d6,.mb3x
         adda.w  #320,a0
         dbf     d7,.mb3
-        lea     chunky_buf+150*320+48,a0
+        lea     chunky_buf+218*320+48,a0
         moveq   #13,d7
 .mb4:   move.w  #223,d6
 .mb4x:  move.b  #128,(a0,d6.w)
@@ -442,16 +511,14 @@ exo_draw_menu_bars:
         move.l  world_seed_val(pc),d1
         lea     txt_seed_num+6(pc),a1
         moveq   #5,d2
-.sd_f:  divu.w  #10,d1
-        swap    d1
-        add.b   #"0",d1
-        move.b  d1,-(a1)
-        clr.w   d1
-        swap    d1
+.sd_f:  moveq   #0,d3
+        divu.l  #10,d3:d1
+        add.b   #"0",d3
+        move.b  d3,-(a1)
         dbf     d2,.sd_f
 
         lea     txt_seed(pc),a2
-        lea     chunky_buf+154*320+60,a3
+        lea     chunky_buf+222*320+60,a3
         bsr.w   .pr_str
         rts
 .card_hdr:

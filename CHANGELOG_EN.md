@@ -1,3 +1,11 @@
+## v0.2.0.6 (2026-11-28)
+- **3 distinct class gameplay loops (disk-loaded `.MOD` music & story scripts on class selection):**
+  - **Pioneer (`PIO`)** — agile scout (`±4` yaw, `+1` thrust); locates and scans **8 Aether crystal formations** with `F / LMB`.
+  - **Guardian (`GRD`)** — combat catamaran (`±3` yaw); intercepts and neutralizes **8 patrol drones**.
+  - **Engineer (`ENG`)** — heavy industrial barge (`±2` yaw); physically docks on landing pads (`THR 0..1`) or uses its construction beam to rebuild **8 colony bases** and raise golden voxel relay towers.
+- **Throttle & Flight Controls:** `0..4` thrust steps (`E` / `Q,Z,C`), zero-thrust hover (`X`), separate afterburner (`Space / LAlt`), `THR` HUD gauge, 4× larger planet traversal scale, and a sci-fi arrow mouse cursor in the title menu.
+- **360° Open-World Navigation & Engine Fixes:** top `N/W/S/E` compass, live `S:XXX/YYY` coordinates, rotating 360° radar with class-objective pointer, terrain Logbook overlay (`J`), 32-bit MC68040 `SEED` division, and full 76-byte `data/colony.sav` persistence.
+
 ## v0.2.0.5 (2026-11-28)
 - 100% voxel-integrated colony bases (landing pads, domes, towers) and Aether crystals.
 - On-Amiga MC68040 world generator from any 6-digit SEED in the title menu.

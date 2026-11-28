@@ -50,6 +50,8 @@ input_update_controls:
         move.b  d0,kbd_held_raw
         move.b  d0,kbd_last_press
 
+        tst.b   cine_active
+        bne.s   .rk_nx
         cmp.b   #$12,d0                 ; E = zwieksz ciag
         beq.s   .thr_up
         cmp.b   #$10,d0                 ; Q = zmniejsz ciag
@@ -87,12 +89,26 @@ input_update_controls:
         bne.s   .turn_l
         tst.b   $20(a0)                 ; A
         beq.s   .chk_r
-.turn_l:addq.w  #3,user_yaw
+.turn_l:moveq   #3,d2
+        cmp.b   #1,player_role
+        bne.s   .tl_3
+        moveq   #4,d2
+.tl_3:  cmp.b   #3,player_role
+        bne.s   .tl_ok
+        moveq   #2,d2
+.tl_ok: add.w   d2,user_yaw
 .chk_r: tst.b   $4e(a0)                 ; Strzalka Prawo
         bne.s   .turn_r
         tst.b   $22(a0)                 ; D
         beq.s   .chk_u
-.turn_r:subq.w  #3,user_yaw
+.turn_r:moveq   #3,d2
+        cmp.b   #1,player_role
+        bne.s   .tr_3
+        moveq   #4,d2
+.tr_3:  cmp.b   #3,player_role
+        bne.s   .tr_ok
+        moveq   #2,d2
+.tr_ok: sub.w   d2,user_yaw
 .chk_u: tst.b   $4c(a0)                 ; Strzalka Gora
         bne.s   .pitch_u
         tst.b   $11(a0)                 ; W
@@ -105,14 +121,22 @@ input_update_controls:
 .pitch_d:addq.w #2,user_pitch
 
 .chk_fh:
-        clr.b   fire_held
-        tst.b   $40(a0)                 ; Spacja
+        clr.b   boost_held
+        tst.b   $40(a0)                 ; Spacja = dopalacz
+        bne.s   .do_bst
+        tst.b   $64(a0)                 ; LAlt = dopalacz
+        bne.s   .do_bst
+        tst.b   pad_btn2_held
+        beq.s   .chk_tl
+.do_bst:move.b  #1,boost_held
+.chk_tl:clr.b   fire_held
+        tst.b   cine_active
+        bne.s   .done
+        tst.b   $23(a0)                 ; F = narzedzie robocze
         bne.s   .do_fh
-        tst.b   $64(a0)                 ; LAlt
+        tst.b   $44(a0)                 ; Enter = narzedzie robocze
         bne.s   .do_fh
-        tst.b   $44(a0)                 ; Enter
-        bne.s   .do_fh
-        tst.b   $23(a0)                 ; F
+        tst.b   mouse_lmb_prev          ; LMB = narzedzie robocze
         bne.s   .do_fh
         btst    #7,$bfe001              ; Fire Port 2
         bne.s   .done
@@ -129,8 +153,10 @@ kbd_held_raw:   dc.b $ff
 kbd_last_press: dc.b $ff
 kbd_last_sdr:   dc.b $ff
 fire_held:      dc.b 0
-ship_throttle:  dc.b 2,0
+boost_held:     dc.b 0
+ship_throttle:  dc.b 1,0
         section fastram_bss,bss
         even
 kbd_matrix:     ds.b 128
         section code,code
+        even

@@ -2,13 +2,18 @@
 
 ![AETHER FALCON: VANGUARD](docs/logo_vanguard_v3.png)
 
-# AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.5
+# AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.6
 
 **Dedicated MC68040 Assembly 3D Engine for THEA1200 (320×256 AGA / 256 Colors)**
 
 > **Project Reboot Note (`v0.1.x` → `v0.2.0.5`):** The previous `v0.1.x` build (based on a rigid 68020 demo setup) hit an architectural ceiling. We started fresh from the ground up targeting **THEA1200 (MC68040 + Fast RAM + AGA)** with a clean, modular engine. Legacy files and screenshots were moved to `docs/archive/`.
 
-## Downloads (`v0.2.0.5` — THEA1200)
+## Downloads (`v0.2.0.6` — THEA1200)
+
+### Current Release: v0.2.0.6 (THEA1200 / Amiga 1200 AGA)
+- **3 distinct classes & gameplay loops:** Pioneer (8 Aether crystal geological surveys), Guardian (8 patrol drone combat interceptions), Engineer (physical landing pad docking & voxel relay tower construction across 8 colony bases).
+- **Flight & HUD upgrades:** 4-step throttle (`E/Q/Z/C`), zero-thrust hover (`X`), separate afterburner (`Space / LAlt`), `THR` HUD gauge, and sci-fi arrow mouse cursor in the title menu.
+- **360° Open-World Navigation:** top `N/W/S/E` compass bar, live `S:XXX/YYY` sector coordinates, 360° rotating radar with class-target pointer, and full terrain Logbook overlay (`J`).
 
 | Profile (`--profile`) | Target Hardware | Download Packages |
 |---|---|---|
@@ -26,9 +31,9 @@ The current `v0.2.x` generation is developed **exclusively for the THEA1200 arch
   - **Amiberry**, **FS-UAE**, and **WinUAE** configured as `A1200 + 68040 + Fast RAM + AGA` (ready-to-boot `_FSUAE.zip` package).
 - **Unsupported platforms:** stock Amiga 1200 (`68EC020` without Fast RAM), Amiga 500/600 (`OCS/ECS`), and the cut-down `320×128` mode from `v0.1.x` are discontinued (archived builds remain in `docs/archive/`).
 
-## Gallery `v0.2.0.5` (Frozen 68040 THEA1200 Engine)
+## Gallery `v0.2.0.6` (Frozen 68040 THEA1200 Engine)
 
-| ![1. Start Menu with Letterbox](docs/screenshots/v0205_01.png) | ![2. Dialogue Box with Portrait](docs/screenshots/v0205_02.png) | ![3. 360° Flight & Water Reflections](docs/screenshots/v0205_03.png) |
+| ![1. 360° Flight & Compass HUD](docs/screenshots/v0206_01.png) | ![2. Pioneer Story Dialogue](docs/screenshots/v0206_02.png) | ![3. Class Selection & Mouse Cursor](docs/screenshots/v0206_03.png) | ![4. Prologue Letterbox](docs/screenshots/v0206_04.png) |
 |:---:|:---:|:---:|
 | **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
 

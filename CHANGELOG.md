@@ -1,3 +1,11 @@
+## v0.2.0.6 (2026-11-28)
+- **3 odrębne rozgrywki dla profesji (dyskowe wczytywanie fabuły i muzyki `.MOD` po wyborze klasy):**
+  - **Pionier (`PIO`)** — najszybszy zwiadowca (`±4` skręt, `+1` ciąg); wyszukuje i skanuje wiązką `F / LMB` **8 formacji kryształów Aetheru**.
+  - **Strażnik (`GRD`)** — katamaran bojowy (`±3` skręt); patroluje niebo i neutralizuje działkiem **8 wrogich dronów**.
+  - **Inżynier (`ENG`)** — ciężka barka (`±2` skręt); fizycznie dokuje na lądowiskach (`THR 0..1`) lub używa wiązki konstrukcyjnej, odbudowując **8 baz kolonii** i wznosząc złote wieże przekaźnikowe w wokselach.
+- **Przepustnica i sterowanie:** biegi ciągu `0..4` (`E` / `Q,Z,C`), zawis (`X`), osobny dopalacz (`Spacja / LAlt`), wskaźnik `THR` na HUD, spowolniona 4× skala prędkości przelotu oraz kursor strzałki sci-fi w menu.
+- **Nawigacja open-world 360° i poprawki stabilności:** górny kompas `N/W/S/E`, współrzędne `S:XXX/YYY`, obrotowy radar 360° ze strzałką celu profesji, Dziennik Pokładowy z mapą terenu pod klawiszem `J`, 32-bitowe dzielenie ziarna `SEED` na MC68040 oraz pełny zapis 76 bajtów w `data/colony.sav`.
+
 ## v0.2.0.5 (2026-11-28)
 - 100% wokselowe bazy kolonii (ladowiska, kopuly, wieze) i krysztaly Aetheru w terenie.
 - Generator swiata z dowolnego 6-cyfrowego ziarna SEED bezposrednio w menu gry na MC68040.

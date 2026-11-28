@@ -73,17 +73,19 @@ flight_update_360:
         and.w   #510,d0
         move.w  (a0,d0.w),d2            ; d5 z terrain_3d.i -> vy
 
-        moveq   #2,d3
+        moveq   #0,d3
+        move.b  ship_throttle(pc),d3    ; 0=zawis, 1..4=ciag marszowy
+        beq.s   .r_sp
         cmp.b   #1,player_role
         bne.s   .r_sp
-        moveq   #3,d3
-.r_sp:  tst.b   fire_held
+        addq.w  #1,d3                   ; Bonus predkosci zwiadowcy Pioniera
+.r_sp:  tst.b   boost_held
         beq.s   .sp_ok
-        addq.w  #3,d3                   ; Dopalacz (Spacja / LPM / Fire)
+        addq.w  #3,d3                   ; Dopalacz (Spacja / LAlt)
 .sp_ok: muls.w  d3,d1
         muls.w  d3,d2
-        asr.l   #2,d1
-        asr.l   #2,d2
+        asr.l   #4,d1
+        asr.l   #4,d2
         add.l   d1,cam_x
         add.l   d2,cam_y
 

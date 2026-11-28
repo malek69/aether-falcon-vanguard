@@ -3,7 +3,7 @@
 <p align="right"><strong>Polski</strong> | <a href="README_EN.md">English</a> | <a href="CHANGELOG.md">Changelog</a> | <a href="docs/archive/">Archiwum v0.1.x</a></p>
 
 <div align="center">
-  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.5</h1>
+  <h1>AETHER FALCON: VANGUARD / EXOPLANET FRONTIER — v0.2.0.6</h1>
   <p><strong>Dedykowany silnik 3D w asemblerze MC68040 dla konsoli THEA1200 (320×256 AGA / 256 kolorów)</strong></p>
 </div>
 
@@ -13,7 +13,7 @@
 
 ---
 
-## Pobieranie (`v0.2.0.5` — THEA1200)
+## Pobieranie (`v0.2.0.6` — THEA1200)
 
 | Profil (`--profile`) | Platforma docelowa | Paczki do pobrania |
 | :--- | :--- | :--- |
@@ -33,9 +33,9 @@ Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architektu
   - **Amiberry**, **FS-UAE** oraz **WinUAE** skonfigurowane jako `A1200 + 68040 + Fast RAM + AGA` (gotowa paczka `_FSUAE.zip`).
 - **Platformy niewspierane:** bazowa Amiga 1200 (`68EC020` bez Fast RAM), Amiga 500/600 (`OCS/ECS`) oraz okrojony tryb `320×128` z linii `v0.1.x` nie są już rozwijane (archiwalne wydania znajdują się w `docs/archive/`).
 
-## Galeria `v0.2.0.5` (Szkielet Silnika 68040 THEA1200)
+## Galeria `v0.2.0.6` (Szkielet Silnika 68040 THEA1200)
 
-| ![1](docs/screenshots/v0205_01.png) | ![2](docs/screenshots/v0205_02.png) | ![3](docs/screenshots/v0205_03.png) |
+| ![1](docs/screenshots/v0206_01.png) | ![2](docs/screenshots/v0206_02.png) | ![3](docs/screenshots/v0206_03.png) | ![4](docs/screenshots/v0206_04.png) |
 |:---:|:---:|:---:|
 | **1. Menu startowe z letterboxem** | **2. Okno dialogowe z portretem** | **3. Lot 360° i odbicia wody** |
 
@@ -82,7 +82,10 @@ Projekt łączy dwa rozwijane silniki w czystym asemblerze **MC68040** zsynchron
 - **Sterowanie poduszkowcem 360°:** `W A S D` / `Strzałki` / `Mysz` / `Pad` (skręt 360° i pochylenie), `E` (zwiększenie ciągu), `Q` / `Z` / `C` (zmniejszenie ciągu), `X` (natychmiastowy zawis w miejscu `Throttle = 0`), `Spacja` / `Alt` (dopalacz).
 - **Interakcja, Dziennik i System:** `F` / `R` / `LMB` / `Fire` (wiązka robocza / skaner / łączność z bazą), `J` / `L` / `Tab` (Dziennik Pokładowy i Mapa Topograficzna), `1`–`3` / `Enter` / `LMB` (wybór opcji w dialogach), `M` (oświetlenie atmosfery AGA), `F5` (zapis gry na dysk), `ESC` (wyjście do systemu).
 
-### Aktualne wydanie: v0.2.0.5 (THEA1200 / Amiga 1200 AGA)
+### Aktualne wydanie: v0.2.0.6 (THEA1200 / Amiga 1200 AGA)
+- **3 odrębne profesje i tryby gry:** Pionier (zwiad i skanowanie 8 kryształów Aetheru), Strażnik (patrol bojowy i neutralizacja 8 dronów), Inżynier (fizyczne dokowanie na lądowiskach i wznoszenie wież w 8 bazach kolonii).
+- **Przepustnica i sterowanie:** 4-stopniowy ciąg (`E/Q/Z/C`), zawis (`X`), osobny dopalacz (`Spacja / LAlt`), wskaźnik `THR` na HUD oraz widoczny kursor strzałki sci-fi w menu.
+- **Nawigacja open-world 360°:** górny kompas `N/W/S/E`, licznik pozycji `S:XXX/YYY`, obrotowy radar 360° ze strzałką celu profesji oraz Dziennik Pokładowy z mapą terenu pod `J`.
 
 * Naprawiono 8-bajtowy format trójkątów siatki 3D (`[i0, i1, i2, tex_id]`) dla myśliwca i dronów.
 * Wyrównano kąty macierzy obrotu `sin_tab` (`192`), sterowanie 360° (`game_input.i`) oraz prędkość lotu w menu i podczas misji.

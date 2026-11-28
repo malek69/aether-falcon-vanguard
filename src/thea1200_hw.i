@@ -14,6 +14,7 @@ thea1200_read_peripherals:
         move.b  d0,d2
         sub.b   d1,d2
         ext.w   d2
+        asr.w   #1,d2
         move.w  d2,mouse_dx
         beq.s   .nmx
         move.b  #120,mouse_active
@@ -22,6 +23,7 @@ thea1200_read_peripherals:
         lsr.w   #8,d1
         sub.b   d1,d0
         ext.w   d0
+        asr.w   #1,d0
         move.w  d0,mouse_dy
         beq.s   .nmy
         move.b  #120,mouse_active
@@ -61,22 +63,46 @@ thea1200_read_peripherals:
         rts
 thea1200_draw_mouse_cursor:
         tst.b   mouse_active
-        beq.s   .mc_end
+        beq.w   .mc_end
         subq.b  #1,mouse_active
-        movem.l d0-d3/a0,-(sp)
+        movem.l d0-d4/a0-a1,-(sp)
         move.w  mouse_x(pc),d0
         move.w  mouse_y(pc),d1
-        lea     chunky_buf,a0
+        cmp.w   #308,d0
+        ble.s   .cx_ok
+        move.w  #308,d0
+.cx_ok: cmp.w   #244,d1
+        ble.s   .cy_ok
+        move.w  #244,d1
+.cy_ok: lea     chunky_buf,a0
         mulu.w  #320,d1
         add.l   d1,a0
         add.w   d0,a0
-        moveq   #5,d2
-.mc_lp: move.b  #255,(a0)
-        move.b  #255,1(a0)
+        lea     .cur_spr(pc),a1
+        moveq   #9,d3
+.mc_y:  moveq   #0,d2
+.mc_x:  move.b  (a1)+,d4
+        beq.s   .mc_sk
+        move.b  d4,(a0,d2.w)
+.mc_sk: addq.w  #1,d2
+        cmp.w   #9,d2
+        blt.s   .mc_x
         adda.w  #320,a0
-        dbf     d2,.mc_lp
-        movem.l (sp)+,d0-d3/a0
+        dbf     d3,.mc_y
+        movem.l (sp)+,d0-d4/a0-a1
 .mc_end:rts
+.cur_spr:
+        dc.b 190,128,0,0,0,0,0,0,0
+        dc.b 128,255,128,0,0,0,0,0,0
+        dc.b 128,255,255,128,0,0,0,0,0
+        dc.b 128,255,255,255,128,0,0,0,0
+        dc.b 128,255,255,255,255,128,0,0,0
+        dc.b 128,255,255,255,255,255,128,0,0
+        dc.b 128,128,128,128,255,255,255,128,0
+        dc.b 0,0,0,128,255,128,255,255,128
+        dc.b 0,0,0,0,128,255,128,128,128
+        dc.b 0,0,0,0,0,128,128,0,0
+        even
 mouse_active:    dc.b 0
 mouse_lmb_prev:  dc.b 0
 mouse_lmb_click: dc.b 0,0
