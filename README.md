@@ -37,9 +37,9 @@ Obecna generacja projektu (`v0.2.x`) jest rozwijana **wyłącznie pod architektu
 
 | ![1](docs/screenshots/v0206_01.png) | ![2](docs/screenshots/v0206_02.png) | ![3](docs/screenshots/v0206_03.png) | ![4](docs/screenshots/v0206_04.png) |
 |:---:|:---:|:---:|
-| **1. Menu startowe z letterboxem** | **2. Okno dialogowe z portretem** | **3. Lot 360° i odbicia wody** |
+| **1. Lot 360°, kompas i radar** | **2. Dialog fabularny profesji** | **3. Wybór klasy i kursor** | **4. Prolog z letterboxem** |
 
-## Co działa w `v0.2.0.5` (obecny szkielet)
+## Co działa w `v0.2.0.6`
 - **Silnik terenu Voxel Space 3D 360° (`MC68040`):** pełna rozdzielczość `320×256 AGA`, mgła odległości (`Z-Fog`) oraz bufor głębokości terenu (`vx_ybuf`).
 - **Menu startowe i wybór kampanii (`src/exo_menu.i`):** Nowa Kampania z wyborem roli (**`1: PIONEER`**, **`2: GUARDIAN`**, **`3: ENGINEER`**) lub wczytanie zapisanej kolonii (**`4: LOAD SAVED COLONY`**).
 - **Trwały zapis i odczyt na dysk (`src/exo_save_load.i`):** zapis stanu świata do `data/colony.sav` (auto-save przy aktywacji bazy oraz ręcznie pod klawiszem `S`).

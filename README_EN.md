@@ -37,7 +37,7 @@ The current `v0.2.x` generation is developed **exclusively for the THEA1200 arch
 |:---:|:---:|:---:|
 | **1. Start Menu with Cinema Letterbox** | **2. Dialogue Box with Animated Portrait** | **3. 360° Flight with Water Reflections & 3D Meshes** |
 
-## Frozen Engine Capabilities (`v0.2.0.5`)
+## Engine Capabilities (`v0.2.0.6`)
 
 - **360° Voxel Space 3D Terrain (`src/terrain_3d.i`):** incremental `MC68040` raymarching (zero `muls.w` in the inner ray loop), `vx_row_lut` row LUT, dynamic horizon pitch (`cam_pitch`), 320-column depth buffer (`vx_ybuf`), animated water reflections, distance fog (`Z-Fog`), and biosphere palette shift.
 - **Gouraud 3D Meshes, Shadows & Particles (`src/vec3d_engine.i`, `refs/aura3d/engine/aura3d_v2.i`):** 3D polygon rendering with `movem.l` Z-buffer clear, terrain-projected shadows underneath 3D objects, 360° sun with atmospheric corona, 360° clouds, 32-slot 3D particle system, and Bresenham 2D lines.
