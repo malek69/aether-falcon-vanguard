@@ -11,7 +11,7 @@ exo_save_game:
         bsr.w   exo_pack_buf
         move.l  d4,d1
         move.l  #sav_buf,d2
-        moveq   #76,d3
+        move.l  #172,d3
         jsr     -48(a6)
         move.l  d4,d1
         jsr     -36(a6)
@@ -29,7 +29,7 @@ exo_load_game:
         beq.s   .ld_cls
         move.l  d4,d1
         move.l  #sav_buf,d2
-        moveq   #76,d3
+        move.l  #172,d3
         jsr     -42(a6)
         move.l  d4,d1
         jsr     -36(a6)
@@ -69,6 +69,14 @@ exo_pack_buf:
         moveq   #11,d0
 .pk_l:  move.l  (a1)+,(a0)+
         dbf     d0,.pk_l
+        lea     exo_crystals,a1
+        moveq   #11,d0
+.pk_c:  move.l  (a1)+,(a0)+
+        dbf     d0,.pk_c
+        lea     exo_drones,a1
+        moveq   #11,d0
+.pk_d:  move.l  (a1)+,(a0)+
+        dbf     d0,.pk_d
         move.l  colony_credits,(a0)+
         move.w  role_contracts_done,(a0)+
         move.w  story_step_off,(a0)+
@@ -87,6 +95,14 @@ exo_unpack_buf:
         moveq   #11,d0
 .up_l:  move.l  (a0)+,(a1)+
         dbf     d0,.up_l
+        lea     exo_crystals,a1
+        moveq   #11,d0
+.up_c:  move.l  (a0)+,(a1)+
+        dbf     d0,.up_c
+        lea     exo_drones,a1
+        moveq   #11,d0
+.up_d:  move.l  (a0)+,(a1)+
+        dbf     d0,.up_d
         move.l  (a0)+,colony_credits
         move.w  (a0)+,role_contracts_done
         move.w  (a0)+,story_step_off
@@ -94,7 +110,7 @@ exo_unpack_buf:
 dos_name: dc.b "dos.library",0
 sav_path: dc.b "data/colony.sav",0
         even
-sav_buf:  ds.b 76
+sav_buf:  ds.b 172
 colony_credits:      dc.l 0
 role_contracts_done: dc.w 0
 story_step_off:      dc.w 0

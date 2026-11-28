@@ -288,7 +288,7 @@ exo_generate_world_from_seed:
         add.w   d0,d0
         move.w  (a2,d0.w),d1
         move.w  d5,d0
-        lsr.w   #1,d6
+        ror.l   #1,d6
         add.w   d6,d0
         and.w   #255,d0
         add.w   d0,d0

@@ -42,6 +42,7 @@ mainloop:
     jsr     vec3d_update_particles
     jsr     exo_draw_ship_and_hud
     jsr     exo_draw_logbook_overlay
+    jsr     exo_check_victory
     clr.w   bbox_x1
     move.w  #319,bbox_x2
     clr.w   bbox_y1
@@ -150,6 +151,8 @@ scene_timeline_table: dc.l 0,0,0,0
     include "exo_menu.i"
     include "exo_save_load.i"
     include "exo_sound.i"
+    include "exo_victory.i"
+    even
 sin_tab:
     dc.w 256,256,256,255,255,254,253,252,251,250,248,247,245,243,241,239
     dc.w 237,234,231,229,226,223,220,216,213,209,206,202,198,194,190,185

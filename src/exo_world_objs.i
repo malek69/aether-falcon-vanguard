@@ -38,16 +38,11 @@ exo_update_and_draw_world:
         clr.w   dock_progress
         move.b  #1,4(a4)
         addq.w  #1,role_contracts_done
-        add.w   #15,terraform_pct
-        add.l   #150,colony_credits
-        cmp.b   #2,player_role
-        bne.s   .dk_e
-        add.l   #50,colony_credits
-        bra.s   .dk_ok
-.dk_e:  cmp.b   #3,player_role
-        bne.s   .dk_ok
-        add.w   #10,terraform_pct
-        add.l   #30,colony_credits
+        add.w   #25,terraform_pct
+        add.l   #180,colony_credits
+        cmp.w   #100,terraform_pct
+        ble.s   .dk_ok
+        move.w  #100,terraform_pct
 .dk_ok: movem.l d0-d1/a4,-(sp)
         jsr     exo_play_sfx_dock
         jsr     exo_advance_role_story
@@ -97,19 +92,12 @@ exo_update_and_draw_world:
         bne.w   .no_act
         move.b  #1,4(a4)
         addq.w  #1,role_contracts_done
-        add.w   #15,terraform_pct
-        add.l   #150,colony_credits
-        move.b  #158,d6
-        cmp.b   #2,player_role
-        bne.s   .chk_e
-        add.l   #50,colony_credits
-        move.b  #188,d6
-        bra.s   .r_ok
-.chk_e: cmp.b   #3,player_role
-        bne.s   .r_ok
-        add.w   #10,terraform_pct
-        add.l   #30,colony_credits
-        move.b  #190,d6
+        add.w   #25,terraform_pct
+        add.l   #180,colony_credits
+        cmp.w   #100,terraform_pct
+        ble.s   .tf_b1
+        move.w  #100,terraform_pct
+.tf_b1: move.b  #190,d6
 .r_ok:  ; Wznies zlota wieze przekaznikowa w wokselach odbudowanej bazy
         move.w  2(a4),d2
         and.w   #255,d2
@@ -197,8 +185,11 @@ exo_update_crystals:
         bgt.w   .cr_nx
         move.b  #1,4(a4)
         addq.w  #1,role_contracts_done
-        add.w   #12,terraform_pct
-        add.l   #200,colony_credits
+        add.w   #13,terraform_pct
+        cmp.w   #100,terraform_pct
+        ble.s   .tf_c1
+        move.w  #100,terraform_pct
+.tf_c1: add.l   #200,colony_credits
         move.w  d1,d0
         moveq   #122,d1
         move.b  #159,d6
@@ -307,8 +298,11 @@ exo_update_drones:
         bgt.s   .dl_dr
         move.b  #1,4(a4)
         addq.w  #1,role_contracts_done
-        add.w   #12,terraform_pct
-        add.l   #250,colony_credits
+        add.w   #13,terraform_pct
+        cmp.w   #100,terraform_pct
+        ble.s   .tf_d1
+        move.w  #100,terraform_pct
+.tf_d1: add.l   #250,colony_credits
         move.w  d1,d0
         moveq   #122,d1
         move.b  #188,d6
