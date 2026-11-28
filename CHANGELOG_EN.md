@@ -1,16 +1,5 @@
 ## v0.2.0.6 (2026-11-28)
 
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/v0206_01.png" width="420" alt="1. 360° Flight, Compass & Radar"><br><b>1. 360° Flight, Compass & Radar</b></td>
-    <td align="center"><img src="docs/screenshots/v0206_02.png" width="420" alt="2. Class Story Dialogue"><br><b>2. Class Story Dialogue</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/screenshots/v0206_03.png" width="420" alt="3. Class Selection & Mouse Cursor"><br><b>3. Class Selection & Mouse Cursor</b></td>
-    <td align="center"><img src="docs/screenshots/v0206_04.png" width="420" alt="4. Prologue Letterbox"><br><b>4. Prologue Letterbox</b></td>
-  </tr>
-</table>
-
 - **3 distinct class gameplay loops (disk-loaded `.MOD` music & story scripts on class selection):**
   - **Pioneer (`PIO`)** — agile scout (`±4` yaw, `+1` thrust); locates and scans **8 Aether crystal formations** with `F / LMB`.
   - **Guardian (`GRD`)** — combat catamaran (`±3` yaw); intercepts and neutralizes **8 patrol drones**.
